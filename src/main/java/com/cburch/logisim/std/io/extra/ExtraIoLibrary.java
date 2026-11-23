@@ -35,6 +35,7 @@ public class ExtraIoLibrary extends Library {
     new FactoryDescription(PlaRom.class, S.getter("PlaRomComponent")),
     new FactoryDescription(TwoWaySwitch.class, S.getter("twoWaySwitch")),
     new FactoryDescription(TwoPinLed.class, S.getter("twopinLEDComponent")),
+    new FactoryDescription(NE555.class, S.getter("ne555Component")),
   };
 
   private List<Tool> tools = null;

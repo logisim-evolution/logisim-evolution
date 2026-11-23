@@ -7,6 +7,7 @@
 * **Table of contents**
   * [Features](#features)
   * [Requirements](#requirements)
+  * [Troubleshooting](#troubleshooting)
   * **[Downloads](#download)**
     * [Package Manager](#package-manager)
     * [Nightly builds (unstable)](#nightly-builds)
@@ -96,6 +97,24 @@ Accessibility quick setup:
 
 ---
 
+## Troubleshooting ##
+
+### Blank window on Linux ###
+
+With some non-reparenting window managers, the Logisim-evolution window may appear blank even
+though its controls still respond. This is caused by an interaction between Java AWT and the window
+manager. Try launching the JAR once with the following environment variable:
+
+```bash
+env _JAVA_AWT_WM_NONREPARENTING=1 java -jar logisim-evolution-<version>-all.jar
+```
+
+If this resolves the problem, configure the same environment variable in the session or launcher
+used to start Logisim-evolution. See [issue #1235](https://github.com/logisim-evolution/logisim-evolution/issues/1235)
+for background and confirmed configurations.
+
+---
+
 ## Download ###
 
 `Logisim-evolution` is available for
@@ -163,14 +182,16 @@ before [creating an issue](https://github.com/logisim-evolution/logisim-evolutio
 the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).
 Otherwise, report the issue to the package maintainer!
 
-* [Snap](https://snapcraft.io/logisim-evolution) (`snap install logisim-evolution`)
-* [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
-* [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
-* [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
-* [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
-* [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) (`winget install -e --id logisim-evolution.logisim-evolution`)
-* [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
-* [nixpkgs](https://search.nixos.org/packages?channel=24.05&show=logisim-evolution)(`nix-shell -p logisim-evolution`)
+| Package manager | Command | Available version |
+| --------------- | ------- | ----------------- |
+| [Snap](https://snapcraft.io/logisim-evolution) | `snap install logisim-evolution` | ![Snapcraft Version](https://img.shields.io/snapcraft/v/logisim-evolution/latest/stable) |
+| [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) | `flatpak install flathub com.github.reds.LogisimEvolution` | ![Flathub Version](https://img.shields.io/flathub/v/com.github.reds.LogisimEvolution) |
+| [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) | `brew install --cask logisim-evolution` | ![Homebrew Cask Version](https://img.shields.io/homebrew/cask/v/logisim-evolution) |
+| [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) | `port install logisim-evolution` | ![MacPorts Port Version](https://img.shields.io/macports/v/logisim-evolution) |
+| [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) | `choco install logisim-evolution` | ![Chocolatey Version](https://img.shields.io/chocolatey/v/Logisim-evolution) |
+| [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) | `winget install -e --id logisim-evolution.logisim-evolution` | ![WinGet Package Version](https://img.shields.io/winget/v/logisim-evolution.logisim-evolution) |
+| [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution) | | ![AUR Version](https://img.shields.io/aur/version/logisim-evolution) |
+| [nixpkgs](https://search.nixos.org/packages?channel=26.05&show=logisim-evolution) | `nix-shell -p logisim-evolution` | [![nixpkgs stable 26.05 package](https://repology.org/badge/version-for-repo/nix_stable_26_05/logisim-evolution.svg)](https://repology.org/project/logisim-evolution/versions) |
 
 ### Nightly builds ###
 

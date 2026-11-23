@@ -4,6 +4,128 @@
 
 * @dev (????-??-??)
   * Allow Text component to snap to grid (@julianvu).
+  * Fixed the FP Round component turning values beyond the long range, infinities and NaN into
+    9.223372036854776E18 or 0 in its truncate and round modes (@emincan2000).
+  * Added missing cache instructions of the NIOS-V g CPU to be able to simulate the programs in the SOC environment (@BFH-ktt1).
+  * Drew the internal logic diagram of TTL 74365 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74138 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74266 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74194 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 744017 (@Vadimatorik).
+  * Fixed the Exponentiator returning 1 or failing with an exception for exponents of 2^31 or more
+    when it is unsigned or wider than 32 bits (@emincan2000).
+  * Fixed the file browser reopening in the Windows Recent Items folder after creating a folder there
+    [#3211] (@LachlanMayes).
+  * Added a `--load-lib` command line option to load JAR and Logisim libraries at startup [#2966] (@DhruviiPatell).
+  * Add (v)hdl support for the floating point Absolute component (@zOnlyKroks)
+  * Drew the internal logic diagram of TTL 74123 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 7476 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74390 (@Vadimatorik).
+  * Added a Window preference to open circuits at the last-used zoom instead of always fitting
+    them to the window [#3070] (@LachlanMayes).
+  * Drew the internal logic diagram of TTL 7493 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 74283 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 7447 (@Vadimatorik).
+  * Drew the internal logic diagram of TTL 7485 (@Vadimatorik).
+  * Fixed 8-bit floats turning some NaN values into infinity, and an assertion in the conversion that failed
+    whenever rounding carried into the exponent (@emincan2000).
+  * Drew the internal logic diagram of TTL 7487 (@Vadimatorik).
+  * Added an optional Unified Header Bar component, which could be toggled via Window Preferences [#3166] (@friendsgamingyt611-sys).
+  * Preserved look-and-feel UI fonts when the Application font is Default [#3162] (@mvanhorn).
+  * Sped up simulation by running a queued component once per step and caching which of its ports are connected
+    [#3065] (@Kejoki).
+  * Made resetting the simulation of designs with many subcircuit instances faster and lighter on memory
+    [#3156] (@iSlavok).
+  * Fixed the simulation tree duplicating and leaking nodes, which made editing designs with nested
+    subcircuits slower and slower [#3152] (@iSlavok).
+  * Added TTL 74594: 8-bit shift register with output register (@Vadimatorik).
+  * Added an option to follow the system light or dark setting, on by default for new installations
+    [#3132] (@tejastagra).
+  * Fixed the Multiplier VHDL/Verilog generators: the VHDL did not compile, and every numeric type
+    (unsigned, signed/unsigned, signed) generated the wrong arithmetic [#3130] (@BhavayGoyal).
+  * Fixed VHDL generation, HDL names and assembler opcodes when the default locale is Turkish
+    (@emincan2000).
+  * Fixed elements drawn in black with dark themes: the subcircuit clock symbol, Classic and HolyCross
+    subcircuit outlines and icons, the Test Vector table, the timing diagram ruler and signal list, and
+    the zoom and compile icons [#3154] (@iSlavok).
+  * Fixed Shifter HDL generation bit selectors and VHDL arithmetic shift right sign extension [#3138] (@Hrushikesh-ramilla).
+  * Added facing and a selectable grid height to the LED Bar [#3085] (@Vadimatorik).
+  * Fixed infinite repaint loop and severe UI unresponsiveness when mismatched bus widths are connected [#3121] (@Hrushikesh-ramilla).
+  * Drew `$...$` formulas on canvas labels, including overlines, while keeping the source text in the
+    editor and in TikZ export [#2942] (@Vadimatorik).
+  * Extended label formulas with modulus, comparisons, bare subscripts, and superscripts
+    [#2942] (@Vadimatorik).
+  * Added TTL 74107: dual negative-edge J-K flip-flops with reset (@Vadimatorik).
+  * Added TTL 744075: triple 3-input OR gate (@Vadimatorik).
+  * Added TTL 7405: hex inverter with open-drain outputs (@Vadimatorik).
+  * Added TTL 74132: quad 2-input NAND gate (Schmitt trigger) (@Vadimatorik).
+  * Shared engineering notation for the 74123 and NE555 resistance and capacitance attributes
+    [#3084] (@Vadimatorik).
+  * Added built-in Verilog synthesis through Yosys, converting HDL into editable Logisim-evolution circuits. [#1616] (@f3rhd).
+  * Added ascending splitter bit redistribution from the Properties pane [#3093] (@mvanhorn).
+  * Fixed selecting splitter bit ends by typing their number in the attribute table [#3096] (@Physanto).
+  * Added an optional bus input to the 7-Segment Display, with a selectable side (@Vadimatorik).
+  * Added ability to move VHDL components in circuit list [#3092] (@johnb432).
+  * Added (V)HDL generators for SquareRoot and Exponentiator Components (@zOnlyKroks)
+  * Added an "On reset / load" attribute to the DIP switch, to keep switch positions across reset and reload
+    [#3066] (@Kejoki).
+  * Fixed FPGA short-circuit false positives for splitter paths sharing the same driver bit
+    [#3076] (@hewzhew).
+  * Unified the Logisim-evolution spelling in component appearance labels and Russian SoC messages
+    [#3008] (@hewzhew).
+  * Fixed FPGA net tracing through unconnected splitter bits and resulting false short-circuit errors
+    [#3063] (@hewzhew).
+  * Showed source line numbers and applicable set/sequence numbers for failed command-line test vectors [#3060] (@goudan789).
+  * Added TTL 74390: dual decade ripple counter (@Vadimatorik).
+  * Added NE555 Timer IC component with Astable and Monostable modes to Extra I/O library (@V-Zemlyakov).
+  * Optimized file dialog performance via startup background warmup and introduced scoped directory memory to isolate
+    circuit projects, image exports, and SoC software directories (@V-Zemlyakov).
+  * Added TTL 74123: dual retriggerable monostable multivibrator with reset (@Vadimatorik).
+  * Fixed ArrayIndexOutOfBoundsException during signal history deduplication and improved ChronoPanel buffer safety (@V-Zemlyakov).
+  * Added TTL 744060: 14-stage binary ripple counter (@Vadimatorik).
+  * Preserved pin and anchor edits in custom circuit appearances when saving [#3025] (@hewzhew).
+  * Refreshed I/O-extra PlaRom state after contents changes and fixed state cloning
+    [#1247] (@hewzhew).
+  * Fixed a NullPointerException that stopped the clock when an I/O-extra PlaRom was placed in a
+    subcircuit, by reading its output width from the component attribute during clock discovery
+    [#1247] (@henriquejsza).
+  * Improved ChronoPanel and signal logging: added Tunnel component support, automatic selection for equivalent clocks,
+    deduplication of tunnels, dynamic bus width updates, and UI stability fixes (@kevinawalsh, @V-Zemlyakov).
+  * Fixed cursor-centered zooming in the circuit appearance editor [#3018] (@hewzhew).
+  * Added TTL 74148: 8-line to 3-line priority encoder (@Vadimatorik).
+  * Added native macOS file dialogs for open and save operations with standard file filtering support (@V-Zemlyakov).
+  * Clarified unknown bits and output don't-care values in test vectors [#1123] (@hewzhew).
+  * Fix macOS preferences dialogue focus and update tab labels (@Alperenu0).
+  * Added theme-aware text label colors and color selection, with previews of the rendered color
+    and preserved light-theme colors for saved files and Printer View [#2661] (@META-Xiao).
+  * Custom canvas, grid, component, signal, width-error, and clock-frequency color
+    preferences are now stored independently for each theme; resetting colors affects
+    only the active theme [#3053] (@META-Xiao).
+  * Fixed loss of custom appearance when merging circuits into a project (@V-Zemlyakov).
+  * Fixed undo and redo after moving polygon and polyline vertices [#1042] (@hewzhew).
+  * Unified the spelling of "Logisim-evolution" in the Snap and Flatpak metadata and the German and French guide
+    [#3008] (@xjx06127).
+  * Fixed French translation mistake for `selCutItem` (@LPe7).
+  * Added TTL 74257: quad 2-line to 1-line data selector with three-state outputs (@Vadimatorik).
+  * Added TTL 74374: octal positive-edge D flip-flop with three-state outputs (@Vadimatorik).
+  * Added TTL 744094: 8-bit shift-and-store register with three-state outputs (@Vadimatorik).
+  * Added TTL 744017: Johnson decade counter with 10 decoded outputs (@Vadimatorik).
+  * Added TTL 74595: 8-bit serial-in, parallel-out shift register with output latch (@Vadimatorik).
+  * Added TTL 74190: synchronous presettable BCD up/down counter (@Vadimatorik).
+  * Added TTL 74365: hex buffer/line driver with three-state outputs (@Vadimatorik).
+  * Added TTL 74259: 8-bit addressable latch (@Vadimatorik).
+  * Added TTL 74393: dual 4-bit binary ripple counter (@Vadimatorik).
+  * Added TTL 74640: octal inverting bus transceivers with three-state outputs (@Vadimatorik).
+  * Added TTL 74688: 8-bit identity comparator (@Vadimatorik).
+  * Fixed TTL 74173 clear operation. [#3146] (@davidhutchens)
+
+* v5.0.0 (2026-09-12)
+  * Improved visual representation of Pull Resistor component (@V-Zemlyakov).
+  * Re-enabled SonarCloud analysis in the GitHub Actions build workflow (@zdimension).
+  * Added anti-aliasing preference to control anti-aliasing of UI elements (@V-Zemlyakov).
+  * Simplified Keyboard component buffer handling by removing redundant array-copy guards
+    [#564] (@hewzhew).
+  * Set default gate shape to rectangular (IEC) for Russian locale (@V-Zemlyakov).
   * Added a new signed/unsigned option to the multiplier component.(@Diogo-Valadares)
   * Added "Show Bus Width" wire attribute to label multi-bit buses with a tick mark at Start, Center, or End (@V-Zemlyakov).
   * Added Image component to insert custom bitmap images into circuits and subcircuit appearances.
@@ -108,9 +230,13 @@
     libraries, wire values, transistor behavior, and unused-library save options.
   * Added a default text-tool color preference and synchronized string-option preference updates.
   * Component tree can now be filtered. Any part of the name matches, and multiple words match in any order.
-  * Added a Github Action check ensuring PRs also provide updated changel(@MarcinOrlowski).
+  * Added a Github Action check ensuring PRs also provide updated changelog (@MarcinOrlowski).
   * Fixed `Line.matches()` comparing transposed coordinates, causing identical lines to be treated
     as different and some different lines as identical [#2939] (@henriquejsza).
+  * Added a Github Action check ensuring pull requests reference the open ticket they address (@MarcinOrlowski).
+  * Added a Github Action locking merged pull requests and the tickets they closed (@MarcinOrlowski).
+  * Fixed the DEB package refusing to install on Debian 12 and Ubuntu 22.04, by listing the
+    pre-`t64` library names as alternative dependencies [#2959] (@MarcinOrlowski).
   * Many other bug fixes.
 
 * v4.1.0 (2026-02-15)

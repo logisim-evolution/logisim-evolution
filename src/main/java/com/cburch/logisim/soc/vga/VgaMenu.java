@@ -16,6 +16,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.tools.MenuExtender;
+import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -52,14 +54,15 @@ public class VgaMenu implements ActionListener, MenuExtender {
   }
 
   public void exportC() {
-    JFileChooser fc = new JFileChooser();
+    JFileChooser fc = JFileChoosers.create(JFileChoosers.DirectoryScope.SOC_SOFTWARE);
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     int result = fc.showDialog(frame, S.get("SelectDirectoryToStoreC"));
     if (result == JFileChooser.APPROVE_OPTION) {
+      JFileChoosers.setCurrentDirectory(JFileChoosers.DirectoryScope.SOC_SOFTWARE, fc.getSelectedFile());
       VgaState myState = instance.getAttributeValue(VgaAttributes.VGA_STATE);
       if (myState == null) throw new NullPointerException("BUG in VgaMenu.java");
       String compName =
-          myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
+          myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase(Locale.ROOT);
       String headerFileName =
           fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".h";
       String cFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".c";

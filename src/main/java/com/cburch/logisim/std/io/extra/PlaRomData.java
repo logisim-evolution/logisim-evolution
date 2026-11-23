@@ -21,7 +21,7 @@ import java.util.Arrays;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-public class PlaRomData implements InstanceData {
+public class PlaRomData implements InstanceData, Cloneable {
   private byte inputs;
   private byte outputs;
   private byte and;
@@ -37,7 +37,6 @@ public class PlaRomData implements InstanceData {
       new String[] {
         new LocaleManager("resources/logisim", "gui").get("saveOption"), S.get("ramClearMenuItem")
       };
-  private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
   private JScrollPane panel;
   private PlaRomPanel drawing;
 
@@ -70,18 +69,36 @@ public class PlaRomData implements InstanceData {
   @Override
   public PlaRomData clone() {
     try {
-      return (PlaRomData) super.clone();
+      final var copy = (PlaRomData) super.clone();
+      copy.inputAnd = new boolean[inputAnd.length][];
+      for (var i = 0; i < inputAnd.length; i++) copy.inputAnd[i] = inputAnd[i].clone();
+      copy.andOutput = new boolean[andOutput.length][];
+      for (var i = 0; i < andOutput.length; i++) copy.andOutput[i] = andOutput[i].clone();
+      copy.inputValue = inputValue.clone();
+      copy.andValue = andValue.clone();
+      copy.outputValue = outputValue.clone();
+      copy.panel = null;
+      copy.drawing = null;
+      return copy;
     } catch (CloneNotSupportedException e) {
-      return null;
+      throw new AssertionError(e);
     }
   }
 
   public void decodeSavedData(String str) {
+    for (final var row : inputAnd) Arrays.fill(row, false);
+    for (final var row : andOutput) Arrays.fill(row, false);
+    // Keep the serialized attribute value so other circuit states can detect edits.
+    savedData = str == null ? "" : str;
     // if empty, all to false so don't do anything
-    if (str == null || str.equals("")) return;
+    if (savedData.isEmpty()) {
+      setAndValue();
+      setOutputValue();
+      return;
+    }
     // split the attribute content string in an array of strings with a single
     // information each one
-    final var datas = str.split(" ");
+    final var datas = savedData.split(" ");
     String[] tmp;
     byte value;
     var cnt = 0;
@@ -101,9 +118,12 @@ public class PlaRomData implements InstanceData {
         cnt++;
       }
     }
+    setAndValue();
+    setOutputValue();
   }
 
   public int editWindow() {
+    final var screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     this.drawing = new PlaRomPanel(this);
     panel =
         new JScrollPane(

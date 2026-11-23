@@ -41,7 +41,6 @@ public class Ttl7454 extends AbstractTtlGate {
     Drawgates.paintAnd(g, x + 105, y + 40, 10, 10, false);
     Drawgates.paintAnd(g, x + 65, y + 20, 10, 10, false);
     Drawgates.paintAnd(g, x + 65, y + 40, 10, 10, false);
-    // TODO Auto-generated method stub
     final var offset =
         (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
     var xpos = new int[] {x + 105, x + 108, x + 108, x + 111 + offset};

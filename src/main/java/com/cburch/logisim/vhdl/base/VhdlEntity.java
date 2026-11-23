@@ -38,6 +38,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +114,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    return content.getName().toLowerCase();
+    return content.getName().toLowerCase(Locale.ROOT);
   }
 
   @Override
@@ -121,7 +122,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     var label = "";
     final var l = attrs.getValue(StdAttr.LABEL);
     if (!("".equals(l)))
-      label = "_" + l.toLowerCase();
+      label = "_" + l.toLowerCase(Locale.ROOT);
     return getHDLName(attrs) + label;
   }
 

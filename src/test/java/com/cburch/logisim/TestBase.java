@@ -10,6 +10,7 @@
 package com.cburch.logisim;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 public class TestBase {
@@ -27,7 +28,7 @@ public class TestBase {
   protected String getRandomString(int length, boolean includeDigits) {
     // chose a Character random from this String
     final var allowedCharsBuilder = new StringBuilder("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    allowedCharsBuilder.append(allowedCharsBuilder.toString().toLowerCase());
+    allowedCharsBuilder.append(allowedCharsBuilder.toString().toLowerCase(Locale.ROOT));
     if (includeDigits) allowedCharsBuilder.append("0123456789");
     final var allowedChars = allowedCharsBuilder.toString();
 

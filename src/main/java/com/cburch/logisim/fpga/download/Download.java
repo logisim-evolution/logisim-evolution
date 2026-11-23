@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
@@ -176,8 +177,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     var steps = basicSteps;
     if (!this.generateHdlOnly && useGui) rootSheet.setDownloadBoard(myBoardInformation.getBoardName());
     switch (vendor) {
-      case VendorSoftware.VENDOR_ALTERA -> downloader =
-          new AlteraDownload(
+      case VendorSoftware.VENDOR_ALTERA ->
+          downloader = new AlteraDownload(
               getProjDir(topLevelSheet),
               rootSheet.getNetList(),
               myBoardInformation,
@@ -186,8 +187,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
               AppPreferences.HdlType.get(),
               writeToFlash,
               fpgaCableName);
-      case VendorSoftware.VENDOR_XILINX -> downloader =
-          new XilinxDownload(
+      case VendorSoftware.VENDOR_XILINX ->
+          downloader = new XilinxDownload(
               getProjDir(topLevelSheet),
               rootSheet.getNetList(),
               myBoardInformation,
@@ -195,15 +196,15 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
               architectures,
               AppPreferences.HdlType.get(),
               writeToFlash);
-      case VendorSoftware.VENDOR_VIVADO -> downloader =
-          new VivadoDownload(
+      case VendorSoftware.VENDOR_VIVADO ->
+          downloader = new VivadoDownload(
               getProjDir(topLevelSheet),
               rootSheet.getNetList(),
               myBoardInformation,
               entities,
               architectures);
-      case VendorSoftware.VENDOR_OPENFPGA -> downloader =
-          new OpenFpgaDownload(
+      case VendorSoftware.VENDOR_OPENFPGA ->
+          downloader = new OpenFpgaDownload(
               getProjDir(topLevelSheet),
               rootSheet.getNetList(),
               myBoardInformation,
@@ -454,7 +455,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       return false;
     }
     final var projectPath = getProjDir(topLevelSheet);
-    final var sourcePath = projectPath + AppPreferences.HdlType.get().toLowerCase() + File.separator;
+    final var sourcePath = projectPath + AppPreferences.HdlType.get().toLowerCase(Locale.ROOT) + File.separator;
     getVhdlFiles(projectPath, sourcePath, entities, architectures, AppPreferences.HdlType.get());
     if (useGui) {
       progressBar.setValue(4);
@@ -473,7 +474,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (executable != null) {
         try {
           executable.descendants().forEach(ProcessHandle::destroy);
-        } catch (UnsupportedOperationException | SecurityException ignored) { }
+        } catch (UnsupportedOperationException | SecurityException ignored) {
+        }
         executable.destroy();
       }
     }

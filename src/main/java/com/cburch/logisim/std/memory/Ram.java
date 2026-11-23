@@ -108,7 +108,7 @@ public class Ram extends Mem {
           boolean needsLabel) {
     super(name, desc, generator, needsLabel);
   }
-  
+
   public Ram() {
     super(_ID, S.getter("ramComponent"), new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
@@ -300,7 +300,7 @@ public class Ram extends Mem {
 
     // perform reads
     final var width = state.getAttributeValue(DATA_ATTR);
-    final var outputEnabled = separate  
+    final var outputEnabled = separate
         || !state.getPortValue(RamAppearance.getOEIndex(0, attrs)).equals(Value.FALSE);
     if (outputEnabled && goodAddr && !misalignError) {
       for (var i = 0; i < dataLines; i++) {

@@ -13,6 +13,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
+import com.cburch.logisim.verilog.VerilogImportDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
@@ -28,6 +29,7 @@ class MenuProject extends Menu {
   private final MenuItemImpl addCircuit = new MenuItemImpl(this, LogisimMenuBar.ADD_CIRCUIT);
   private final MenuItemImpl addVhdl = new MenuItemImpl(this, LogisimMenuBar.ADD_VHDL);
   private final MenuItemImpl importVhdl = new MenuItemImpl(this, LogisimMenuBar.IMPORT_VHDL);
+  private final JMenuItem importVerilog = new JMenuItem();
   private final JMenu loadLibrary = new JMenu();
   private final JMenu loadBuiltin = new JMenu();
   private final JMenuItem loadLogisim = new JMenuItem();
@@ -62,6 +64,7 @@ class MenuProject extends Menu {
     loadBuiltin.addMenuListener(myMenuListener);
     loadLogisim.addActionListener(myListener);
     loadJar.addActionListener(myListener);
+    importVerilog.addActionListener(myListener);
     unload.addActionListener(myListener);
     menubar.registerItem(LogisimMenuBar.MOVE_CIRCUIT_UP, moveUp);
     menubar.registerItem(LogisimMenuBar.MOVE_CIRCUIT_DOWN, moveDown);
@@ -85,6 +88,7 @@ class MenuProject extends Menu {
     add(addCircuit);
     add(addVhdl);
     add(importVhdl);
+    add(importVerilog);
     add(loadLibrary);
     add(unload);
     addSeparator();
@@ -104,6 +108,7 @@ class MenuProject extends Menu {
 
     final var known = menubar.getSaveProject() != null;
     loadLibrary.setEnabled(known);
+    importVerilog.setEnabled(known);
     loadBuiltin.setEnabled(known);
     loadLogisim.setEnabled(known);
     loadJar.setEnabled(known);
@@ -143,6 +148,7 @@ class MenuProject extends Menu {
     addCircuit.setText(S.get("projectAddCircuitItem"));
     addVhdl.setText(S.get("projectAddVhdlItem"));
     importVhdl.setText(S.get("projectImportVhdlItem"));
+    importVerilog.setText(S.get("projectImportVerilogItem"));
     loadLibrary.setText(S.get("projectLoadLibraryItem"));
     loadBuiltin.setText(S.get("projectLoadBuiltinItem"));
     loadLogisim.setText(S.get("projectLoadLogisimItem"));
@@ -169,7 +175,9 @@ class MenuProject extends Menu {
       if (proj == null) {
         return;
       }
-      if (src == loadLogisim) {
+      if (src == importVerilog) {
+        VerilogImportDialog.show(proj);
+      } else if (src == loadLogisim) {
         ProjectLibraryActions.doLoadLogisimLibrary(proj);
       } else if (src == loadJar) {
         ProjectLibraryActions.doLoadJarLibrary(proj);

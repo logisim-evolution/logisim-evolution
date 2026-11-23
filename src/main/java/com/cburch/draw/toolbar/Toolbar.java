@@ -37,6 +37,7 @@ public class Toolbar extends JPanel {
 
     computeContents();
     if (model != null) model.addToolbarModelListener(myListener);
+    com.cburch.logisim.prefs.AppPreferences.UI_ANTIALIASING.addPropertyChangeListener(myListener);
   }
 
   private void computeContents() {
@@ -100,7 +101,7 @@ public class Toolbar extends JPanel {
     }
   }
 
-  private class MyListener implements ToolbarModelListener {
+  private class MyListener implements ToolbarModelListener, java.beans.PropertyChangeListener {
     @Override
     public void toolbarAppearanceChanged(ToolbarModelEvent event) {
       repaint();
@@ -109,6 +110,11 @@ public class Toolbar extends JPanel {
     @Override
     public void toolbarContentsChanged(ToolbarModelEvent event) {
       computeContents();
+    }
+
+    @Override
+    public void propertyChange(java.beans.PropertyChangeEvent evt) {
+      repaint();
     }
   }
 }

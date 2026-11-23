@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,6 +92,7 @@ public class DefaultClassicAppearance {
     notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
     final var rect = new Rectangle(rX, rY, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
+    rect.setValue(DrawAttr.STROKE_COLOR, new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     final var ret = new ArrayList<CanvasObject>();
     ret.add(notch);

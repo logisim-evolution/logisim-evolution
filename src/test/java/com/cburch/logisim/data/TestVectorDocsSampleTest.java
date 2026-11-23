@@ -10,22 +10,29 @@
 package com.cburch.logisim.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.TestVectorEvaluator;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
+import com.cburch.logisim.gui.test.TestThread;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.LocaleManager;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -399,6 +406,43 @@ public class TestVectorDocsSampleTest {
     // Verify all tests failed as expected
     assertEquals(0, passFail[0], "Expected 0 tests to pass");
     assertEquals(4, passFail[1], "Expected 4 tests to fail");
+
+    File sequencedFile = new File(tempDir, "docsSample_seq_exec_test.txt");
+    try (FileWriter writer = new FileWriter(sequencedFile)) {
+      writer.write("# comment before header\n\n");
+      writer.write("A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2] <set> <seq>\n");
+      writer.write("0 0 1 1 0 0 0 00 8 19\n");
+    }
+    File combinationalFile = new File(tempDir, "docsSample_combinational_exec_test.txt");
+    try (FileWriter writer = new FileWriter(combinationalFile)) {
+      writer.write("A B O_Nor O_Nand O_Xor O_Or O_And O_AB[2] <set> <seq>\n");
+      writer.write("0 0 1 1 0 0 0 00 0 0\n");
+    }
+
+    final var originalErr = System.err;
+    final var originalLocale = LocaleManager.getLocale();
+    final var errors = new ByteArrayOutputStream();
+    try (final var capturedErr = new PrintStream(errors, true, StandardCharsets.UTF_8)) {
+      LocaleManager.setLocale(Locale.ENGLISH);
+      System.setErr(capturedErr);
+      assertEquals(4, TestThread.doTestVector(project, circuit, testFile.getAbsolutePath()));
+      assertTrue(errors.toString(StandardCharsets.UTF_8)
+          .contains("Error on test vector 1 (line 2):"));
+
+      errors.reset();
+      assertEquals(1, TestThread.doTestVector(project, circuit, sequencedFile.getAbsolutePath()));
+      assertTrue(errors.toString(StandardCharsets.UTF_8)
+          .contains("Error on test vector 1 (set 8, sequence 19, line 4):"));
+
+      errors.reset();
+      assertEquals(1, TestThread.doTestVector(project, circuit, combinationalFile.getAbsolutePath()));
+      assertTrue(errors.toString(StandardCharsets.UTF_8)
+          .contains("Error on test vector 1 (line 2):"));
+      assertFalse(errors.toString(StandardCharsets.UTF_8).contains("set 0"));
+    } finally {
+      System.setErr(originalErr);
+      LocaleManager.setLocale(originalLocale);
+    }
   }
 
   @Test

@@ -61,6 +61,9 @@ drawn.
 libraries, label components can be placed anywhere on the canvas;
 they do not snap to the grid.
   </p>
+  <p>
+   如果标签的全部文本，或多行标签中的某一行，用 <code>$...$</code> 括起来，Logisim 会把它画成公式，而不是显示源文本。支持的记号有 <code>\text{...}</code>、<code>\overline{...}</code>、<code>\cdot</code>、<code>\oplus</code>、下标 <code>A_s</code> 或 <code>_{...}</code>、上标 <code>A^2</code>，以及符号 <code>+</code>、<code>=</code>、<code>&lt;</code>、<code>&gt;</code>、<code>|</code>、<code>\ne</code>、<code>\le</code>、<code>\leq</code>、<code>\geq</code>、<code>\ge</code>、<code>(</code> 和 <code>)</code>。例如 <code>$\text{Y}=\text{B}\cdot\overline{\text{C}}+\text{A}\cdot\text{B}$</code>。编辑时仍显示源文本。无法识别的命令按普通文本显示。标签边框按绘出的公式计算，比源字符串更窄。
+  </p>
   <h2>
    Pins
   </h2>

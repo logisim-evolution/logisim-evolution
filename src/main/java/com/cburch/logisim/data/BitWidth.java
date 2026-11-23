@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.data;
 
+import static com.cburch.logisim.data.Strings.S;
+
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Component;
@@ -59,10 +61,15 @@ public class BitWidth implements Comparable<BitWidth> {
 
     @Override
     public BitWidth parse(String value) {
-      int v = (int) Long.parseLong(value);
-      if (v < min) throw new NumberFormatException("bit width must be at least " + min);
-      if (v > max) throw new NumberFormatException("bit width must be at most " + max);
-      return BitWidth.create(v);
+      final long v;
+      try {
+        v = Long.parseLong(value);
+      } catch (NumberFormatException e) {
+        throw new NumberFormatException(S.get("integerFormatError", value));
+      }
+      if (v < min) throw new NumberFormatException(S.get("bitWidthAtLeastError", String.valueOf(min)));
+      if (v > max) throw new NumberFormatException(S.get("bitWidthAtMostError", String.valueOf(max)));
+      return BitWidth.create((int) v);
     }
   }
 

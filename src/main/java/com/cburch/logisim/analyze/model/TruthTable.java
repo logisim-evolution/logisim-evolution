@@ -649,7 +649,7 @@ public class TruthTable {
       final var b = (1 << (oldCount - 1 - index)); // _0001000
       final var changed = new boolean[columns.size()];
       // loop rows by index to avoid java.util.ConcurrentModificationException
-      //noinspection ForLoopReplaceableByForEach
+      // noinspection ForLoopReplaceableByForEach
       for (var i = 0; i < rows.size(); ++i) {
         final var r = rows.get(i);
         if (r.inputs[index] == Entry.DONT_CARE) continue;

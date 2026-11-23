@@ -22,6 +22,7 @@ import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,14 +85,14 @@ public class VhdlEntityComponent extends HdlCircuitComponent<VhdlContentComponen
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    return attrs.getValue(CONTENT_ATTR).getName().toLowerCase();
+    return attrs.getValue(CONTENT_ATTR).getName().toLowerCase(Locale.ROOT);
   }
 
   @Override
   public String getHDLTopName(AttributeSet attrs) {
     var label = "";
     if (!attrs.getValue(StdAttr.LABEL).equals("")) {
-      label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
+      label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase(Locale.ROOT);
     }
 
     return getHDLName(attrs) + label;

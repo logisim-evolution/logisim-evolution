@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 public class MainMenuListener extends MenuListener {
 
@@ -80,6 +79,7 @@ public class MainMenuListener extends MenuListener {
       final var src = event.getSource();
       final var proj = frame.getProject();
       final var cur = proj == null ? null : proj.getCurrentCircuit();
+      final var curHdl = proj == null ? null : (VhdlContent) proj.getCurrentHdl();
       if (src == LogisimMenuBar.ADD_CIRCUIT) {
         ProjectCircuitActions.doAddCircuit(proj);
       } else if (src == LogisimMenuBar.ADD_VHDL) {
@@ -87,16 +87,24 @@ public class MainMenuListener extends MenuListener {
       } else if (src == LogisimMenuBar.IMPORT_VHDL) {
         ProjectCircuitActions.doImportVhdl(proj);
       } else if (src == LogisimMenuBar.MOVE_CIRCUIT_UP) {
-        ProjectCircuitActions.doMoveCircuit(proj, cur, -1);
+        if (cur != null) {
+          ProjectCircuitActions.doMoveCircuit(proj, cur, -1);
+        } else if (curHdl != null) {
+          ProjectCircuitActions.doMoveVhdl(proj, curHdl, -1);
+        }
       } else if (src == LogisimMenuBar.MOVE_CIRCUIT_DOWN) {
-        ProjectCircuitActions.doMoveCircuit(proj, cur, 1);
+        if (cur != null) {
+          ProjectCircuitActions.doMoveCircuit(proj, cur, 1);
+        } else if (curHdl != null) {
+          ProjectCircuitActions.doMoveVhdl(proj, curHdl, 1);
+        }
       } else if (src == LogisimMenuBar.SET_MAIN_CIRCUIT) {
         ProjectCircuitActions.doSetAsMainCircuit(proj, cur);
       } else if (src == LogisimMenuBar.REMOVE_CIRCUIT) {
         if (cur != null) {
           ProjectCircuitActions.doRemoveCircuit(proj, cur);
-        } else if (proj.getCurrentHdl() != null) {
-          ProjectCircuitActions.doRemoveVhdl(proj, (VhdlContent) proj.getCurrentHdl());
+        } else if (curHdl != null) {
+          ProjectCircuitActions.doRemoveVhdl(proj, curHdl);
         }
       } else if (src == LogisimMenuBar.EDIT_LAYOUT) {
         frame.setEditorView(Frame.EDIT_LAYOUT);
@@ -118,7 +126,7 @@ public class MainMenuListener extends MenuListener {
       final var proj = frame == null ? null : frame.getProject();
       final var file = proj == null ? null : proj.getLogisimFile();
       final var cur = proj == null ? null : proj.getCurrentCircuit();
-      final var curIndex = file == null ? -1 : file.indexOfCircuit(cur);
+      final var curHdl = proj == null ? null : (VhdlContent) proj.getCurrentHdl();
       final var editorView = frame == null ? "" : frame.getEditorView();
       final var viewAppearance = editorView.equals(Frame.EDIT_APPEARANCE);
       final var viewLayout = editorView.equals(Frame.EDIT_LAYOUT);
@@ -131,14 +139,18 @@ public class MainMenuListener extends MenuListener {
       var canToggleAppearance = true;
 
       // is project circuit?
-      if (curIndex >= 0) {
+      if (cur != null) {
+        final var curIndex = file == null ? -1 : file.indexOfCircuit(cur);
         canSetMain = file.getMainCircuit() != cur;
         canMoveUp = curIndex > 0;
         canMoveDown = curIndex < file.getTools().size() - 1;
         canRemove = file.getCircuits().size() > 1 && proj.getDependencies().canRemove(cur);
         canRevert = viewAppearance && !cur.getAppearance().isDefaultAppearance();
-      } else if (proj.getCurrentHdl() != null) {
-        canRemove = true;
+      } else if (curHdl != null) {
+        final var curIndex = file == null ? -1 : file.indexOfVhdl(curHdl);
+        canMoveUp = curIndex > 0;
+        canMoveDown = curIndex < file.getTools().size() - 1;
+        canRemove = proj.getDependencies().canRemove(curHdl);
         canToggleAppearance = false;
       }
 

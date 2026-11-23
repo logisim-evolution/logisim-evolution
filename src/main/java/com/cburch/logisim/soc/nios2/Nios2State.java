@@ -45,6 +45,7 @@ import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
@@ -502,7 +503,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       "gp", "sp", "fp", "ea", "sstat", "ra"};
 
   public static int getRegisterIndex(String name) {
-    final var regName = name.toLowerCase();
+    final var regName = name.toLowerCase(Locale.ROOT);
     for (var i = 0; i < registerABINames.length; i++) {
       if (registerABINames[i].equals(regName)) return i;
     }
@@ -535,12 +536,12 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   }
 
   public static boolean isCustomRegister(String name) {
-    final var regName = name.toLowerCase();
+    final var regName = name.toLowerCase(Locale.ROOT);
     return regName.startsWith("c") && regName.length() < 4 && !regName.startsWith("ctl");
   }
 
   public static boolean isControlRegister(String name) {
-    String regName = name.toLowerCase();
+    String regName = name.toLowerCase(Locale.ROOT);
     return regName.startsWith("ctl") && regName.length() < 6;
   }
 

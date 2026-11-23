@@ -63,8 +63,6 @@ public class Template {
     return new Template(buf);
   }
 
-  /* ********************************************************************** */
-
   private final String contents;
 
   /**

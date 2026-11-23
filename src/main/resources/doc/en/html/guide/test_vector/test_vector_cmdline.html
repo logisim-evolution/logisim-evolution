@@ -93,8 +93,14 @@ Passed : 2, Failed : 2
 <p><strong>Note:</strong> In the error output (stderr) you will read:</p>
 
 	<pre class="code">
-Error on test vector 3:
-Error on test vector 4:
+Error on test vector 3 (line 4):
+Error on test vector 4 (line 5):
+</pre>
+
+<p>For a vector with nonzero <tt>&lt;set&gt;</tt> and <tt>&lt;seq&gt;</tt> values, the error also includes both numbers, for example:</p>
+
+	<pre class="code">
+Error on test vector 75 (set 8, sequence 19, line 92):
 </pre>
 
 <p>

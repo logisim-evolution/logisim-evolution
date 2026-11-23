@@ -18,15 +18,22 @@ import org.gradle.jvm.application.tasks.CreateStartScripts
 
 plugins {
   checkstyle
-  id("io.github.ben-manes.versions") version "0.61.0"
+  id("io.github.ben-manes.versions") version "0.67.0"
   java
   application
   id("com.gradleup.shadow") version "9.6.1"
-  id("org.sonarqube") version "7.4.0.8496"
+  id("org.sonarqube") version "7.5.0.8588"
 }
 
 repositories {
   mavenCentral()
+}
+
+sonar {
+  properties {
+    property("sonar.projectKey", "logisim-evolution_logisim-evolution")
+    property("sonar.organization", "logisim-evolution")
+  }
 }
 
 application {
@@ -35,16 +42,15 @@ application {
 }
 
 dependencies {
-  implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
   implementation("com.fifesoft:rsyntaxtextarea:4.0.1")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:2.0.18")
-  implementation("org.slf4j:slf4j-simple:2.0.18")
-  implementation("com.formdev:flatlaf:3.7.2")
+  implementation("org.slf4j:slf4j-api:2.0.20")
+  implementation("org.slf4j:slf4j-simple:2.0.20")
+  implementation("com.formdev:flatlaf:3.8")
   implementation("commons-cli:commons-cli:1.11.0")
   implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
   implementation("org.apache.commons:commons-text:1.15.0")
@@ -55,7 +61,8 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.23.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.24.0")
+  testImplementation("org.hamcrest:hamcrest:3.0")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -391,6 +398,73 @@ object func {
     return listOf("--add-modules", dependencies)
     // return (ext.get(parametersName) as List<Any?>).filterIsInstance<String>() + addModules
   }
+
+  /** Matches a bare package name that carries the Debian 64-bit `time_t` suffix. */
+  private val T64_PACKAGE_NAME = Regex("""[a-z0-9][a-z0-9+.-]*t64""")
+
+  /**
+   * Rewrites the `Depends` field of the given DEB package so that every `t64` package name is
+   * offered together with its pre-transition name, i.e. `libasound2t64 | libasound2`.
+   *
+   * Debian's 64-bit `time_t` transition renamed a lot of library packages by appending a `t64`
+   * suffix. `jpackage` reads the dependency names off the build machine, so a package built on a
+   * recent Ubuntu lists the new names only and refuses to install on Debian 12 or Ubuntu 22.04.
+   * On the architectures we ship (amd64, arm64) `time_t` was 64 bits all along, so both packages
+   * expose the very same ABI and either one satisfies us. `apt` honours the order of the
+   * alternatives, therefore recent systems keep using the `t64` package.
+   *
+   * See https://github.com/logisim-evolution/logisim-evolution/issues/2959
+   */
+  fun addLegacyDebDependencyAliases(debFile: String, workDir: String) {
+    val root = File(workDir)
+    root.deleteRecursively()
+    root.mkdirs()
+
+    // `--raw-extract` unpacks the payload and drops the control files into `DEBIAN/`,
+    // which is exactly the layout `--build` expects back.
+    runCommand(listOf("dpkg-deb", "--raw-extract", debFile, workDir),
+        "Error while unpacking the DEB package.")
+
+    val controlFile = File("${workDir}/DEBIAN/control")
+    val lines = controlFile.readLines()
+    val patched = mutableListOf<String>()
+    var aliased = false
+    var idx = 0
+    while (idx < lines.size) {
+      val line = lines[idx]
+      idx++
+      if (!line.startsWith("Depends:")) {
+        patched.add(line)
+        continue
+      }
+      // Control fields may be folded over continuation lines.
+      val value = StringBuilder(line.removePrefix("Depends:"))
+      while (idx < lines.size && (lines[idx].startsWith(" ") || lines[idx].startsWith("\t"))) {
+        value.append(" ").append(lines[idx].trim())
+        idx++
+      }
+      val deps = value.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
+      patched.add("Depends: " + deps.joinToString(", ") { dep ->
+        if (!T64_PACKAGE_NAME.matches(dep)) dep else {
+          aliased = true
+          "${dep} | ${dep.dropLast(3)}"
+        }
+      })
+    }
+
+    if (!aliased) {
+      logger.lifecycle("No t64 dependencies found in ${debFile}. Package left untouched.")
+      root.deleteRecursively()
+      return
+    }
+
+    controlFile.writeText(patched.joinToString("\n") + "\n")
+    // `--root-owner-group` is a must, as the build user owns the unpacked files but the package
+    // has to hand them over to root, just like the one `jpackage` produced.
+    runCommand(listOf("dpkg-deb", "--root-owner-group", "--build", workDir, debFile),
+        "Error while repacking the DEB package.")
+    root.deleteRecursively()
+  }
 }
 
 /**
@@ -493,6 +567,7 @@ tasks.register("createDeb") {
   val outputFile = "${targetDir}/${project.name}_${appVersion}_${debArch}.deb"
   val linuxParams = (ext.get(LINUX_PARAMS) as List<Any?>).filterIsInstance<String>()
   val jdepsFile = ext.get(JDEPS_FILE) as String
+  val repackDir = "${ext.get(BUILD_DIR) as String}/debRepack"
 
   inputs.dir(ext.get(PACKAGE_INPUT_DIR) as String)
   inputs.dir("${ext.get(SUPPORT_DIR) as String}/linux")
@@ -509,6 +584,7 @@ tasks.register("createDeb") {
     val params = linuxParams + func.getNeededModules(jdepsFile) + listOf("--type", "deb")
     func.runCommand(params, "Error while creating the DEB package.")
     func.verifyFileExists(outputFile);
+    func.addLegacyDebDependencyAliases(outputFile, repackDir)
   }
 }
 
@@ -723,27 +799,35 @@ tasks.register("createApp") {
     )
     func.runCommand(params, "Error while creating the .app directory.")
 
-    if ("x86_64".equals(arch)) {
-      val pListFilename = "${appDirName}/Contents/Info.plist"
-      val tempPList = "${dest}/Info.plist"
-      func.runCommand(listOf(
-          "awk",
-          "{print >\"${tempPList}\"};"
-              + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${tempPList}\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
-              + "}",
-          pListFilename,
-      ), "Error while patching Info.plist file.")
+    val languages = listOf("de", "el", "en", "es", "fr", "it", "ja", "nl", "pl", "pt", "ru", "zh")
+    val langXml = languages.joinToString("") { "<string>$it</string>" }
+    val pListFilename = "${appDirName}/Contents/Info.plist"
+    val tempPList = "${dest}/Info.plist"
+    func.runCommand(listOf(
+        "awk",
+        "{print >\"${tempPList}\"};"
+            + "/NSHighResolutionCapable/{"
+            + "print \"  <string>true</string>\" >\"${tempPList}\";"
+            + "print \"  <key>CFBundleLocalizations</key>\" >\"${tempPList}\";"
+            + "print \"  <array>${langXml}</array>\" >\"${tempPList}\";"
+            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${tempPList}\""
+            + "}",
+        pListFilename,
+    ), "Error while patching Info.plist file.")
 
-      func.runCommand(listOf(
-          "mv", tempPList, pListFilename
-      ), "Error while moving Info.plist into the .app directory.")
+    func.runCommand(listOf(
+        "mv", tempPList, pListFilename
+    ), "Error while moving Info.plist into the .app directory.")
 
-      func.runCommand(listOf(
-          "codesign", "--force", "--sign", "-", appDirName
-      ), "Error while executing: codesign")
+    for (lang in languages) {
+      val lprojDir = File("${appDirName}/Contents/Resources/${lang}.lproj")
+      lprojDir.mkdirs()
+      File(lprojDir, "InfoPlist.strings").writeText("/* Localized Bundle */\n")
     }
+
+    func.runCommand(listOf(
+        "codesign", "--force", "--sign", "-", appDirName
+    ), "Error while executing: codesign")
   }
 }
 
@@ -976,8 +1060,8 @@ tasks {
 
   // Checkstyles related tasks: "checkstylMain" and "checkstyleTest"
   checkstyle {
-    // Checkstyle version to use
-    toolVersion = "10.3.4"
+    // Checkstyle version to use. Should match version in checkstyle workflow.
+    toolVersion = "13.9.0"
 
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698

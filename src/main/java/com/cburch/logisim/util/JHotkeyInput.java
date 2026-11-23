@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.prefs.BackingStoreException;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -37,7 +38,7 @@ public class JHotkeyInput extends JPanel {
   private static JFrame topFrame = null;
   private final JButton resetButton = new JButton();
   private final JButton applyButton = new JButton();
-  private static final String os = System.getProperty("os.name").toLowerCase();
+  private static final String os = System.getProperty("os.name").toLowerCase(Locale.ROOT);
   private static final String lookAndFeel = UIManager.getLookAndFeel().getName();
   private int fieldVerticalBias;
   private int fieldHorizonalBias;
@@ -91,7 +92,7 @@ public class JHotkeyInput extends JPanel {
       topFrame = frame;
     }
     hotkeyListener = new HotkeyInputKeyListener(this);
-    hotkeyInputField = new JTextField(text.toUpperCase());
+    hotkeyInputField = new JTextField(text.toUpperCase(Locale.ROOT));
     previousData = text;
 
     setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -226,12 +227,12 @@ public class JHotkeyInput extends JPanel {
   }
 
   public void setText(String s) {
-    hotkeyInputField.setText(s.toUpperCase());
+    hotkeyInputField.setText(s.toUpperCase(Locale.ROOT));
   }
 
   public void resetText(String s) {
-    hotkeyInputField.setText(s.toUpperCase());
-    previousData = s.toUpperCase();
+    hotkeyInputField.setText(s.toUpperCase(Locale.ROOT));
+    previousData = s.toUpperCase(Locale.ROOT);
   }
 
   public void setBoundKeyStroke(PrefMonitorKeyStroke keyStroke) {
@@ -346,13 +347,13 @@ public class JHotkeyInput extends JPanel {
     @Override
     public void insertString(DocumentFilter.FilterBypass fb, int offset,
                              String text, AttributeSet attr) throws BadLocationException {
-      fb.insertString(offset, text.toUpperCase(), attr);
+      fb.insertString(offset, text.toUpperCase(Locale.ROOT), attr);
     }
 
     @Override
     public void replace(DocumentFilter.FilterBypass fb, int offset, int length,
                         String text, AttributeSet attrs) throws BadLocationException {
-      fb.replace(offset, length, text.toUpperCase(), attrs);
+      fb.replace(offset, length, text.toUpperCase(Locale.ROOT), attrs);
     }
   }
 }

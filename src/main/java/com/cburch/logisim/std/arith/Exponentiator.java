@@ -69,9 +69,15 @@ public class Exponentiator extends InstanceFactory {
       }
 
       BigInteger aa = a.toBigInteger(unsigned);
-      int b_val = Math.max((int) b.toLongValue(), 0);
+      BigInteger bb = b.toBigInteger(unsigned);
+      if (bb.signum() < 0) {
+        // Same as pow() above for a negative exponent
+        return new Value[] {Value.createKnown(width, 0), Value.createKnown(width, 0)};
+      }
 
-      var rr = aa.pow(b_val);
+      // Only the low 2 * w bits are used, and the full power of a wide exponent can be far too
+      // large to compute
+      var rr = aa.modPow(bb, BigInteger.ONE.shiftLeft(2 * w));
 
       long lo = rr.longValue();
       long hi = rr.shiftRight(w).longValue();
@@ -85,13 +91,13 @@ public class Exponentiator extends InstanceFactory {
   }
 
   static final int PER_DELAY = 1;
-  private static final int BASE = 0;
-  private static final int EXP = 1;
-  private static final int LOW_OUT = 2;
-  private static final int UPP_OUT = 3;
+  public static final int BASE = 0;
+  public static final int EXP = 1;
+  public static final int LOW_OUT = 2;
+  public static final int UPP_OUT = 3;
 
   public Exponentiator() {
-    super(_ID, S.getter("exponentiatorComponent"));
+    super(_ID, S.getter("exponentiatorComponent"), new ExponentiatorHdlGeneratorFactory());
     setAttributes(
       new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
       new Object[] {BitWidth.create(32), Comparator.UNSIGNED_OPTION});

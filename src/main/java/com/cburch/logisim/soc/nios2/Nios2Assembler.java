@@ -12,6 +12,7 @@ package com.cburch.logisim.soc.nios2;
 import com.cburch.logisim.soc.util.AbstractAssembler;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.LinkedList;
+import java.util.Locale;
 
 public class Nios2Assembler extends AbstractAssembler {
 
@@ -47,8 +48,8 @@ public class Nios2Assembler extends AbstractAssembler {
   public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {
     for (AssemblerToken token : tokens) {
       if (token.getType() == AssemblerToken.REGISTER) {
-        if (token.getValue().toLowerCase().startsWith("ctl")) token.setType(CONTROL_REGISTER);
-        else if (token.getValue().toLowerCase().startsWith("c")) token.setType(CUSTOM_REGISTER);
+        if (token.getValue().toLowerCase(Locale.ROOT).startsWith("ctl")) token.setType(CONTROL_REGISTER);
+        else if (token.getValue().toLowerCase(Locale.ROOT).startsWith("c")) token.setType(CUSTOM_REGISTER);
       }
     }
   }

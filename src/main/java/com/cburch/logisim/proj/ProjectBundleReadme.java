@@ -53,13 +53,13 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
   private JEditorPane projectDescription = new JEditorPane();
   private ReadmeInfo projectReadmeInfo;
   private final Frame parrent;
-  
+
   public class ReadmeInfo {
     private String projectName;
     private String projectAuthor;
     private String projectKeywords;
     private String projectDescription;
-    
+
     public ReadmeInfo(String name, String author, String keyword, String description) {
       projectName = name;
       projectAuthor = author;
@@ -79,7 +79,7 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
     projectName.setText(projName);
     parrent = project.getFrame();
   }
-  
+
   public void showReadme(InputStream file) throws IOException {
     final var lines = new StringBuilder();
     var kar = 0;
@@ -130,7 +130,7 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
     gbc.gridwidth = 2;
     add(new JLabel(S.get("projDescription"), SwingConstants.CENTER), gbc);
     gbc.gridy++;
-    final var scroller = new JScrollPane(projectDescription); 
+    final var scroller = new JScrollPane(projectDescription);
     scroller.setPreferredSize(new Dimension(AppPreferences.getScaled(500), AppPreferences.getScaled(300)));
     add(scroller, gbc);
     gbc.gridx = 0;
@@ -154,7 +154,7 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
       setVisible(false);
       dispose();
     } else if (writeButton.equals(e.getSource())) {
-      projectReadmeInfo = new ReadmeInfo(projectName.getText(), projectAuthor.getText(), 
+      projectReadmeInfo = new ReadmeInfo(projectName.getText(), projectAuthor.getText(),
           projectKeywords.getText(), projectDescription.getText());
       setVisible(false);
       dispose();
@@ -162,7 +162,7 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
   }
 
   public static void writeReadmeFile(ZipOutputStream zipfile, ReadmeInfo info) {
-    if ((zipfile == null) || (StringUtil.isNullOrEmpty(info.projectAuthor) 
+    if ((zipfile == null) || (StringUtil.isNullOrEmpty(info.projectAuthor)
         && StringUtil.isNullOrEmpty(info.projectDescription) && StringUtil.isNullOrEmpty(info.projectKeywords))) return;
     try {
       final var seperator = "---\n\n";
@@ -217,8 +217,8 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
         zipfile.write(projDescription.getBytes());
         zipfile.write("\n".getBytes());
       }
-      final var dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
-      final var now = LocalDateTime.now();  
+      final var dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+      final var now = LocalDateTime.now();
       zipfile.write(S.get("projHeader3").concat("\n\n").getBytes());
       zipfile.write(S.fmt("projGenerateInfo", BuildInfo.displayName, BuildInfo.url, dtf.format(now)).concat("\n\n").getBytes());
     } catch (IOException e) {

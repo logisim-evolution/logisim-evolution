@@ -356,7 +356,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents;
   }
 
-  static Map<String, String> getToplevelWires(MapComponent component) {
+  private static Map<String, String> getToplevelWires(MapComponent component) {
     final var wires = new HashMap<String, String>();
     if (component.getNrOfPins() <= 0) {
       Reporter.report.addError(S.get("HdlToplevelComponentNoPinsError"));

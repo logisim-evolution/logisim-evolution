@@ -27,6 +27,7 @@ import com.cburch.logisim.fpga.data.SimpleRectangle;
 import com.cburch.logisim.fpga.file.PngFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,6 +45,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -250,8 +252,8 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   }
 
   public Image getImage() {
-    return (image.getWidth() == IMAGE_WIDTH && image.getHeight() == IMAGE_HEIGHT) 
-           ? image 
+    return (image.getWidth() == IMAGE_WIDTH && image.getHeight() == IMAGE_HEIGHT)
+           ? image
            : image.getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, 4);
   }
 
@@ -362,7 +364,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       ioComps.removeComponent(edit, scale);
       defineRectangle = new SimpleRectangle(e, edit, scale);
     }
-    
+
     if (defineRectangle != null) {
       defineRectangle.resizeAndGetUpdate(e, scale);
       repaint();
@@ -377,7 +379,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   @Override
   public void mouseClicked(MouseEvent e) {
     if (!mapMode && image == null) {
-      final var fc = new JFileChooser();
+      final var fc = JFileChoosers.create();
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.setDialogTitle(S.get("BoardManipLoadPng"));
       fc.setFileFilter(PngFileFilter.PNG_FILTER);
@@ -388,7 +390,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
         try {
           image = ImageIO.read(file);
           repaint();
-          boardName = file.getName().toUpperCase().replaceAll(".PNG", "")
+          boardName = file.getName().toUpperCase(Locale.ROOT).replaceAll(".PNG", "")
                           .replaceAll(".XML", "");
           for (BoardManipulatorListener l : listeners)
             l.boardNameChanged(boardName);

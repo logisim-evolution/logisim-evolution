@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarFile;
 
@@ -151,7 +152,7 @@ public final class LogisimFileActions {
         }
         /* Okay merged the missing libraries, now add the circuits */
         for (final var circ : getCircuitsToMerge(mergelib, selectedCircuits, includeDependencies)) {
-          final var circName = circ.getName().toUpperCase();
+          final var circName = circ.getName().toUpperCase(Locale.ROOT);
           if (toolList.contains(circName)) {
             final var ret = new ArrayList<String>();
             ret.add(circName);
@@ -191,7 +192,7 @@ public final class LogisimFileActions {
                   if (!exists) {
                     final var tools = new HashSet<String>();
                     LibraryTools.buildToolList(source, tools);
-                    if (!tools.contains(suggestedName.toUpperCase())) {
+                    if (!tools.contains(suggestedName.toUpperCase(Locale.ROOT))) {
                       break;
                     }
                     exists = true;
@@ -215,7 +216,7 @@ public final class LogisimFileActions {
                     options,
                     options[0]);
 
-                if (response == 0) { 
+                if (response == 0) {
                   mergedCircuits.add(circ);
                 } else if (response == 1) { // Rename
                   final var renamed = new Circuit(suggestedName, mergelib, null);
@@ -228,6 +229,9 @@ public final class LogisimFileActions {
                     mutation.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
                   }
                   mutation.execute();
+                  if (circ.getAppearance().hasCustomAppearance()) {
+                    renamed.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom());
+                  }
                   mergedCircuits.add(renamed);
                 }
                 // response == 2 or dialog closed -> cancel (do nothing)
@@ -336,6 +340,9 @@ public final class LogisimFileActions {
         } else {
           proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
         }
+        if (circ.getAppearance().hasCustomAppearance()) {
+          newCircuit.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom());
+        }
       }
       final var availableTools = new HashMap<String, AddTool>();
       LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
@@ -346,7 +353,7 @@ public final class LogisimFileActions {
           final var result = new CircuitMutation(newCirc);
           for (final var comp : circ.getNonWires()) {
             if (!(comp.getFactory() instanceof Pin)) {
-              final var current = availableTools.get(comp.getFactory().getName().toUpperCase());
+              final var current = availableTools.get(comp.getFactory().getName().toUpperCase(Locale.ROOT));
               if (current != null) {
                 final var factory = current.getFactory();
                 if (factory instanceof SubcircuitFactory subcirc) {
@@ -362,13 +369,6 @@ public final class LogisimFileActions {
             }
           }
           proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
-        }
-      }
-      // Last pass, restore the custom appearance
-      for (final var circ : mergedCircuits) {
-        if (circ.getAppearance().hasCustomAppearance()) {
-          final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
-          newCirc.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom(), proj, newCirc);
         }
       }
       mergedCircuits.clear();
@@ -422,7 +422,7 @@ public final class LogisimFileActions {
       }
       LibraryTools.buildToolList(source, toolList);
       for (final var lib : libs) {
-        if (libNames.containsKey(lib.getName().toUpperCase())) {
+        if (libNames.containsKey(lib.getName().toUpperCase(Locale.ROOT))) {
           OptionPane.showMessageDialog(
               null,
               "\"" + lib.getName() + "\": " + S.get("LibraryAlreadyLoaded"),
@@ -474,8 +474,8 @@ public final class LogisimFileActions {
       if (lib instanceof LogisimFile thisLib) {
         for (final var circ : thisLib.getCircuits()) {
           for (final var tool : circ.getNonWires()) {
-            if (availableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
-              final var current = availableTools.get(tool.getFactory().getName().toUpperCase());
+            if (availableTools.containsKey(tool.getFactory().getName().toUpperCase(Locale.ROOT))) {
+              final var current = availableTools.get(tool.getFactory().getName().toUpperCase(Locale.ROOT));
               if (current != null) {
                 tool.setFactory(current.getFactory());
               } else if ("Text".equals(tool.getFactory().getName())) {

@@ -129,7 +129,6 @@ public class ImageXmlFactory {
     try {
       ImageIO.write(result, "jpg", blaat);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       logger.error("JPEG Writer exception: {}", e.getMessage());
     }
     byte[] data = blaat.toByteArray();
@@ -187,14 +186,12 @@ public class ImageXmlFactory {
       try {
         bytestream.flush();
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       ByteArrayInputStream instream = new ByteArrayInputStream(bytestream.toByteArray());
       try {
         result = ImageIO.read(instream);
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     } else {

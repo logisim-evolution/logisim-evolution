@@ -218,7 +218,7 @@ class TableTabCaret {
         case '\n':
           dy = 1;
           break;
-        case '\u0008': // backspace
+        case '\b': // backspace
           newEntry = Entry.DONT_CARE;
           dx = -1;
           break;

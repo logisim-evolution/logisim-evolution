@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
@@ -160,7 +161,7 @@ public class AssemblyWindow
           new FileFilter() {
             @Override
             public boolean accept(File f) {
-              return f.isDirectory() || f.getName().toLowerCase().endsWith(".lss");
+              return f.isDirectory() || f.getName().toLowerCase(Locale.ROOT).endsWith(".lss");
             }
 
             @Override
@@ -174,7 +175,7 @@ public class AssemblyWindow
       if (result == JFileChooser.APPROVE_OPTION) {
         file = fileChooser.getSelectedFile();
         try {
-          if (file.getName().toLowerCase().endsWith(".lss")) {
+          if (file.getName().toLowerCase(Locale.ROOT).endsWith(".lss")) {
             status.setText("");
             document.setPage(file.toURI().toURL());
           } else {

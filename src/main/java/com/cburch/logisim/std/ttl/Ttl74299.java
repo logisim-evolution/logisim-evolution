@@ -52,7 +52,7 @@ public class Ttl74299 extends AbstractTtlGate {
   public static final byte CLK = 12;
   public static final byte nCLR = 9;
 
-  //Outputs
+  // Outputs
   public static final byte QA = 8;
   public static final byte QH = 17;
 

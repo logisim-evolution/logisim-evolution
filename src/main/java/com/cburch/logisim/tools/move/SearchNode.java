@@ -174,8 +174,8 @@ class SearchNode implements Comparable<SearchNode> {
     if (crossing) newDist += CROSSING_PENALTY;
     if (moveDir != dir) newDist += TURN_PENALTY;
     return (nextLoc.getX() < 0 || nextLoc.getY() < 0)
-      ? null
-      : new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
+        ? null
+        : new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
   }
 
   @Override

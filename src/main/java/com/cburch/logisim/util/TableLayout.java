@@ -112,9 +112,6 @@ public class TableLayout implements LayoutManager2 {
         y += yRemaining * rowWeight[i] / rowWeightTotal;
       }
     }
-
-    // TODO Auto-generated method stub
-
   }
 
   @Override

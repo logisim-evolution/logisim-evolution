@@ -41,6 +41,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
+import java.util.Locale;
 
 abstract class AbstractGate extends InstanceFactory {
   static Value pullOutput(Value value, Object outType) {
@@ -190,7 +191,7 @@ abstract class AbstractGate extends InstanceFactory {
   public String getHDLName(AttributeSet attrs) {
     final var myAttrs = (GateAttributes) attrs;
     final var completeName = new StringBuilder();
-    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase(Locale.ROOT));
     final var width = myAttrs.getValue(StdAttr.WIDTH);
     if (width.getWidth() > 1) completeName.append("_BUS");
     final var inputCount = myAttrs.getValue(GateAttributes.ATTR_INPUTS);

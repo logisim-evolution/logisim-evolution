@@ -7,12 +7,15 @@
     <suppress checks="MissingJavadocMethod"/>
     <suppress checks="MissingJavadocType"/>
     <suppress checks="JavadocParagraph"/>
+    <suppress checks="JavadocContentLocation"/>
     <suppress checks="NeedBraces"/>
     <suppress checks="LineLength"/>
 
     <suppress checks="LocalVariableName"/>
+    <suppress checks="LocalFinalVariableName"/>
     <suppress checks="ParameterName"/>
     <suppress checks="MemberName"/>
+    <suppress checks="GoogleNonConstantFieldName"/>
     <suppress checks="TypeName"/>
     <suppress checks="VariableDeclarationUsageDistance"/>
     <suppress checks="AbbreviationAsWordInName"/>
@@ -21,6 +24,8 @@
     <suppress checks="MissingSwitchDefault"/>
     <suppress checks="MultipleVariableDeclarations"/>
     <suppress checks="EmptyBlock"/>
+    <suppress checks="TextBlockGoogleStyleFormatting"/>
+    <suppress checks="SingleSpaceSeparator"/>
     <suppress checks="EmptyLineSeparator"/>
     <suppress checks="NonEmptyAtclauseDescription"/>
     <suppress checks="SummaryJavadoc"/>
@@ -28,7 +33,4 @@
     <suppress checks="CustomImportOrder"/>
     <suppress checks="SingleLineJavadoc"/>
     <suppress checks="FallThrough"/>
-
-    <!-- Auto-generated file. https://github.com/logisim-evolution/logisim-evolution/issues/563-->
-    <suppress id="VhdlSyntax" files="src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.java"/>
 </suppressions>

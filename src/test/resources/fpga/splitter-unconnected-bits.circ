@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Circuit from issue #3063, without toolbar and project preferences. -->
+<project source="5.1.0dev" version="1.0">
+  <lib desc="#Wiring" name="0"/>
+  <lib desc="#Gates" name="1"/>
+  <main name="main"/>
+  <circuit name="main">
+    <comp lib="0" loc="(270,360)" name="Pin">
+      <a name="label" val="x"/>
+      <a name="width" val="2"/>
+    </comp>
+    <comp lib="0" loc="(280,360)" name="Splitter">
+      <a name="appear" val="center"/>
+      <a name="bit1" val="none"/>
+      <a name="facing" val="south"/>
+      <a name="fanout" val="1"/>
+    </comp>
+    <comp lib="0" loc="(300,360)" name="Splitter">
+      <a name="appear" val="center"/>
+      <a name="bit0" val="none"/>
+      <a name="bit1" val="0"/>
+      <a name="facing" val="south"/>
+      <a name="fanout" val="1"/>
+    </comp>
+    <comp lib="0" loc="(330,360)" name="Splitter">
+      <a name="appear" val="center"/>
+      <a name="bit1" val="none"/>
+      <a name="facing" val="south"/>
+      <a name="fanout" val="1"/>
+      <a name="spacing" val="2"/>
+    </comp>
+    <comp lib="0" loc="(330,360)" name="Splitter">
+      <a name="appear" val="center"/>
+      <a name="bit0" val="none"/>
+      <a name="bit1" val="0"/>
+      <a name="facing" val="west"/>
+      <a name="fanout" val="1"/>
+      <a name="spacing" val="3"/>
+    </comp>
+    <comp lib="0" loc="(350,360)" name="Pin">
+      <a name="facing" val="west"/>
+      <a name="label" val="y"/>
+      <a name="type" val="output"/>
+      <a name="width" val="2"/>
+    </comp>
+    <comp lib="1" loc="(290,430)" name="XOR Gate">
+      <a name="facing" val="south"/>
+      <a name="size" val="30"/>
+    </comp>
+    <wire from="(270,360)" to="(280,360)"/>
+    <wire from="(280,360)" to="(300,360)"/>
+    <wire from="(280,380)" to="(280,390)"/>
+    <wire from="(290,430)" to="(290,440)"/>
+    <wire from="(290,440)" to="(330,440)"/>
+    <wire from="(300,380)" to="(300,390)"/>
+    <wire from="(300,380)" to="(310,380)"/>
+    <wire from="(310,360)" to="(310,380)"/>
+    <wire from="(330,360)" to="(350,360)"/>
+    <wire from="(330,380)" to="(330,440)"/>
+  </circuit>
+</project>

@@ -32,6 +32,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
+import java.util.Locale;
 
 public abstract class AbstractTtlGate extends InstanceFactory {
   protected static final int DEFAULT_HEIGHT = 60;
@@ -679,6 +680,6 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + getName()).toUpperCase();
+    return CorrectLabel.getCorrectLabel("TTL" + getName()).toUpperCase(Locale.ROOT);
   }
 }

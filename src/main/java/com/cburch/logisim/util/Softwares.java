@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -98,7 +99,7 @@ public final class Softwares {
 
     final var osname = System.getProperty("os.name");
     if (osname == null) throw new IllegalArgumentException("no os.name");
-    else if (osname.toLowerCase().contains("windows"))
+    else if (osname.toLowerCase(Locale.ROOT).contains("windows"))
       for (var i = 0; i < questaProgs.length; i++) questaProgs[i] += ".exe";
 
     return questaProgs;

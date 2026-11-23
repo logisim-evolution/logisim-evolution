@@ -236,6 +236,7 @@
 			<tocitem target="ioex_plarom" text="ПЗУ на основе ПЛМ" image="icon_pla" />
 			<tocitem target="ioex_twowayswitch" text="Переключатель" image="icon_twowayswitch" />
 			<tocitem target="ioex_twopinled" text="2-контактный светодиод" image="icon_twopinled" />
+			<tocitem target="ioex_ne555" text="Таймер NE555" image="icon_ne555" />
 		</tocitem>
 		<tocitem target="soc" text = "Библиотека SoC">
 			<tocitem target="nios2_sim" text ="Имитационная модель процессора Nios2s" image="up_icon" />

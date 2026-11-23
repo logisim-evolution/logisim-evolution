@@ -34,9 +34,14 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class AppearanceViewTest {
 
@@ -100,6 +105,69 @@ class AppearanceViewTest {
         });
   }
 
+  @ParameterizedTest
+  @CsvSource({
+    "1000, 5000, 350, 1800, -1, false",
+    "1000, 5000, 350, 1800, 1, false",
+    "5000, 1000, 2200, 350, -1, false",
+    "5000, 1000, 2200, 350, 1, false",
+    "5000, 5000, 2200, 1800, -1, false",
+    "5000, 5000, 2200, 1800, 1, false",
+    "5000, 5000, 7600, 7600, -1, false",
+    "5000, 5000, 7600, 7600, 1, false",
+    "1000, 5000, 350, 1800, -1, true",
+    "1000, 5000, 350, 1800, 1, true"
+  })
+  void mouseZoomKeepsScrolledAppearancePointUnderCursor(
+      int width, int height, int scrollX, int scrollY, int rotation, boolean fromCanvas)
+      throws Exception {
+    SwingUtilities.invokeAndWait(
+        () -> {
+          final var view = newAppearanceView(Bounds.create(0, 0, width, height));
+          final var canvas = (AppearanceCanvas) view.getCanvas();
+          final var pane = view.getCanvasPane();
+          final var viewport = pane.getViewport();
+          view.getZoomModel().setZoomFactor(1.5);
+          pane.setSize(400, 300);
+          pane.doLayout();
+          canvas.recomputeSize();
+          viewport.doLayout();
+          viewport.setViewPosition(new Point(scrollX, scrollY));
+
+          final var cursor = new Point(80, 140);
+          final var before = viewport.getViewPosition();
+          final var pointX = (before.x + cursor.x) / view.getZoomModel().getZoomFactor();
+          final var pointY = (before.y + cursor.y) / view.getZoomModel().getZoomFactor();
+          final var source = fromCanvas ? canvas : pane;
+          final var eventPoint = SwingUtilities.convertPoint(viewport, cursor, source);
+          final var event =
+              new MouseWheelEvent(
+                  source,
+                  MouseEvent.MOUSE_WHEEL,
+                  0,
+                  InputEvent.CTRL_DOWN_MASK,
+                  eventPoint.x,
+                  eventPoint.y,
+                  0,
+                  false,
+                  MouseWheelEvent.WHEEL_UNIT_SCROLL,
+                  1,
+                  rotation);
+          if (fromCanvas) {
+            view.getZoomModel().setZoomFactor(1.5 - rotation * 0.1, event);
+          } else {
+            pane.dispatchEvent(event);
+          }
+          viewport.doLayout();
+
+          final var zoom = view.getZoomModel().getZoomFactor();
+          final var after = viewport.getViewPosition();
+          assertEquals(1.5 - rotation * 0.1, zoom, 1.0e-6);
+          assertEquals(pointX, (after.x + cursor.x) / zoom, 1.0 / zoom);
+          assertEquals(pointY, (after.y + cursor.y) / zoom, 1.0 / zoom);
+        });
+  }
+
   @Test
   void appearanceCanvasLeavesViewportPaddingForMiddleButtonPanning() {
     final var view = newAppearanceView();
@@ -132,6 +200,10 @@ class AppearanceViewTest {
   }
 
   private static AppearanceView newAppearanceView() {
+    return newAppearanceView(Bounds.create(0, 0, 50, 50));
+  }
+
+  private static AppearanceView newAppearanceView(Bounds bounds) {
     final var project = mock(Project.class);
     final var circuitState = mock(CircuitState.class);
     final var circuit = mock(Circuit.class);
@@ -145,7 +217,7 @@ class AppearanceViewTest {
     when(circuit.getAppearance()).thenReturn(appearance);
     when(circuit.getName()).thenReturn("main");
     when(circuit.getStaticAttributes()).thenReturn(attributeSet("circuit"));
-    when(appearance.getAbsoluteBounds()).thenReturn(Bounds.create(0, 0, 50, 50));
+    when(appearance.getAbsoluteBounds()).thenReturn(bounds);
     when(appearance.getCustomAppearanceDrawing()).thenReturn(new Drawing());
 
     view.setCircuit(project, circuitState);

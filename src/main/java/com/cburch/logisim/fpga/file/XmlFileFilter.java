@@ -12,6 +12,7 @@ package com.cburch.logisim.fpga.file;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import java.io.File;
+import java.util.Locale;
 import javax.swing.filechooser.FileFilter;
 
 public class XmlFileFilter extends FileFilter {
@@ -22,7 +23,7 @@ public class XmlFileFilter extends FileFilter {
 
   @Override
   public boolean accept(File f) {
-    return f.isDirectory() || f.getName().toLowerCase().endsWith(XML_EXTENSION);
+    return f.isDirectory() || f.getName().toLowerCase(Locale.ROOT).endsWith(XML_EXTENSION);
   }
 
   @Override

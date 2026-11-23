@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.JFileChooser;
@@ -235,6 +236,18 @@ public class ProjectCircuitActions {
     }
   }
 
+  public static void doMoveVhdl(Project proj, VhdlContent vhdl, int delta) {
+    final var tool = proj.getLogisimFile().getAddTool(vhdl);
+    if (tool != null) {
+      final var oldPos = proj.getLogisimFile().indexOfVhdl(vhdl);
+      final var newPos = oldPos + delta;
+      final var toolsCount = proj.getLogisimFile().getTools().size();
+      if (newPos >= 0 && newPos < toolsCount) {
+        proj.doAction(LogisimFileActions.moveCircuit(tool, newPos));
+      }
+    }
+  }
+
   public static void doRemoveCircuit(Project proj, Circuit circuit) {
     if (proj.getLogisimFile().getCircuits().size() == 1) {
       OptionPane.showMessageDialog(
@@ -408,7 +421,7 @@ public class ProjectCircuitActions {
 
     var dest = chooser.getSelectedFile();
     if (dest == null) return;
-    if (!dest.getName().toLowerCase().endsWith(".circ")) {
+    if (!dest.getName().toLowerCase(Locale.ROOT).endsWith(".circ")) {
       dest = new File(dest.getParentFile(), dest.getName() + ".circ");
     }
 
@@ -447,6 +460,7 @@ public class ProjectCircuitActions {
         exportFile.addVhdlContent(vhdl);
       }
       exportFile.setMainCircuit(targetCircuit);
+      exportFile.getOptions().copyFrom(proj.getLogisimFile().getOptions(), exportFile);
 
       try (final var out = new FileOutputStream(dest)) {
         exportFile.write(out, loader, dest);

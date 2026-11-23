@@ -23,6 +23,8 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.util.ColorUtil;
+import com.cburch.logisim.util.FormulaText;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
@@ -45,7 +47,7 @@ public class Text extends InstanceFactory {
   public static final Attribute<Font> ATTR_FONT =
       Attributes.forFont("font", S.getter("textFontAttr"));
   public static final Attribute<Color> ATTR_COLOR =
-      Attributes.forColor("color", S.getter("textColorAttr"));
+      new TextColorAttribute("color", S.getter("textColorAttr"));
   public static final Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
@@ -108,12 +110,12 @@ public class Text extends InstanceFactory {
     } else {
       Bounds bds = attrs.getOffsetBounds();
       if (bds == null) {
+        final var halign = attrs.getHorizontalAlign();
+        final var valign = attrs.getVerticalAlign();
         bds =
-            StringUtil.estimateBounds(
-                attrs.getText(),
-                attrs.getFont(),
-                attrs.getHorizontalAlign(),
-                attrs.getVerticalAlign());
+            FormulaText.containsFormula(text)
+                ? FormulaText.estimateBounds(text, attrs.getFont(), halign, valign)
+                : StringUtil.estimateBounds(text, attrs.getFont(), halign, valign);
         attrs.setOffsetBounds(bds);
       }
       return bds == null ? Bounds.EMPTY_BOUNDS : bds;
@@ -146,14 +148,21 @@ public class Text extends InstanceFactory {
     Graphics g = painter.getGraphics();
     Font old = g.getFont();
     g.setFont(attrs.getFont());
-    GraphicsUtil.drawText(g, text, 0, 0, halign, valign);
+    if (FormulaText.containsFormula(text)) {
+      FormulaText.draw(g, text, 0, 0, halign, valign);
+    } else {
+      GraphicsUtil.drawText(g, text, 0, 0, halign, valign);
+    }
 
     String textTrim = text.endsWith(" ") ? text.substring(0, text.length() - 1) : text;
     Bounds newBds;
     if (textTrim.equals("")) {
       newBds = Bounds.EMPTY_BOUNDS;
     } else {
-      Rectangle bdsOut = GraphicsUtil.getTextBounds(g, textTrim, 0, 0, halign, valign);
+      Rectangle bdsOut =
+          FormulaText.containsFormula(textTrim)
+              ? FormulaText.getBounds(g, textTrim, 0, 0, halign, valign)
+              : GraphicsUtil.getTextBounds(g, textTrim, 0, 0, halign, valign);
       newBds = Bounds.create(bdsOut).expand(4);
     }
     if (attrs.setOffsetBounds(newBds)) {
@@ -171,7 +180,9 @@ public class Text extends InstanceFactory {
     final var y = loc.getY();
     final var gfx = painter.getGraphics();
     gfx.translate(x, y);
-    gfx.setColor(painter.getAttributeValue(ATTR_COLOR));
+    final var storedColor = painter.getAttributeValue(ATTR_COLOR);
+    // Stored colors remain the reference for light canvases and printer view.
+    gfx.setColor(painter.isPrintView() ? storedColor : ColorUtil.getThemeTextColor(storedColor));
     paintGhost(painter);
     gfx.translate(-x, -y);
   }

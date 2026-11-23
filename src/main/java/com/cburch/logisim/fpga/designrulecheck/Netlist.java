@@ -251,8 +251,8 @@ public class Netlist {
           return drcStatus;
         }
       }
-    } 
-    
+    }
+
     // if we already have good drc results we can leave
     if (drcStatus == DRC_PASSED) return DRC_PASSED;
 
@@ -1075,8 +1075,8 @@ public class Netlist {
               return false;
             }
             for (int endId = 1; endId < ends.size(); endId++) {
-              //If this is an end that is not connected to the root bus
-              //we can continue we already warned severly before.
+              // If this is an end that is not connected to the root bus
+              // we can continue we already warned severly before.
               if (sattrs.isNoConnect(endId)) continue;
               // we iterate through all bits to see if the current net is connected to this splitter
               if (thisNet.contains(ends.get(endId).getLocation())) {
@@ -1189,6 +1189,8 @@ public class Netlist {
           if (end == 0) {
             // This is a main net, find the connected end.
             final var splitterEnd = busBitConnection[bitIndex];
+            // Endpoint 0 denotes an unconnected bit, not the combined end.
+            if (splitterEnd == 0) continue;
             /* Find the corresponding Net index */
             Byte netIndex = 0;
             for (var index = 0; index < bitIndex; index++) {
@@ -1444,6 +1446,8 @@ public class Netlist {
           if (end == 0) {
             /* this is a main net, find the connected end */
             final var splitterEnd = busBitConnection[bitIndex];
+            // Endpoint 0 denotes an unconnected bit, not the combined end.
+            if (splitterEnd == 0) continue;
             /* Find the corresponding Net index */
             Byte netIndex = 0;
             for (var index = 0; index < bitIndex; index++) {
@@ -1509,6 +1513,8 @@ public class Netlist {
           if (end == 0) {
             // This is a main net, find the connected end.
             var splitterEnd = busBitConnection[combinedBitIndex];
+            // Endpoint 0 denotes an unconnected bit, not the combined end.
+            if (splitterEnd == 0) continue;
             /* Find the corresponding Net index */
             Byte netIndex = 0;
             for (var index = 0; index < combinedBitIndex; index++) {
@@ -1572,7 +1578,7 @@ public class Netlist {
   }
 
   public boolean markClockSourceComponents(List<String> hierarchyNames, List<Netlist> hierarchyNetlists, ClockSourceContainer clockSources) {
-    //First pass: we go down the hierarchy till the leaves
+    // First pass: we go down the hierarchy till the leaves
     for (final var sub : mySubCircuits) {
       final var subFact = (SubcircuitFactory) sub.getComponent().getFactory();
       final var newHierarchyNames = new ArrayList<>(hierarchyNames);
@@ -1648,7 +1654,8 @@ public class Netlist {
         } else if (net.getBitWidth() == 1 && net.getSourceNets(0).size() > 1) {
           // We have to check if the net is connected to multiple drivers
           final var sourceNets = net.getSourceNets(0);
-          final var sourceConnections = new HashMap<Component, Integer>();
+          // Each output bit has its own ConnectionPoint, shared by all paths to that driver.
+          final var sourceConnections = new HashSet<ConnectionPoint>();
           final var segments = new HashSet<>(net.getWires());
           var foundShortCrcuit = false;
           final var error = new SimpleDrcContainer(myCircuit, S.get("NetList_ShortCircuit"), SimpleDrcContainer.LEVEL_FATAL, SimpleDrcContainer.MARK_WIRE | SimpleDrcContainer.MARK_INSTANCE);
@@ -1661,9 +1668,8 @@ public class Netlist {
               final var comp = source.getSource().getComp();
               for (final var seg : segments) error.addMarkComponent(seg);
               error.addMarkComponent(comp);
-              final var index = source.getIndex();
-              foundShortCrcuit |= (sourceConnections.containsKey(comp) && sourceConnections.get(comp) != index) || (sourceConnections.keySet().size() > 0);
-              sourceConnections.put(comp, index);
+              sourceConnections.add(source.getSource());
+              foundShortCrcuit |= sourceConnections.size() > 1;
             }
           }
           if (foundShortCrcuit) {

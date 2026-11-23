@@ -52,7 +52,7 @@ public final class WindowMenuManager {
     return menus;
   }
 
-  // TODO frames should call removeMenu when they're destroyed
+  // TODO: frames should call removeMenu when they're destroyed
 
   public static void removeManager(WindowMenuItemManager manager) {
     for (final var menu : menus) {

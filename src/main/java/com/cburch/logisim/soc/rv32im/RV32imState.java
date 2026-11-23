@@ -47,6 +47,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Locale;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -230,14 +231,14 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       registers[index - 1] = value;
       lastRegisterWritten = index;
     }
-    
+
     public int getCsrValue(int sprIndex) {
-      final var index = getSprArrayIndex(sprIndex); 
+      final var index = getSprArrayIndex(sprIndex);
       return (index < 0)
           ? 0
           : csrs[index];
     }
-    
+
     public void writeCsr(int sprIndex, int value) {
       final var index = getSprArrayIndex(sprIndex);
       if (index < 4 || index == 17) return; // these are RO CSR's
@@ -345,7 +346,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       final var exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
       synchronized (instrTraceLock) {
-        while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES) 
+        while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
           instrTrace.removeLast();
       }
       if (exe == null) {
@@ -512,7 +513,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   };
 
   public static int getRegisterIndex(String name) {
-    final var regName = name.toLowerCase();
+    final var regName = name.toLowerCase(Locale.ROOT);
     for (int i = 0; i < registerABINames.length; i++)
       if (registerABINames[i].equals(regName)) return i;
     if (regName.startsWith("x") && regName.length() < 4) {
@@ -563,7 +564,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     return resetVector;
   }
 
-  
+
 
   public boolean setNrOfIrqs(int value) {
     if (nrOfIrqs == value) return false;
@@ -669,26 +670,26 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   public static boolean isSprImplemented(int index) {
     return getSprArrayIndex(index) != -1;
   }
-    
+
   public static int getSprArrayIndex(int index) {
     return Arrays.asList(implementedSprs).indexOf(index);
   }
-    
+
   public static int getSprArrayIndex(String name) {
-    return Arrays.asList(implementedSprNames).indexOf(name.toUpperCase());
+    return Arrays.asList(implementedSprNames).indexOf(name.toUpperCase(Locale.ROOT));
   }
-      
+
   public static String getSprName(int index) {
     int sprIndex = getSprArrayIndex(index);
     return sprIndex != -1
-          ? implementedSprNames[sprIndex].toLowerCase()
+          ? implementedSprNames[sprIndex].toLowerCase(Locale.ROOT)
           : String.format("0x%03X", index);
   }
 
   public static int getSprValue(int index) {
-    return (index < 0 || index >= implementedSprs.length) 
+    return (index < 0 || index >= implementedSprs.length)
           ? -1
           : implementedSprs[index];
   }
-    
+
 }

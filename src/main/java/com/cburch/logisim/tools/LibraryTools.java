@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public final class LibraryTools {
 
   public static void buildToolList(Library lib, Set<String> tools) {
     for (final var tool : lib.getTools()) {
-      tools.add(tool.getName().toUpperCase());
+      tools.add(tool.getName().toUpperCase(Locale.ROOT));
     }
     for (final var sublib : lib.getLibraries()) {
       buildToolList(sublib, tools);
@@ -59,10 +60,10 @@ public final class LibraryTools {
     var ret = true;
     if (!"Base".equals(lib.getName())) {
       for (final var tool1 : lib.getTools()) {
-        if (tools.containsKey(tool1.getName().toUpperCase())) {
+        if (tools.containsKey(tool1.getName().toUpperCase(Locale.ROOT))) {
           ret = false;
         } else {
-          tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+          tools.put(tool1.getName().toUpperCase(Locale.ROOT), (AddTool) tool1);
         }
       }
     }
@@ -108,7 +109,7 @@ public final class LibraryTools {
     final var MyLocation = (location.isEmpty()) ? lib.getName() : location + "->" + lib.getName();
     while (toolIter.hasNext()) {
       final var tool = toolIter.next();
-      if (upercasedNames.contains(tool.getName().toUpperCase())) {
+      if (upercasedNames.contains(tool.getName().toUpperCase(Locale.ROOT))) {
         ret.put(tool.getName(), MyLocation);
       }
     }
@@ -123,29 +124,29 @@ public final class LibraryTools {
     var hasErrors = false;
     while (toolIter.hasNext()) {
       final var tool = toolIter.next();
-      if (tools.contains(tool.getName().toUpperCase())) {
+      if (tools.contains(tool.getName().toUpperCase(Locale.ROOT))) {
         hasErrors = true;
         if (!error.containsKey(tool.getName())) {
           error.put(tool.getName(), S.get("LibraryHasDuplicatedTools"));
         }
       }
-      tools.add(tool.getName().toUpperCase());
+      tools.add(tool.getName().toUpperCase(Locale.ROOT));
     }
     for (final var sublib : lib.getLibraries()) {
-      if (names.contains(sublib.getName().toUpperCase())) {
+      if (names.contains(sublib.getName().toUpperCase(Locale.ROOT))) {
         hasErrors = true;
         if (!error.containsKey(sublib.getName())) {
           error.put(sublib.getName(), S.get("LibraryHasDuplicatedSublibraries"));
         }
       }
-      names.add(sublib.getName().toUpperCase());
+      names.add(sublib.getName().toUpperCase(Locale.ROOT));
       hasErrors |= !isLibraryConform(sublib, names, tools, error);
     }
     return !hasErrors;
   }
 
   public static void buildLibraryList(Library lib, Map<String, Library> names) {
-    names.put(lib.getName().toUpperCase(), lib);
+    names.put(lib.getName().toUpperCase(Locale.ROOT), lib);
     for (final var sublib : lib.getLibraries()) {
       buildLibraryList(sublib, names);
     }
@@ -155,10 +156,10 @@ public final class LibraryTools {
     /* we work top -> down */
     final var toBeRemoved = new HashSet<String>();
     for (final var sublib : lib.getLibraries()) {
-      if (knownLibs.containsKey(sublib.getName().toUpperCase())) {
+      if (knownLibs.containsKey(sublib.getName().toUpperCase(Locale.ROOT))) {
         toBeRemoved.add(sublib.getName());
       } else if (addToSet) {
-        knownLibs.put(sublib.getName().toUpperCase(), sublib);
+        knownLibs.put(sublib.getName().toUpperCase(Locale.ROOT), sublib);
       }
     }
     for (final var remove : toBeRemoved) {

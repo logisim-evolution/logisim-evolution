@@ -59,8 +59,6 @@ public class LineBufferTest extends TestBase {
     assertEquals(itemCount, this.lb.size());
   }
 
-  /* ********************************************************************************************* */
-
   /** Tests is plain add(String) works as expected. */
   @Test
   public void testAdd() {
@@ -254,8 +252,6 @@ public class LineBufferTest extends TestBase {
     }
   }
 
-  /* ********************************************************************************************* */
-
   /** Checks if providing less arguments than positional placeholders would be detected. */
   @Test
   public void testAddTooLittlePosArgs() {
@@ -272,8 +268,6 @@ public class LineBufferTest extends TestBase {
         RuntimeException.class,
         () -> this.lb.validateLineNoPositionals("This is {{foo}} bar {{   2}} test"));
   }
-
-  /* ********************************************************************************************* */
 
   /** Ensures getWithIndent() returns what it should. */
   @Test
@@ -329,8 +323,6 @@ public class LineBufferTest extends TestBase {
     assertTrue(found, "Default ctor not found!");
   }
 
-  /* ********************************************************************************************* */
-
   /** Ensures format() can handle additional opening brackets. */
   @Test
   public void testPlaceholderSoroundedByThreeBrackets() {
@@ -349,8 +341,6 @@ public class LineBufferTest extends TestBase {
     assertEquals(exp, buffer.get(0));
   }
 
-  /* ********************************************************************************************* */
-
   @Test
   public void testRemarkLine() {
     final var remark = getRandomString();
@@ -368,8 +358,6 @@ public class LineBufferTest extends TestBase {
       assertEquals(expected, lb.get(0));
     }
   }
-
-  /* ********************************************************************************************* */
 
   /** Tests remark block generator for non-indented blocks. */
   @Test

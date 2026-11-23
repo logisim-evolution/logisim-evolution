@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInterface {
 
@@ -56,7 +57,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   public String getAsmInstruction() {
     if (!valid) return null;
     final var s = new StringBuilder();
-    s.append(AsmOpcodes[operation].toLowerCase());
+    s.append(AsmOpcodes[operation].toLowerCase(Locale.ROOT));
     if (operation != INSTR_FENCE_TSO) {
       while (s.length() < RV32imSupport.ASM_FIELD_SIZE) s.append(" ");
       addMasks(s, succ);
@@ -116,7 +117,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    if (getInstructions().contains(instruction.toUpperCase(Locale.ROOT))) return 4;
     return -1;
   }
 
@@ -124,7 +125,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT))) operation = i;
     if (operation < 0) {
       valid = false;
       return false;

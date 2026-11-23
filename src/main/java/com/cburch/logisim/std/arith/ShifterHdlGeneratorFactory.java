@@ -109,11 +109,13 @@ public class ShifterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var nrOfBitsToShift = (1 << stageNumber);
     contents.empty().addRemarkBlock(String.format("Stage %d of the binary shift tree is defined here", stageNumber));
     if (stageNumber == 0) {
+      final var testShiftBit = (nrOfBits == 2) ? "shiftAmount == 0" : "shiftAmount[0] == 0";
+      contents.pair("testShiftBit", testShiftBit);
       contents.add("""
           assign s_stage0ShiftIn = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))
-               ? dataA[{{shiftMode}}] : ({{nrOfBits1}} == 4) ? dataA[0] : 0;
+               ? dataA[{{nrOfBits1}}] : ({{shiftMode}} == 4) ? dataA[0] : 0;
 
-          assign s_stage0Result  = (shiftAmount == 0)
+          assign s_stage0Result  = ({{testShiftBit}})
                ? dataA
                : (({{shiftMode}} == 0) || ({{shiftMode}} == 1))
                   ? {dataA[{{nrOfBits2}}:0],s_stage0ShiftIn}
@@ -183,7 +185,7 @@ public class ShifterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents
           .add("""
             s_stage{{stageNumber}}ShiftIn <= s_stage{{stageNumber1}}Result( {{nrOfBits1}} {{downto}} {{bitsShiftDiff}} ) {{when}} {{shiftMode}} = 1 {{else}}
-                               ({{others}} => s_stage{{stageNumber1}}Result({{stageNumber1}})) {{when}} {{shiftMode}} = 3 {{else}}
+                               ({{others}} => s_stage{{stageNumber1}}Result({{nrOfBits1}})) {{when}} {{shiftMode}} = 3 {{else}}
                                s_stage{{stageNumber1}}Result( {{nrOfBitsToShift1}} {{downto}} 0 ) {{when}} {{shiftMode}} = 4 {{else}}
                                ({{others}} => '0');
 

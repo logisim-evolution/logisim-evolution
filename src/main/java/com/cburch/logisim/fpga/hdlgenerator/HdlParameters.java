@@ -239,8 +239,8 @@ public class HdlParameters {
       }
 
       return isIntParameter
-        ? Integer.toString((int) selectedValue)
-        : Hdl.getConstantVector(selectedValue, getNumberOfVectorBits(attrs));
+          ? Integer.toString((int) selectedValue)
+          : Hdl.getConstantVector(selectedValue, getNumberOfVectorBits(attrs));
     }
 
     public boolean isRepresentedByInteger() {

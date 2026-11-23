@@ -26,6 +26,7 @@ import com.cburch.logisim.util.StringUtil;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -376,7 +377,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         }
       }
     }
-    return LineBuffer.format("{{1}}_{{2}}", subDirectoryName.toUpperCase(), componentId.toString());
+    return LineBuffer.format("{{1}}_{{2}}", subDirectoryName.toUpperCase(Locale.ROOT), componentId.toString());
   }
 
   /* Here all public entries for HDL generation are defined */
@@ -470,7 +471,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
   public String getRelativeDirectory() {
-    final var mainDirectory = AppPreferences.HdlType.get().toLowerCase();
+    final var mainDirectory = AppPreferences.HdlType.get().toLowerCase(Locale.ROOT);
     final var directoryName = new StringBuilder();
     directoryName.append(mainDirectory);
     if (!mainDirectory.endsWith(File.separator)) directoryName.append(File.separator);

@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -120,7 +121,7 @@ public final class ProjectActions {
       isOk = false;
       errors.put(FILE_NAME_FORMAT_ERROR, S.get("InvalidFileFormatError"));
     }
-    if (forbiddenNames.contains(filename.toUpperCase())) {
+    if (forbiddenNames.contains(filename.toUpperCase(Locale.ROOT))) {
       isOk = false;
       errors.put(FILE_NAME_KEYWORD_ERROR, S.get("UsedLibraryToolnameError"));
     }
@@ -357,8 +358,8 @@ public final class ProjectActions {
     }
 
     baseProject.doAction(LogisimFileActions.mergeFile(
-        mergelib, 
-        baseProject.getLogisimFile(), 
+        mergelib,
+        baseProject.getLogisimFile(),
         circuitsToMerge,
         includeDependencies));
   }
@@ -525,8 +526,8 @@ public final class ProjectActions {
    *
    * <p>It is the action listener for the File->Import project bundle... menu option.
    *
-   * @param proj the current project to perform the file->open action afterwards 
-   * @return true if success, false otherwise 
+   * @param proj the current project to perform the file->open action afterwards
+   * @return true if success, false otherwise
    */
   public static boolean doExtractAndRunProject(Project proj) {
     var ret = true;
@@ -610,7 +611,7 @@ public final class ProjectActions {
                 if (libraryFile == null
                     || !extractedLibraryFiles.add(libraryFile)
                     || (!libraryFile.toString().endsWith(Loader.LOGISIM_EXTENSION)
-                        && !libraryFile.toString().toLowerCase().endsWith(".jar"))) {
+                        && !libraryFile.toString().toLowerCase(Locale.ROOT).endsWith(".jar"))) {
                   continue;
                 }
                 Files.createDirectories(libDir);
@@ -631,7 +632,7 @@ public final class ProjectActions {
           zipFile.close();
         } catch (IOException e) {
           isCorrectFile = false;
-          OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError", 
+          OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError",
               String.format("%s\n%s", zipFileName, e.getMessage())));
         }
       } else {
@@ -647,7 +648,7 @@ public final class ProjectActions {
    * <p>It is the action listener for the File->Export project bundle... menu option.
    *
    * @param proj Project to be exported
-   * @return true if success, false otherwise 
+   * @return true if success, false otherwise
    */
   public static boolean doExportProject(Project proj) {
     var ret = true;
@@ -675,7 +676,7 @@ public final class ProjectActions {
         }
         final var path = Paths.get(zipFile);
         if (Files.exists(path)) {
-          isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
+          isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite",
               new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
         } else {
           isCorrectFile = true;
@@ -706,7 +707,7 @@ public final class ProjectActions {
     return ret;
   }
 
-  
+
   /**
    * Saves a Logisim project in a .circ file.
    *
@@ -719,6 +720,7 @@ public final class ProjectActions {
     var loader = proj.getLogisimFile().getLoader();
     var chooser = loader.createChooser();
     chooser.setFileFilter(Loader.LOGISIM_FILTER);
+    chooser.setDialogTitle(S.get("FileSaveAsItem"));
     if (loader.getMainFile() != null) {
       chooser.setSelectedFile(loader.getMainFile());
     }

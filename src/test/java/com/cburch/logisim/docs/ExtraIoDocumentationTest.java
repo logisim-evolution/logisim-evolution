@@ -47,7 +47,8 @@ class ExtraIoDocumentationTest {
           "DigitalOscilloscope", "digitalscope",
           "PlaRom", "pla",
           "TwoWaySwitch", "twowayswitch",
-          "TwoPinLed", "twopinled");
+          "TwoPinLed", "twopinled",
+          "NE555", "ne555");
   private static final Map<String, String> TARGET_PAGES =
       Map.of(
           "ioex", "index",
@@ -57,7 +58,8 @@ class ExtraIoDocumentationTest {
           "ioex_digitalscope", "digitalscope",
           "ioex_plarom", "pla",
           "ioex_twowayswitch", "twowayswitch",
-          "ioex_twopinled", "twopinled");
+          "ioex_twopinled", "twopinled",
+          "ioex_ne555", "ne555");
   private static final Pattern FACTORY_DESCRIPTION =
       Pattern.compile("new\\s+FactoryDescription\\(\\s*(\\w+)\\.class", Pattern.DOTALL);
 

@@ -41,7 +41,7 @@ public class RamState extends MemState implements AttributeListener {
      */
     return this.clone();
   }
-  
+
   @Override
   public void attributeValueChanged(AttributeEvent e) {
     AttributeSet attrs = e.getSource();
@@ -62,7 +62,7 @@ public class RamState extends MemState implements AttributeListener {
   public boolean setClock(int clockIndex, Value newClock, Object trigger) {
     return (clockIndex < 0 || clockIndex > 1) ? false : clockState[clockIndex].updateClock(newClock, trigger);
   }
-  
+
   public boolean setClock(Value newClock, Object trigger) {
     return setClock(0, newClock, trigger);
   }
@@ -80,7 +80,7 @@ public class RamState extends MemState implements AttributeListener {
     }
     listener.setInstance(value);
   }
-  
+
   long getCurrent(int index) {
     return (index == 1) ? portB : getCurrent();
   }

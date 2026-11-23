@@ -19,6 +19,7 @@ import com.cburch.logisim.soc.util.AssemblerToken;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterface {
 
@@ -100,7 +101,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   public String getAsmInstruction() {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
-    s.append(AsmOpcodes[operation].toLowerCase());
+    s.append(AsmOpcodes[operation].toLowerCase(Locale.ROOT));
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
     s.append(RV32imState.registerABINames[destination]).append(",")
@@ -151,7 +152,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    if (getInstructions().contains(instruction.toUpperCase(Locale.ROOT))) return 4;
     return -1;
   }
 
@@ -160,7 +161,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     int operation = -1;
     valid = true;
     for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase())) operation = i;
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT))) operation = i;
     if (operation < 0) {
       valid = false;
       return false;

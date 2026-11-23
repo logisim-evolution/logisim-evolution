@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Nios2ComparisonInstructions implements AssemblerExecutionInterface {
 
@@ -119,7 +120,7 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
 
   public Nios2ComparisonInstructions() {
     for (int i = 0; i < AsmOpcodes.length; i++) {
-      Opcodes.add(AsmOpcodes[i].toLowerCase());
+      Opcodes.add(AsmOpcodes[i].toLowerCase(Locale.ROOT));
       OpcCodes.add(AsmOpcs[i]);
       OpxCodes.add(AsmOpxs[i]);
     }
@@ -205,9 +206,9 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
-    if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
+    if (!Opcodes.contains(instr.getOpcode().toLowerCase(Locale.ROOT))) return false;
     valid = true;
-    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase());
+    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase(Locale.ROOT));
     if (instr.getNrOfParameters() != 3) {
       valid = false;
       instr.setError(instr.getInstruction(), S.getter("AssemblerExpectedThreeArguments"));
@@ -345,7 +346,7 @@ public class Nios2ComparisonInstructions implements AssemblerExecutionInterface 
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-    if (Opcodes.contains(instruction.toLowerCase())) return 4;
+    if (Opcodes.contains(instruction.toLowerCase(Locale.ROOT))) return 4;
     return -1;
   }
 }

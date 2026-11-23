@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecutionInterface {
 
@@ -62,7 +63,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       0x3A, 0x3A, 0x3A, 0x0C, 0x14, 0x1C, 0x2C, 0x34, 0x3C, 0x04, 0x04, 0x24,
       PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR, PSEUDO_INSTR};
   private static final Integer[] AsmOpxs = {
-      0x0e, 0x16, 0x1E, 0x06, 0x31, 0x39, 0x27, 0x18, 0x24,
+      0x0e, 0x16, 0x1E, 0x06, 0x31, 0x39, 0x27, 0x25, 0x24,
       0x1F, 0x07, 0x17, -1, -1, -1, -1, -1, -1, SIGN_EXTEND, SIGN_EXTEND, SIGN_EXTEND,
       -1, -1, -1, SIGN_EXTEND, -1, DOUBLE_SIZE};
 
@@ -90,7 +91,7 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
 
   public Nios2ArithmeticAndLogicalInstructions() {
     for (int i = 0; i < AsmOpcodes.length; i++) {
-      Opcodes.add(AsmOpcodes[i].toLowerCase());
+      Opcodes.add(AsmOpcodes[i].toLowerCase(Locale.ROOT));
       OpcCodes.add(AsmOpcs[i]);
       OpxCodes.add(AsmOpxs[i]);
     }
@@ -235,9 +236,9 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
   }
 
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
-    if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
+    if (!Opcodes.contains(instr.getOpcode().toLowerCase(Locale.ROOT))) return false;
     valid = true;
-    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase());
+    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase(Locale.ROOT));
     AssemblerToken[] param2, param3;
     if (operation == INSTR_NOP) {
       if (instr.getNrOfParameters() != 0) {
@@ -451,8 +452,8 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
   }
 
   public int getInstructionSizeInBytes(String instruction) {
-    if (Opcodes.contains(instruction.toLowerCase())) {
-      int idx = Opcodes.indexOf(instruction.toLowerCase());
+    if (Opcodes.contains(instruction.toLowerCase(Locale.ROOT))) {
+      int idx = Opcodes.indexOf(instruction.toLowerCase(Locale.ROOT));
       return OpxCodes.get(idx) == DOUBLE_SIZE ? 8 : 4;
     }
     return -1;

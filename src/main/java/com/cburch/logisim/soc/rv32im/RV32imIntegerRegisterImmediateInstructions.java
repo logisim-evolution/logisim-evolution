@@ -18,6 +18,7 @@ import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExecutionInterface {
 
@@ -129,7 +130,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
     if (!valid)
       return "Unknown";
     StringBuilder s = new StringBuilder();
-    s.append(AsmOpcodes[operation].toLowerCase());
+    s.append(AsmOpcodes[operation].toLowerCase(Locale.ROOT));
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
         s.append(" ");
 
@@ -252,7 +253,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (getInstructions().contains(instruction.toUpperCase())) return 4;
+    if (getInstructions().contains(instruction.toUpperCase(Locale.ROOT))) return 4;
     return -1;
   }
 
@@ -260,7 +261,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
-      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase()))
+      if (AsmOpcodes[i].equals(instr.getOpcode().toUpperCase(Locale.ROOT)))
           operation = i;
     if (operation < 0) {
       valid = false;

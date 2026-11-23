@@ -9,23 +9,13 @@
 
 package com.cburch.logisim.std.ttl;
 
+import static com.cburch.logisim.std.ttl.TtlTestInstanceState.createInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.EndData;
-import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceData;
-import com.cburch.logisim.instance.InstanceFactory;
-import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.proj.Project;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 class Ttl7493Test {
@@ -80,7 +70,7 @@ class Ttl7493Test {
   @Test
   void independentFallingEdgeClocksAndAsynchronousResetWork() {
     final var gate = new Ttl7493();
-    final var state = new TestInstanceState(gate, false);
+    final var state = new TtlTestInstanceState(gate, false);
     reset(gate, state);
 
     pulse(gate, state, Ttl7493.PORT_INDEX_CKA);
@@ -98,7 +88,7 @@ class Ttl7493Test {
   @Test
   void qaToCkbCascadeCountsFromZeroThroughFifteen() {
     final var gate = new Ttl7493();
-    final var state = new TestInstanceState(gate, false);
+    final var state = new TtlTestInstanceState(gate, false);
     reset(gate, state);
 
     for (var expected = 1; expected <= 16; expected++) {
@@ -110,7 +100,7 @@ class Ttl7493Test {
   @Test
   void invalidExposedPowerInputsMakeOutputsUnknown() {
     final var gate = new Ttl7493();
-    final var state = new TestInstanceState(gate, true);
+    final var state = new TtlTestInstanceState(gate, true);
     state.setPortValue(8, Value.FALSE);
     state.setPortValue(9, Value.TRUE);
     reset(gate, state);
@@ -130,19 +120,12 @@ class Ttl7493Test {
     assertUnknownOutputs(state);
   }
 
-  private static Instance createInstance(InstanceFactory factory, boolean showPowerPins) {
-    final var attrs = factory.createAttributeSet();
-    attrs.setValue(TtlLibrary.VCC_GND, showPowerPins);
-    return Instance.getInstanceFor(
-        factory.createComponent(Location.create(0, 0, false), attrs));
-  }
-
   private static void assertPort(Instance instance, int index, int x, int y, int type) {
     assertEquals(Location.create(x, y, false), instance.getPortLocation(index));
     assertEquals(type, instance.getPorts().get(index).getType());
   }
 
-  private static void reset(Ttl7493 gate, TestInstanceState state) {
+  private static void reset(Ttl7493 gate, TtlTestInstanceState state) {
     state.setPortValue(Ttl7493.PORT_INDEX_CKA, Value.FALSE);
     state.setPortValue(Ttl7493.PORT_INDEX_CKB, Value.FALSE);
     state.setPortValue(Ttl7493.PORT_INDEX_R0_1, Value.TRUE);
@@ -153,14 +136,14 @@ class Ttl7493Test {
     gate.propagate(state);
   }
 
-  private static void pulse(Ttl7493 gate, TestInstanceState state, int clockPort) {
+  private static void pulse(Ttl7493 gate, TtlTestInstanceState state, int clockPort) {
     state.setPortValue(clockPort, Value.TRUE);
     gate.propagate(state);
     state.setPortValue(clockPort, Value.FALSE);
     gate.propagate(state);
   }
 
-  private static void cascadeClockA(Ttl7493 gate, TestInstanceState state) {
+  private static void cascadeClockA(Ttl7493 gate, TtlTestInstanceState state) {
     state.setPortValue(Ttl7493.PORT_INDEX_CKB, state.getPortValue(Ttl7493.PORT_INDEX_QA));
     state.setPortValue(Ttl7493.PORT_INDEX_CKA, Value.TRUE);
     gate.propagate(state);
@@ -171,7 +154,7 @@ class Ttl7493Test {
     gate.propagate(state);
   }
 
-  private static int outputValue(TestInstanceState state) {
+  private static int outputValue(TtlTestInstanceState state) {
     return (int)
         (state.getPortValue(Ttl7493.PORT_INDEX_QA).toLongValue()
             | state.getPortValue(Ttl7493.PORT_INDEX_QB).toLongValue() << 1
@@ -179,102 +162,10 @@ class Ttl7493Test {
             | state.getPortValue(Ttl7493.PORT_INDEX_QD).toLongValue() << 3);
   }
 
-  private static void assertUnknownOutputs(TestInstanceState state) {
+  private static void assertUnknownOutputs(TtlTestInstanceState state) {
     assertEquals(Value.UNKNOWN, state.getPortValue(Ttl7493.PORT_INDEX_QA));
     assertEquals(Value.UNKNOWN, state.getPortValue(Ttl7493.PORT_INDEX_QB));
     assertEquals(Value.UNKNOWN, state.getPortValue(Ttl7493.PORT_INDEX_QC));
     assertEquals(Value.UNKNOWN, state.getPortValue(Ttl7493.PORT_INDEX_QD));
-  }
-
-  private static final class TestInstanceState implements InstanceState {
-    private final AttributeSet attrs;
-    private final Instance instance;
-    private final Map<Integer, Value> portValues = new HashMap<>();
-    private InstanceData data;
-
-    private TestInstanceState(InstanceFactory factory, boolean showPowerPins) {
-      attrs = factory.createAttributeSet();
-      attrs.setValue(TtlLibrary.VCC_GND, showPowerPins);
-      instance =
-          Instance.getInstanceFor(
-              factory.createComponent(Location.create(0, 0, false), attrs));
-    }
-
-    @Override
-    public void fireInvalidated() {}
-
-    @Override
-    public AttributeSet getAttributeSet() {
-      return attrs;
-    }
-
-    @Override
-    public <E> E getAttributeValue(Attribute<E> attr) {
-      return attrs.getValue(attr);
-    }
-
-    @Override
-    public InstanceData getData() {
-      return data;
-    }
-
-    @Override
-    public InstanceFactory getFactory() {
-      return instance.getFactory();
-    }
-
-    @Override
-    public Instance getInstance() {
-      return instance;
-    }
-
-    @Override
-    public int getPortIndex(Port port) {
-      return instance.getPorts().indexOf(port);
-    }
-
-    @Override
-    public Value getPortValue(int portIndex) {
-      return portValues.getOrDefault(portIndex, Value.UNKNOWN);
-    }
-
-    @Override
-    public Project getProject() {
-      return null;
-    }
-
-    @Override
-    public int getTickCount() {
-      return 0;
-    }
-
-    @Override
-    public boolean isCircuitRoot() {
-      return true;
-    }
-
-    @Override
-    public boolean isPortConnected(int portIndex) {
-      return false;
-    }
-
-    @Override
-    public CircuitState createCircuitSubstateFor(Circuit circ) {
-      return null;
-    }
-
-    @Override
-    public void setData(InstanceData value) {
-      data = value;
-    }
-
-    @Override
-    public void setPort(int portIndex, Value value, int delay) {
-      portValues.put(portIndex, value);
-    }
-
-    private void setPortValue(int portIndex, Value value) {
-      portValues.put(portIndex, value);
-    }
   }
 }

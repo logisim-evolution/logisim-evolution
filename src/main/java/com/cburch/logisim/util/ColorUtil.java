@@ -21,6 +21,13 @@ import javax.swing.UIManager;
  */
 public final class ColorUtil {
 
+  private static final int RGB_CHANNEL_MIN = 0;
+  private static final int RGB_CHANNEL_MAX = 255;
+  // BT.709 luma weights for gamma-encoded RGB.
+  private static final double LUMA_RED_WEIGHT = 0.2126;
+  private static final double LUMA_GREEN_WEIGHT = 0.7152;
+  private static final double LUMA_BLUE_WEIGHT = 0.0722;
+
   public static final Color MAGNIFYING_INTERIOR = new Color(255, 230, 230, 220);
 
   private ColorUtil() {
@@ -28,10 +35,47 @@ public final class ColorUtil {
   }
 
   /**
-   * Returns complementary color to provided one (i.e. white for black etc).
+   * Returns complementary color to provided one (i.e. white for black etc), preserving alpha.
    */
   public static Color getComplementaryColor(Color color) {
-    return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
+    return new Color(
+        RGB_CHANNEL_MAX - color.getRed(),
+        RGB_CHANNEL_MAX - color.getGreen(),
+        RGB_CHANNEL_MAX - color.getBlue(),
+        color.getAlpha());
+  }
+
+  /**
+   * Inverts luma while preserving chroma and alpha, subject to RGB gamut clipping.
+   */
+  public static Color getLuminanceInvertedColor(Color color) {
+    // Usually works well, unless you insist on #ffff00 text on a white canvas.
+    final var luma = calculateLuma(color);
+    final var invertedLuma = RGB_CHANNEL_MAX - luma;
+    final var adjustment = invertedLuma - luma;
+    // An equal RGB offset changes Y without changing U/V until a channel is clipped.
+    return new Color(
+        adjustChannel(color.getRed(), adjustment),
+        adjustChannel(color.getGreen(), adjustment),
+        adjustChannel(color.getBlue(), adjustment),
+        color.getAlpha());
+  }
+
+  /** Returns the displayed text color without changing the stored light-theme color. */
+  public static Color getThemeTextColor(Color color) {
+    return AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+        ? getLuminanceInvertedColor(color)
+        : color;
+  }
+
+  private static int adjustChannel(int channel, double adjustment) {
+    return Math.clamp(Math.round(channel + adjustment), RGB_CHANNEL_MIN, RGB_CHANNEL_MAX);
+  }
+
+  private static double calculateLuma(Color color) {
+    return LUMA_RED_WEIGHT * color.getRed()
+        + LUMA_GREEN_WEIGHT * color.getGreen()
+        + LUMA_BLUE_WEIGHT * color.getBlue();
   }
 
   /**
@@ -49,7 +93,7 @@ public final class ColorUtil {
    * https://en.wikipedia.org/wiki/Grayscale
    */
   public static int getLuminance(Color color) {
-    return (int) (0.2126 * color.getRed() + 0.7152 * color.getGreen() + 0.0722 * color.getBlue());
+    return (int) calculateLuma(color);
   }
 
   /**

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JScrollPane;
@@ -207,14 +208,14 @@ public class VhdlContent extends HdlContent {
   public static boolean labelVHDLInvalid(String label) {
     if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*"))
       return (true);
-    return Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase());
+    return Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase(Locale.ROOT));
   }
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
     String err = null;
     if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*")) {
       err = S.get("vhdlInvalidNameError");
-    } else if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
+    } else if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase(Locale.ROOT))) {
       err = S.get("vhdlKeywordNameError");
     } else if (file != null && file.containsFactory(label)) {
       err = S.get("vhdlDuplicateNameError");

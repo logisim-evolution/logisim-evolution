@@ -26,6 +26,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
+import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -172,9 +173,9 @@ class BuildCircuitButton extends JButton {
 
         /* Check for name collisions with input and output names */
         final var labels = new HashSet<String>();
-        for (final var label : model.getInputs().getNames()) labels.add(label.toUpperCase());
-        for (final var label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
-        if (labels.contains(name.toUpperCase())) {
+        for (final var label : model.getInputs().getNames()) labels.add(label.toUpperCase(Locale.ROOT));
+        for (final var label : model.getOutputs().getNames()) labels.add(label.toUpperCase(Locale.ROOT));
+        if (labels.contains(name.toUpperCase(Locale.ROOT))) {
           OptionPane.showMessageDialog(
               parent,
               S.get("buildDuplicatedNameError"),

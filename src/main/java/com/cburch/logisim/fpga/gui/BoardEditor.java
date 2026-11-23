@@ -21,6 +21,7 @@ import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.fpga.menu.MenuFpga;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -183,7 +185,8 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         this.clear();
       }
       case "load" -> {
-        JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
+        JFileChooser fc = JFileChoosers.create();
+        fc.setDialogTitle(S.get("FpgaBoardLoadFile"));
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setFileFilter(XmlFileFilter.XML_FILTER);
         fc.setAcceptAllFileFilterUsed(false);
@@ -257,14 +260,14 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     if (tag == null || tag.isEmpty()) {
       return false;
     }
-    if (tag.toLowerCase().startsWith("xml")) {
+    if (tag.toLowerCase(Locale.ROOT).startsWith("xml")) {
       return false;
     }
     return tag.matches("^[a-zA-Z_:][a-zA-Z0-9._:-]*$");
   }
 
   private String getDirName(String old, String windowName) {
-    JFileChooser fc = new JFileChooser(old);
+    JFileChooser fc = JFileChoosers.createAt(old != null ? new File(old) : null);
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     fc.setDialogTitle(windowName);
     int retval = fc.showOpenDialog(null);

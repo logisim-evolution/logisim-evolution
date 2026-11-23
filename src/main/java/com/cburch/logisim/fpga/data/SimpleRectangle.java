@@ -59,7 +59,7 @@ public class SimpleRectangle {
       height = Math.max(0, Math.min(e.getY(), ymax)) - y;
     }
   }
- 
+
   public FpgaIoInformationContainer getIoInfo() {
     return toBeModified;
   }

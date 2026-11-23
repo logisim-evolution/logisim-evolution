@@ -18,6 +18,7 @@ import com.cburch.logisim.util.JInputDialog;
 import java.awt.Component;
 import java.awt.Window;
 import java.io.File;
+import java.util.Locale;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -45,7 +46,7 @@ public class ImageSourceAttribute extends Attribute<String> {
     if (value.startsWith("data:image/")) {
       final var semicolon = value.indexOf(';');
       final var type = semicolon > 11 ? value.substring(11, semicolon) : "image";
-      return "[" + type.toUpperCase() + " Data]";
+      return "[" + type.toUpperCase(Locale.ROOT) + " Data]";
     }
     return new File(value).getName();
   }
@@ -75,7 +76,7 @@ public class ImageSourceAttribute extends Attribute<String> {
         @Override
         public boolean accept(File f) {
           if (f.isDirectory()) return true;
-          final var name = f.getName().toLowerCase();
+          final var name = f.getName().toLowerCase(Locale.ROOT);
           return name.endsWith(".png")
               || name.endsWith(".jpg")
               || name.endsWith(".jpeg")

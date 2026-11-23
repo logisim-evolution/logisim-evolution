@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Minimal reproducer from issue #3076: both paths carry x[1]. -->
+<project source="4.1.0" version="1.0">
+  <lib desc="#Wiring" name="0"/>
+  <lib desc="#Gates" name="1"/>
+  <main name="main"/>
+  <circuit name="main">
+    <comp lib="0" loc="(100,80)" name="Pin">
+      <a name="label" val="x"/>
+      <a name="width" val="2"/>
+    </comp>
+    <comp lib="0" loc="(150,80)" name="Splitter"/>
+    <comp lib="0" loc="(150,180)" name="Splitter"/>
+    <comp lib="0" loc="(240,120)" name="Pin">
+      <a name="label" val="y"/>
+      <a name="facing" val="west"/>
+      <a name="type" val="output"/>
+    </comp>
+    <wire from="(100,80)" to="(130,80)"/>
+    <wire from="(130,80)" to="(150,80)"/>
+    <wire from="(130,80)" to="(130,180)"/>
+    <wire from="(130,180)" to="(150,180)"/>
+    <wire from="(170,70)" to="(200,70)"/>
+    <wire from="(200,70)" to="(200,120)"/>
+    <wire from="(200,120)" to="(200,170)"/>
+    <wire from="(170,170)" to="(200,170)"/>
+    <wire from="(200,120)" to="(240,120)"/>
+  </circuit>
+</project>

@@ -37,6 +37,7 @@ import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,7 +310,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.drawLine(
         xpos + 35 + getSymbolWidth(width), ypos + 50, xpos + 35 + getSymbolWidth(width), ypos + 60);
     g.fillOval(xpos + 32 + getSymbolWidth(width), ypos + 47, 6, 6);
-    String maxVal = "3CT=0x" + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase();
+    String maxVal = "3CT=0x" + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase(Locale.ROOT);
     GraphicsUtil.drawText(
         g,
         maxVal,
@@ -341,7 +342,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       var value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.DARK_GRAY);
-        value = StringUtil.toHexString(width, val.toLongValue()).toUpperCase();
+        value = StringUtil.toHexString(width, val.toLongValue()).toUpperCase(Locale.ROOT);
       } else {
         g.setColor(Color.YELLOW);
         for (var i = 0; i < StringUtil.toHexString(width, val.toLongValue()).length(); i++)

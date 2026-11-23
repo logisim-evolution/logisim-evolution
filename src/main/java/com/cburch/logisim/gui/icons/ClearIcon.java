@@ -33,7 +33,10 @@ public class ClearIcon implements Icon {
   @Override
   public void paintIcon(Component comp, Graphics gfx, int x, int y) {
     final var g2 = (Graphics2D) gfx.create();
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    if (AppPreferences.UI_ANTIALIASING.getBoolean()) {
+      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+    }
     g2.translate(x, y);
     g2.setColor((comp == null) ? Color.GRAY : comp.getForeground());
     g2.setStroke(new BasicStroke(

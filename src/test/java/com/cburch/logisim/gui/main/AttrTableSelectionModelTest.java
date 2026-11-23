@@ -10,6 +10,8 @@
 package com.cburch.logisim.gui.main;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -17,10 +19,14 @@ import static org.mockito.Mockito.when;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.Splitter;
+import com.cburch.logisim.circuit.SplitterAttributes;
+import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
@@ -32,7 +38,10 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.vhdl.base.VhdlContent;
+import java.util.List;
 import java.util.Set;
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -135,6 +144,46 @@ class AttrTableSelectionModelTest {
     }
     assertEquals("A", firstInput.getAttributeSet().getValue(StdAttr.LABEL));
     assertEquals("a", secondInput.getAttributeSet().getValue(StdAttr.LABEL));
+  }
+
+  @Test
+  void distributionCommandTracksSingleSelectionAndRejectsStaleEditor() throws Exception {
+    SwingUtilities.invokeAndWait(() -> {
+      final var fixture = new Fixture();
+      final var attrs = SplitterFactory.instance.createAttributeSet();
+      attrs.setValue(SplitterAttributes.ATTR_WIDTH,
+          BitWidth.create(8));
+      attrs.setValue(SplitterAttributes.ATTR_FANOUT, 3);
+      final var splitter = new Splitter(
+          Location.create(0, 0, true), attrs);
+      add(fixture.circuit, splitter);
+      final var frame = mock(Frame.class);
+      final var canvas = mock(Canvas.class);
+      final var selection = mock(Selection.class);
+      when(frame.getCanvas()).thenReturn(canvas);
+      when(frame.getEditorView()).thenReturn(Frame.EDIT_LAYOUT);
+      when(canvas.getCircuit()).thenReturn(fixture.circuit);
+      when(canvas.getSelection()).thenReturn(selection);
+      when(selection.getAttributeSet()).thenReturn(attrs);
+      when(selection.getComponents()).thenReturn(Set.of(splitter));
+      final var model = new AttrTableSelectionModel(fixture.project, frame);
+      final var count = model.getRowCount();
+      final var row = model.getRow(count - 1);
+      assertTrue(row instanceof SplitterDistributionRow);
+      final var button = (JButton) row.getEditor(null);
+      final var pin = pinWithLabel("", 40);
+      for (final var components : List.of(Set.<Component>of(),
+          Set.of(pin), Set.<Component>of(splitter, pin),
+          Set.<Component>of(splitter, new Splitter(
+              Location.create(80, 0, true), (AttributeSet) attrs.clone())))) {
+        when(selection.getComponents()).thenReturn(components);
+        model.selectionChanged(null);
+        assertEquals(count - 1, model.getRowCount());
+        assertFalse(row.isValueEditable());
+        button.doClick();
+        assertTrue(splitter.distributionChanges(1));
+      }
+    });
   }
 
   private static AttributeSet attributeSet(String label) {

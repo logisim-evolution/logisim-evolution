@@ -45,7 +45,7 @@ public class SquareRoot extends InstanceFactory {
     int w = width.getWidth();
     if (upper == Value.NIL || upper.isUnknown()) upper = Value.createKnown(width, 0);
     if (a.isFullyDefined() && upper.isFullyDefined()) {
-      //Math.sqrt() uses double so we only have 53 bit precision(26 + 26 = 52).
+      // Math.sqrt() uses double so we only have 53 bit precision(26 + 26 = 52).
       if (w <= 26) {
         long num = (upper.toLongValue() << w) | a.toLongValue();
 
@@ -77,7 +77,7 @@ public class SquareRoot extends InstanceFactory {
   public static final int REM = 3;
 
   public SquareRoot() {
-    super(_ID, S.getter("squareRootComponent"));
+    super(_ID, S.getter("squareRootComponent"), new SquareRootHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH},
         new Object[] {BitWidth.create(8)});

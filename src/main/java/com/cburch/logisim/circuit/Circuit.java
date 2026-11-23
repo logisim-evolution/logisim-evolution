@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -286,6 +287,7 @@ public class Circuit {
   private LinkedHashSet<Component> comps = new LinkedHashSet<>(); // doesn't include wires
   CircuitWires wires = new CircuitWires();
   private final List<Component> clocks = new ArrayList<>();
+  private final List<Component> tickAware = new ArrayList<>();
   private final CircuitLocker locker;
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
@@ -456,7 +458,7 @@ public class Circuit {
     isAnnotated = true;
     /* Now annotate all circuits below me */
     for (final var subs : subCircuits) {
-      final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
+      final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase(Locale.ROOT));
       final var inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
       circ.annotate(proj, clearExistingLabels, inLibrary);
     }
@@ -684,6 +686,10 @@ public class Circuit {
     return clocks;
   }
 
+  List<Component> getTickAware() {
+    return tickAware;
+  }
+
   public Set<Component> getComponents() {
     return CollectionUtil.createUnmodifiableSetUnion(comps, wires.getWires());
   }
@@ -837,6 +843,14 @@ public class Circuit {
     return false;
   }
 
+  /**
+   * A value that changes whenever anything in this circuit is connected or
+   * disconnected, and never repeats. isConnected() answers stay good while it holds.
+   */
+  public int getWiringVersion() {
+    return wires.points.getVersion();
+  }
+
   void mutatorAdd(Component c) {
     locker.checkForWritePermission("add", this);
 
@@ -882,6 +896,8 @@ public class Circuit {
       final var factory = c.getFactory();
       if (factory instanceof Clock) {
         clocks.add(c);
+      } else if (factory instanceof TickAware) {
+        tickAware.add(c);
       } else if (factory instanceof Rom) {
         Rom.closeHexFrame(c);
       } else if (factory instanceof SubcircuitFactory subFactory) {
@@ -904,6 +920,7 @@ public class Circuit {
     comps = new LinkedHashSet<>();
     wires = new CircuitWires();
     clocks.clear();
+    tickAware.clear();
     myNetList.clear();
     isAnnotated = false;
     for (final var comp : oldComps) {
@@ -929,6 +946,8 @@ public class Circuit {
       factory.removeComponent(this, c, proj.getCircuitState(this));
       if (factory instanceof Clock) {
         clocks.remove(c);
+      } else if (factory instanceof TickAware) {
+        tickAware.remove(c);
       } else if (factory instanceof DynamicElementProvider) {
         DynamicElementProvider.removeDynamicElements(this, c);
       }

@@ -12,6 +12,7 @@ package com.cburch.logisim.file;
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -32,6 +33,8 @@ import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -472,11 +475,12 @@ final class XmlWriter {
     ret.appendChild(fromMouseMappings());
     ret.appendChild(fromToolbarData());
 
-    for (final var circ : file.getCircuits()) {
-      ret.appendChild(fromCircuit(circ));
-    }
-    for (final var vhdl : file.getVhdlContents()) {
-      ret.appendChild(fromVhdl(vhdl));
+    for (final var tool : file.getTools()) {
+      if (tool.getFactory() instanceof SubcircuitFactory factory) {
+        ret.appendChild(fromCircuit(factory.getSubcircuit()));
+      } else if (tool.getFactory() instanceof VhdlEntity factory) {
+        ret.appendChild(fromVhdl(factory.getContent()));
+      }
     }
     return ret;
   }

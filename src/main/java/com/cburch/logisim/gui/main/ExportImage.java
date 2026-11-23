@@ -17,6 +17,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.generic.TikZWriter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.Color;
@@ -29,6 +30,7 @@ import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -119,22 +121,36 @@ public class ExportImage {
     if (filter == null) return;
 
     // Then display file chooser
-    final var loader = proj.getLogisimFile().getLoader();
-    final var chooser = loader.createChooser();
+    final var exportDir =
+        JFileChoosers.getCurrentDirectory(JFileChoosers.DirectoryScope.IMAGE_EXPORT);
+    final var initialDir =
+        (exportDir != null && !exportDir.isEmpty() && new File(exportDir).canRead())
+            ? new File(exportDir)
+            : proj.getLogisimFile().getLoader().getCurrentDirectory();
+    final var chooser =
+        JFileChoosers.createAt(initialDir, JFileChoosers.DirectoryScope.IMAGE_EXPORT);
     chooser.setAcceptAllFileFilterUsed(false);
     if (circuits.size() > 1) {
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       chooser.setDialogTitle(S.get("exportImageDirectorySelect"));
     } else {
+      chooser.setDialogType(JFileChooser.SAVE_DIALOG);
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(S.get("exportImageFileSelect"));
+      if (!circuits.isEmpty()) {
+        chooser.setSelectedFile(new File(circuits.get(0).getName() + filter.getDefaultExtension()));
+      }
     }
     final var returnVal = chooser.showDialog(frame, S.get("exportImageButton"));
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
 
     // Determine whether destination is valid
     final var dest = chooser.getSelectedFile();
-    chooser.setCurrentDirectory(dest.isDirectory() ? dest : dest.getParentFile());
+    final var selectedDir = dest.isDirectory() ? dest : dest.getParentFile();
+    if (selectedDir != null) {
+      chooser.setCurrentDirectory(selectedDir);
+      JFileChoosers.setCurrentDirectory(JFileChoosers.DirectoryScope.IMAGE_EXPORT, selectedDir);
+    }
     if (dest.exists()) {
       if (!dest.isDirectory()) {
         final var confirm =
@@ -304,13 +320,13 @@ public class ExportImage {
       this.desc = desc;
       extensions = new String[exts.length];
       for (var i = 0; i < exts.length; i++) {
-        extensions[i] = "." + exts[i].toLowerCase();
+        extensions[i] = "." + exts[i].toLowerCase(Locale.ROOT);
       }
     }
 
     @Override
     public boolean accept(File f) {
-      final var name = f.getName().toLowerCase();
+      final var name = f.getName().toLowerCase(Locale.ROOT);
       for (final var extension : extensions) {
         if (name.endsWith(extension)) return true;
       }

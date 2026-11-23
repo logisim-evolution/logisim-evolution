@@ -38,6 +38,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import org.w3c.dom.Element;
 
 public abstract class DynamicElement extends AbstractCanvasObject {
@@ -322,7 +323,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     if (elt.hasAttribute("stroke-width"))
       strokeWidth = Integer.parseInt(elt.getAttribute("stroke-width").trim());
     if (elt.hasAttribute("label")) {
-      final var loc = elt.getAttribute("label").trim().toLowerCase();
+      final var loc = elt.getAttribute("label").trim().toLowerCase(Locale.ROOT);
       labelLoc = switch (loc) {
         case "left" -> LABEL_LEFT;
         case "right" -> LABEL_RIGHT;

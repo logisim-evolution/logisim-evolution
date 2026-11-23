@@ -31,6 +31,7 @@ import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.tools.WireRepair;
 import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.util.Arrays;
 import javax.swing.JPopupMenu;
 
 public class Splitter extends ManagedComponent
@@ -73,6 +74,29 @@ public class Splitter extends ManagedComponent
     super(loc, attrs, 3);
     configureComponent();
     attrs.addAttributeListener(this);
+  }
+
+  public boolean distributionChanges(int order) {
+    final var attrs = (SplitterAttributes) getAttributeSet();
+    final var desired = SplitterAttributes.computeDistribution(attrs.fanout, attrs.bitEnd.length, order);
+    return !Arrays.equals(attrs.bitEnd, desired);
+  }
+
+  public void redistribute(Project project, Circuit circuit, int order) {
+    if (circuit == null
+        || !project.getLogisimFile().contains(circuit)
+        || !circuit.contains(this)
+        || !distributionChanges(order)) return;
+    final var attrs = (SplitterAttributes) getAttributeSet();
+    final var desired = SplitterAttributes.computeDistribution(attrs.fanout, attrs.bitEnd.length, order);
+    final var mutation = new CircuitMutation(circuit);
+    for (var i = 0; i < desired.length; i++) {
+      if (attrs.bitEnd[i] != desired[i]) {
+        mutation.set(this, attrs.getBitOutAttribute(i), (int) desired[i]);
+      }
+    }
+    project.doAction(mutation.toAction(S.getter(
+        order > 0 ? "splitterDistributeAscending" : "splitterDistributeDescending")));
   }
 
   //

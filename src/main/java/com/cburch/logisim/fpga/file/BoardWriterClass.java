@@ -17,6 +17,7 @@ import com.cburch.logisim.util.XmlUtil;
 import java.awt.Image;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Locale;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -89,7 +90,7 @@ public class BoardWriterClass {
       clkInfo.setAttribute(
           CLOCK_SECTION_STRINGS[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
       final var pin = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[1]);
-      pin.setValue(BoardInfo.fpga.getClockPinLocation().toUpperCase());
+      pin.setValue(BoardInfo.fpga.getClockPinLocation().toUpperCase(Locale.ROOT));
       clkInfo.setAttributeNode(pin);
       final var pull = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[2]);
       pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockPull()]);
@@ -101,7 +102,7 @@ public class BoardWriterClass {
       final var fpga = boardInfo.createElement(FPGA_INFORMATION_SECTION_STRING);
       fpga.setAttribute(
           FPGA_SECTION_STRINGS[0],
-          VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase());
+          VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase(Locale.ROOT));
       final var part = boardInfo.createAttribute(FPGA_SECTION_STRINGS[1]);
       part.setValue(BoardInfo.fpga.getPart());
       fpga.setAttributeNode(part);

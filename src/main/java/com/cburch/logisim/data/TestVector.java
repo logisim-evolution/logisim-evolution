@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
@@ -43,6 +44,7 @@ public class TestVector {
   private class TestVectorReader {
     private final BufferedReader in;
     private StringTokenizer curLine;
+    private int lineNumber;
     private int setColumnIndex = -1;
     private int seqColumnIndex = -1;
 
@@ -55,6 +57,7 @@ public class TestVector {
       var line = in.readLine();
 
       while (line != null) {
+        lineNumber++;
         final var i = line.indexOf('#');
         if (i >= 0) line = line.substring(0, i);
         final var ret = new StringTokenizer(line);
@@ -74,10 +77,12 @@ public class TestVector {
       final var localFloatingFlags = new ArrayList<boolean[]>();
       final var localSetNumbers = new ArrayList<Integer>();
       final var localSeqNumbers = new ArrayList<Integer>();
+      final var localLineNumbers = new ArrayList<Integer>();
       curLine = findNonemptyLine();
 
       while (curLine != null) {
         parseData(localDontCareFlags, localFloatingFlags, localSetNumbers, localSeqNumbers);
+        localLineNumbers.add(lineNumber);
         curLine = findNonemptyLine();
       }
 
@@ -112,6 +117,10 @@ public class TestVector {
       TestVector.this.seqNumbers = new int[localSeqNumbers.size()];
       for (int i = 0; i < localSeqNumbers.size(); i++) {
         TestVector.this.seqNumbers[i] = localSeqNumbers.get(i);
+      }
+      TestVector.this.lineNumbers = new int[localLineNumbers.size()];
+      for (int i = 0; i < localLineNumbers.size(); i++) {
+        TestVector.this.lineNumbers[i] = localLineNumbers.get(i);
       }
       TestVector.this.dontCareFlags = localDontCareFlags;
       TestVector.this.floatingFlags = localFloatingFlags;
@@ -164,7 +173,7 @@ public class TestVector {
         }
 
         // Check for special values
-        final var tUpper = t.toUpperCase();
+        final var tUpper = t.toUpperCase(Locale.ROOT);
         if ("<DC>".equals(tUpper)) {
           dcFlags[pinIndex] = true;
           vals[pinIndex] = Value.UNKNOWN; // Placeholder, won't be compared
@@ -218,7 +227,7 @@ public class TestVector {
 
       for (var i = 0; i < n; i++) {
         final var t = (String) curLine.nextElement();
-        final var tUpper = t.toUpperCase();
+        final var tUpper = t.toUpperCase(Locale.ROOT);
 
         // Check for special columns
         if ("<SET>".equals(tUpper)) {
@@ -274,6 +283,7 @@ public class TestVector {
   public List<Value[]> data;
   public int[] setNumbers;
   public int[] seqNumbers;
+  public int[] lineNumbers;
   private List<boolean[]> dontCareFlags;
   private List<boolean[]> floatingFlags;
 

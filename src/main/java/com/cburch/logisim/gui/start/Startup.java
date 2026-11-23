@@ -34,6 +34,7 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
+import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.LocaleManager;
@@ -45,13 +46,16 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.jar.JarFile;
 import javax.help.JHelp;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -107,6 +111,9 @@ public class Startup implements AWTEventListener {
      (if no label is provided, File is loaded into every RAM/ROM) */
   private final HashMap<String, File> memoryLoadFiles = new HashMap<>();
 
+  /* JAR and Logisim (.circ) libraries to load into the project opened at startup */
+  private final ArrayList<File> librariesToLoad = new ArrayList<>();
+
   private File saveFile;
   private int ttyFormat = 0;
   // from other sources
@@ -159,6 +166,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_HELP_LONG = "help";
   private static final String ARG_LOAD_SHORT = "l";
   private static final String ARG_LOAD_LONG = "load";
+  private static final String ARG_LOAD_LIB_LONG = "load-lib";
   private static final String ARG_SAVE_LONG = "save";
   private static final String ARG_GEOMETRY_SHORT = "m";
   private static final String ARG_GEOMETRY_LONG = "geometry";
@@ -194,7 +202,7 @@ public class Startup implements AWTEventListener {
   protected static boolean parseBool(String option) throws IllegalArgumentException {
     final var positives = List.of("yes", "y", "1", "true", "t");
     final var negatives = List.of("no", "n", "0", "false", "f");
-    final var flag = option.toLowerCase();
+    final var flag = option.toLowerCase(Locale.ROOT);
     if (positives.contains(flag)) return true;
     if (negatives.contains(flag)) return false;
     // FIXME: hardcoded string
@@ -330,6 +338,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, Option.UNLIMITED_VALUES); // We can have 1 or 2 arguments here
+    addOption(opts, "argLoadLibOption", ARG_LOAD_LIB_LONG, 1);
     addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
@@ -396,6 +405,7 @@ public class Startup implements AWTEventListener {
         case ARG_TTY_LONG -> handleArgTty(startup, opt);
         case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
         case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+        case ARG_LOAD_LIB_LONG -> handleArgLoadLib(startup, opt);
         case ARG_SAVE_LONG -> handleArgSave(startup, opt);
         case ARG_GATES_LONG -> handleArgGates(startup, opt);
         case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
@@ -447,11 +457,13 @@ public class Startup implements AWTEventListener {
       logger.error(S.get("saveNeedsTtyError"));
       return null;
     }
+    if (!startup.librariesToLoad.isEmpty() && startup.isTty) {
+      logger.error(S.get("loadLibNeedsGuiError"));
+      return null;
+    }
 
     return startup;
   }
-
-  /* ********************************************************************************************* */
 
   private static void preloadLocale(String[] args) {
     for (var i = 0; i < args.length; i++) {
@@ -559,6 +571,24 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
+  private static RC handleArgLoadLib(Startup startup, Option opt) {
+    final var file = new File(opt.getValue());
+    if (!file.isFile()) {
+      logger.error(S.get("argLoadLibMissingError", file));
+      return RC.ERROR;
+    }
+    if (!file.canRead()) {
+      logger.error(S.get("argLoadLibCannotReadError", file));
+      return RC.ERROR;
+    }
+    if (!Loader.JAR_FILTER.accept(file) && !Loader.LOGISIM_FILTER.accept(file)) {
+      logger.error(S.get("argLoadLibUnsupportedError", file));
+      return RC.ERROR;
+    }
+    startup.librariesToLoad.add(file);
+    return RC.OK;
+  }
+
   private static RC handleArgSave(Startup startup, Option opt) {
     if (startup.saveFile != null) {
       logger.error(S.get("saveMultipleError"));
@@ -570,7 +600,7 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgGates(Startup startup, Option opt) {
-    final var gateShape = opt.getValue().toLowerCase();
+    final var gateShape = opt.getValue().toLowerCase(Locale.ROOT);
     if ("ansi".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;
@@ -810,8 +840,6 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  /* ********************************************************************************************* */
-
   private static boolean trySetLocale(String lang) {
     final var opts = S.getLocaleOptions();
     for (final var locale : opts) {
@@ -848,6 +876,48 @@ public class Startup implements AWTEventListener {
 
   List<File> getFilesToOpen() {
     return filesToOpen;
+  }
+
+  List<File> getLibrariesToLoad() {
+    return librariesToLoad;
+  }
+
+  /**
+   * Returns the library class name declared by the "Library-Class" attribute
+   * in the manifest of the given JAR file.
+   *
+   * @param jarFile JAR file to inspect.
+   *
+   * @return Fully qualified class name, or {@code null} if the JAR cannot be read
+   *     or does not declare a library class.
+   */
+  static String getJarLibraryClassName(File jarFile) {
+    try (final var jar = new JarFile(jarFile)) {
+      final var manifest = jar.getManifest();
+      return (manifest == null) ? null : manifest.getMainAttributes().getValue("Library-Class");
+    } catch (IOException e) {
+      return null;
+    }
+  }
+
+  private void loadCommandLineLibraries(Project proj) {
+    final var loader = proj.getLogisimFile().getLoader();
+    for (final var libFile : librariesToLoad) {
+      final Library lib;
+      if (Loader.JAR_FILTER.accept(libFile)) {
+        final var className = getJarLibraryClassName(libFile);
+        if (className == null) {
+          logger.error(S.get("argLoadLibNoClassError", libFile));
+          continue;
+        }
+        lib = loader.loadJarLibrary(libFile, className);
+      } else {
+        lib = loader.loadLogisimLibrary(libFile);
+      }
+      if (lib != null && !proj.getLogisimFile().getLibraries().contains(lib)) {
+        proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
+      }
+    }
   }
 
   HashMap<String, File> getMemoryLoadFiles() {
@@ -943,6 +1013,22 @@ public class Startup implements AWTEventListener {
 
     Toolkit.getDefaultToolkit()
         .addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
+    // Warm up file choosers in background to avoid first-open delay.
+    final var warmupThread = new Thread(() -> {
+      try {
+        new JFileChooser();
+        if (MacCompatibility.isRunningOnMac()) {
+          final var fd = new java.awt.FileDialog((java.awt.Frame) null);
+          fd.addNotify();
+          fd.dispose();
+        }
+      } catch (Throwable ignored) {
+      }
+    }, "FileChooser-Warmup");
+    warmupThread.setDaemon(true);
+    warmupThread.setPriority(Thread.MIN_PRIORITY);
+    warmupThread.start();
+
     // pre-load the two basic component libraries, just so that the time
     // taken is shown separately in the progress bar.
     if (showSplash) {
@@ -1128,6 +1214,10 @@ public class Startup implements AWTEventListener {
 
     if (proj != null)
       proj.doAction(LogisimFileActions.loadLibraries(defaultLibraries, proj.getLogisimFile()));
+
+    if (proj != null && !librariesToLoad.isEmpty()) {
+      loadCommandLineLibraries(proj);
+    }
 
     for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);

@@ -88,12 +88,12 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var netEnable = Hdl.getNetName(componentInfo, 0, true, nets);
           if (nrOfPins == 1) {
             final var netData = Hdl.getNetName(componentInfo, 1, true, nets);
-            
-            // skip OPEN assignment if any pin is unconnected 
+
+            // skip OPEN assignment if any pin is unconnected
             if (!netData.equals("OPEN") && !netEnable.equals("OPEN")) {
               contents
                   .addVhdlKeywords()
-                  //'Z' instead of (others => 'Z') for 1-bit signals
+                  // 'Z' instead of (others => 'Z') for 1-bit signals
                   .add(
                       "{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} 'Z';",
                       LOCAL_INOUT_BUBBLE_BUS_NAME,
@@ -103,8 +103,8 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
             }
           } else {
             final var busData = Hdl.getBusName(componentInfo, 1, nets);
-            
-            // skip OPEN assignment if any pin is unconnected 
+
+            // skip OPEN assignment if any pin is unconnected
             if (!busData.equals("OPEN") && !netEnable.equals("OPEN")) {
               contents
                   .addVhdlKeywords()

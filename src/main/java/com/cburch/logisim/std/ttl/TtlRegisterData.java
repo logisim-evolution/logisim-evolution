@@ -41,7 +41,7 @@ public class TtlRegisterData extends ClockState implements InstanceData {
   }
 
   public void clear() {
-    Arrays.fill(values, Value.createKnown(values.length, 0));
+    Arrays.fill(values, Value.createKnown(bits, 0));
   }
 
   public void setValue(int i, Value value) {

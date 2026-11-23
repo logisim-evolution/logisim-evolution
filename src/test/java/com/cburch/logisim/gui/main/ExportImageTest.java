@@ -31,7 +31,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.prefs.PreferenceChangeEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -184,10 +183,6 @@ class ExportImageTest {
   }
 
   private static void setPreference(PrefMonitor<Integer> monitor, int value) {
-    final var preferences = AppPreferences.getPrefs();
-    preferences.putInt(monitor.getIdentifier(), value);
-    monitor.preferenceChange(
-        new PreferenceChangeEvent(
-            preferences, monitor.getIdentifier(), Integer.toString(value)));
+    monitor.set(value);
   }
 }

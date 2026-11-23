@@ -20,6 +20,7 @@ import java.awt.Graphics;
  * Model based on https://www.ti.com/product/SN74LS245 datasheet.
  */
 public class Ttl74245 extends AbstractTtlGate {
+
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -32,8 +33,8 @@ public class Ttl74245 extends AbstractTtlGate {
     super(
         _ID,
         (byte) 20,
-        new byte [] { }, // output ports
-        new byte [] { }, // not used ports
+        new byte [] {}, // output ports
+        new byte [] {}, // not used ports
         new byte[] { 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18 }, // inout ports
         new String[] {
           "DIR", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8",

@@ -12,8 +12,10 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.gui.generic.AttrTableModelRow;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.instance.StdAttr;
@@ -31,6 +33,19 @@ class AttrTableComponentModel extends AttributeSetTableModel {
     this.circ = circ;
     this.comp = comp;
     setInstance(comp.getFactory());
+  }
+
+  @Override
+  public int getRowCount() {
+    return super.getRowCount() + (comp instanceof Splitter ? 1 : 0);
+  }
+
+  @Override
+  public AttrTableModelRow getRow(int index) {
+    if (index == super.getRowCount() && comp instanceof Splitter splitter) {
+      return new SplitterDistributionRow(proj, circ, splitter, () -> true);
+    }
+    return super.getRow(index);
   }
 
   public Circuit getCircuit() {

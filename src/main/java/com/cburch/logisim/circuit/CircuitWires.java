@@ -234,7 +234,7 @@ public class CircuitWires {
 
     /** Value this component is driving onto the bus (null for sinks) */
     public Value drivenValue;
-    // todo: maybe also keep point number, or EndData, etc.?
+    // TODO: maybe also keep point number, or EndData, etc.?
 
     BusConnection(Component comp, Location loc) {
       component = comp;
@@ -374,7 +374,7 @@ public class CircuitWires {
           error |= mask;
         }
       }
-      busVal = Value.create_unsafe(width, error, unknown, value);
+      busVal = Value.createUnsafe(width, error, unknown, value);
       dirty = false;
       return busVal;
     }
@@ -1198,7 +1198,7 @@ public class CircuitWires {
 
       final var vb = s.busAt.get(p);
       if (vb == null) {
-        // todo: we could keep track of the affected components here
+        // TODO: we could keep track of the affected components here
       } else if (vb.width <= 0) {
         // point is wired to a bus with invalid width: ignore new value
         // propagate NIL across entire bundle

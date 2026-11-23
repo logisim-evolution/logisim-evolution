@@ -453,6 +453,7 @@
 			<tocitem target="ioex_plarom" text="Programmable Logic Array" image="icon_pla" />
 			<tocitem target="ioex_twowayswitch" text="Two-Way Switch" image="icon_twowayswitch" />
 			<tocitem target="ioex_twopinled" text="2-Pin LED" image="icon_twopinled" />
+			<tocitem target="ioex_ne555" text="NE555" image="icon_ne555" />
 		</tocitem>
 <!-- not documented 
 		<tocitem target="ttl" text="TTL">

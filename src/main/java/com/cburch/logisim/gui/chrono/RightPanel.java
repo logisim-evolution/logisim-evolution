@@ -233,12 +233,12 @@ public class RightPanel extends JPanel {
   }
 
   public void changeSpotlight(Signal oldSignal, Signal newSignal) {
-    if (oldSignal != null) {
+    if (oldSignal != null && oldSignal.idx >= 0 && oldSignal.idx < rows.size()) {
       final var waveform = rows.get(oldSignal.idx);
       waveform.flush();
       repaint(waveform.getBounds());
     }
-    if (newSignal != null) {
+    if (newSignal != null && newSignal.idx >= 0 && newSignal.idx < rows.size()) {
       final var waveform = rows.get(newSignal.idx);
       waveform.flush();
       repaint(waveform.getBounds());
@@ -472,6 +472,16 @@ public class RightPanel extends JPanel {
           fillColor = colors[1];
           lineColor = colors[2];
         }
+
+        if (x1 == x0) {
+          // sub-pixel segment: update state for next transition but don't draw
+          prevHi = hi;
+          prevLo = lo;
+          prevFill = fillColor;
+          if (!cur.advance()) break;
+          continue;
+        }
+
         // __________       _____ __________       ______
         //     \_____\_____/_____X_____/    \_____/
         //    |     |     |     |     |    |     |
@@ -603,10 +613,19 @@ public class RightPanel extends JPanel {
     }
 
     private void createOffscreen() {
-      buf = (BufferedImage) createImage(width, WAVE_HEIGHT);
-      final var g = buf.createGraphics();
+      if (width <= 0 || WAVE_HEIGHT <= 0) {
+        buf = null;
+        return;
+      }
+      final var img = (BufferedImage) createImage(width, WAVE_HEIGHT);
+      if (img == null) {
+        buf = null;
+        return;
+      }
+      final var g = img.createGraphics();
       drawWaveform(g);
       g.dispose();
+      buf = img;
     }
 
     public void paintWaveform(Graphics2D g) {
@@ -614,6 +633,7 @@ public class RightPanel extends JPanel {
         // TODO: reallocating image each time seems silly
         createOffscreen();
       }
+      if (buf == null) return;
       final var y = WAVE_HEIGHT * signal.idx;
       g.drawImage(buf, null, 0, y);
     }
@@ -742,7 +762,8 @@ public class RightPanel extends JPanel {
       final var time0 = model.getStartTime();
       final var timeL = (time0 / divMajor) * divMajor;
       final var h = ChronoPanel.HEADER_HEIGHT - ChronoPanel.GAP;
-      g.setColor(Color.BLACK);
+      // The timeline is filled with the theme background in paintComponent().
+      g.setColor(getForeground());
       g.drawLine(0, height - 2, width, height - 2);
       for (var i = 0; true; i++) {
         final var t = timeL + divMinor * i;

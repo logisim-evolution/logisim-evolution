@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
@@ -43,8 +44,6 @@ public class LineBuffer implements RandomAccess {
   private final Pairs pairs = new Pairs();
 
   private final String SPACE = " ";
-
-  /* ********************************************************************************************* */
 
   protected LineBuffer() {
     super();
@@ -85,7 +84,6 @@ public class LineBuffer implements RandomAccess {
     this();
     pairs.addPairs(pairsToAdd);
   }
-  /* ********************************************************************************************* */
 
   /**
    * Returns instance of LineBuffer with default settings.
@@ -104,8 +102,6 @@ public class LineBuffer implements RandomAccess {
   public static LineBuffer getHdlBuffer() {
     return getBuffer().addHdlPairs();
   }
-
-  /* ********************************************************************************************* */
 
   /**
    * Returns number of content entries stored in buffer.
@@ -144,8 +140,6 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Adds pairs that are always available.
    *
@@ -183,7 +177,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addVhdlKeywords() {
-    for (final var keyword : Vhdl.getVhdlKeywords()) pair(keyword.toLowerCase(), keyword);
+    for (final var keyword : Vhdl.getVhdlKeywords()) pair(keyword.toLowerCase(Locale.ROOT), keyword);
     return this;
   }
 
@@ -218,8 +212,6 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Adds line to the buffer only if line is not present already, formatting it first.
    *
@@ -251,8 +243,6 @@ public class LineBuffer implements RandomAccess {
     if (!contents.contains(line)) add(line, true);
     return this;
   }
-
-  /* ********************************************************************************************* */
 
   /**
    * Adds single line to the content buffer. Will resolve paried placeholders first (but not
@@ -363,8 +353,6 @@ public class LineBuffer implements RandomAccess {
     return add(otherBuffer.get());
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Formats provided fmt string using global pairs.
    *
@@ -408,8 +396,6 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Appends single empty line to the content buffer.
    *
@@ -428,8 +414,6 @@ public class LineBuffer implements RandomAccess {
   public LineBuffer empty(int count) {
     return repeat(count, "");
   }
-
-  /* ********************************************************************************************* */
 
   /**
    * Returns specified line of the content buffer present at index position.
@@ -509,8 +493,6 @@ public class LineBuffer implements RandomAccess {
     return clone;
   }
 
-  /* ********************************************************************************************* */
-
   /** Returns default unit of indentation string. */
   public static String getDefaultIndent() {
     return getIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
@@ -534,8 +516,6 @@ public class LineBuffer implements RandomAccess {
   public static String getIndent(int indentUnits, String indentString) {
     return indentString.repeat(indentUnits);
   }
-
-  /* ********************************************************************************************* */
 
   /**
    * Builds and adds remark block to the contents buffer.
@@ -625,8 +605,6 @@ public class LineBuffer implements RandomAccess {
     return this;
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Formats provided fmt string using provided arguments for positional placeholders.
    *
@@ -662,8 +640,6 @@ public class LineBuffer implements RandomAccess {
     return getHdlBuffer().addVhdlKeywords().add(fmt, args).get(0);
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Emits warning string to stdout.
    *
@@ -694,8 +670,6 @@ public class LineBuffer implements RandomAccess {
   private void abort(String fmt, Object... args) {
     abort(format(fmt, args));
   }
-
-  /* ********************************************************************************************* */
 
   private List<String> placeholders = new ArrayList<>();
   private final List<String> positionalPlaceholders = new ArrayList<>();
@@ -822,8 +796,6 @@ public class LineBuffer implements RandomAccess {
     }
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Extract names of valid placeholders found in provided string.
    *
@@ -850,8 +822,6 @@ public class LineBuffer implements RandomAccess {
     return keys;
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Both objects are equal if their content (and its order) is exatcly the same.
    *
@@ -874,8 +844,6 @@ public class LineBuffer implements RandomAccess {
     return contents.toString();
   }
 
-  /* ********************************************************************************************* */
-
   /**
    * Create new pair and adds it to internal pair contaier.
    *
@@ -887,8 +855,6 @@ public class LineBuffer implements RandomAccess {
     pairs.pair(key, value);
     return this;
   }
-
-  /* ********************************************************************************************* */
 
   /** Container holding all the key-value pairs used by LineBuffer. */
   public static class Pairs implements Cloneable {

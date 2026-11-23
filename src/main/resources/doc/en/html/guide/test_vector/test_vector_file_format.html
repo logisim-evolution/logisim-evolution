@@ -49,11 +49,21 @@ in numeric values. Underscores are ignored during parsing. Examples:
 <code>0x0000_1111</code>, <code>0o1234_5670</code>, <code>1111_0000</code>,
 <code>1_234</code>, or <code>-5_000</code>.</p>
 
-<p>For hex, octal, and binary values, a digit of 'x' specifies four,
-three, or one "don't care" bits. So the value 101xx is a five bit
-binary value, with the last two bits unspecified, and 0x1ax5 is a hex
-value with four unspecified bits.  Such "don't cares" can not be used
-in decimal notation.</p>
+<p>For hex, octal, and binary values, a digit of <code>x</code> represents four
+unknown bits in hexadecimal, three in octal, or one in binary. So the value
+<code>101xx</code> is a five-bit
+binary value with two unknown low-order bits, and <code>0x1ax5</code> is a
+hexadecimal value with four unknown bits. Unknown bits cannot be used in
+decimal notation.</p>
+
+<p>In an input column, these unknown bits are driven into the circuit and
+propagated like any other logic value. They are not wildcards: the test is run
+only once, without trying every possible combination of 0 and 1. In an output
+column, an <code>x</code> accepts 0, 1, or unknown for that bit during comparison,
+but not an error value. To ignore an entire output value regardless of its state,
+use the <code>&lt;DC&gt;</code> value
+described on the <a href="test_vector_special_values.html">Special Values</a>
+page.</p>
 
 <p>
 	<b>Previous:</b> <a href="test_vector_window.html">Test Vector Window</a> | <b>Next:</b> <a href="test_vector_special_values.html">Special Values</a>.
@@ -61,4 +71,3 @@ in decimal notation.</p>
 
 </body>
 </html>
-

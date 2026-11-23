@@ -40,6 +40,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -138,8 +139,11 @@ public class PlaRom extends InstanceFactory {
 
     @Override
     public BitWidth getBitWidth(InstanceState state, Object option) {
-      PlaRomData data = getPlaRomData(state);
-      return BitWidth.create(data.getOutputs());
+      // Clock discovery queries the bit width through an InstanceState that has no
+      // CircuitState, so avoid getPlaRomData(state), which would dereference it. The
+      // output width is carried by ATTR_OUTPUTS, the same attribute that sizes the
+      // output port, so read it directly. See issue #1247.
+      return BitWidth.create(state.getAttributeValue(ATTR_OUTPUTS));
     }
 
     @Override
@@ -206,12 +210,18 @@ public class PlaRom extends InstanceFactory {
     byte inputs = instance.getAttributeValue(ATTR_INPUTS).byteValue();
     byte outputs = instance.getAttributeValue(ATTR_OUTPUTS).byteValue();
     byte and = instance.getAttributeValue(ATTR_AND).byteValue();
+    String contents = instance.getAttributeValue(CONTENTS_ATTR);
     PlaRomData ret = (PlaRomData) instance.getData(state);
-    if (ret == null) {
+    // Another circuit state may have already resized and saved the shared table.
+    // Rebuild from that table instead of resizing this state's stale copy again.
+    if (ret == null
+        || (!Objects.equals(ret.getSavedData(), contents)
+            && (ret.getInputs() != inputs || ret.getOutputs() != outputs || ret.getAnd() != and))) {
       ret = new PlaRomData(inputs, outputs, and);
-      // if new, fill the content with the saved data
-      ret.decodeSavedData(instance.getAttributeValue(CONTENTS_ATTR));
+      ret.decodeSavedData(contents);
       instance.setData(state, ret);
+    } else if (!Objects.equals(ret.getSavedData(), contents)) {
+      ret.decodeSavedData(contents);
     } else if (ret.updateSize(inputs, outputs, and)) {
       // if size updated, update the content attribute, written here because can't
       // access PlaRomData object from instanceAttributeChanged method
@@ -225,12 +235,18 @@ public class PlaRom extends InstanceFactory {
     byte inputs = state.getAttributeValue(ATTR_INPUTS).byteValue();
     byte outputs = state.getAttributeValue(ATTR_OUTPUTS).byteValue();
     byte and = state.getAttributeValue(ATTR_AND).byteValue();
+    String contents = state.getAttributeValue(CONTENTS_ATTR);
     PlaRomData ret = (PlaRomData) state.getData();
-    if (ret == null) {
+    // Another circuit state may have already resized and saved the shared table.
+    // Rebuild from that table instead of resizing this state's stale copy again.
+    if (ret == null
+        || (!Objects.equals(ret.getSavedData(), contents)
+            && (ret.getInputs() != inputs || ret.getOutputs() != outputs || ret.getAnd() != and))) {
       ret = new PlaRomData(inputs, outputs, and);
-      // if new, fill the content with the saved data
-      ret.decodeSavedData(state.getAttributeValue(CONTENTS_ATTR));
+      ret.decodeSavedData(contents);
       state.setData(ret);
+    } else if (!Objects.equals(ret.getSavedData(), contents)) {
+      ret.decodeSavedData(contents);
     } else if (ret.updateSize(inputs, outputs, and)) {
       // if size updated, update the content attribute, written here because can't
       // access PlaRomData object from instanceAttributeChanged method

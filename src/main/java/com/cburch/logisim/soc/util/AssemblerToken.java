@@ -10,6 +10,7 @@
 package com.cburch.logisim.soc.util;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class AssemblerToken {
@@ -68,7 +69,7 @@ public class AssemblerToken {
     this.offset = offset;
     valid = true;
     if (type == HEX_NUMBER) {
-      String[] split = value.toUpperCase().split("X");
+      String[] split = value.toUpperCase(Locale.ROOT).split("X");
       if (split.length != 2) {
         valid = false;
         return;
@@ -129,8 +130,8 @@ public class AssemblerToken {
   public int getNumberValue() {
     if (type == DEC_NUMBER) return Integer.parseInt(value);
     else if (type == HEX_NUMBER) {
-      if (value.toUpperCase().contains("X")) {
-        String[] split = value.toUpperCase().split("X");
+      if (value.toUpperCase(Locale.ROOT).contains("X")) {
+        String[] split = value.toUpperCase(Locale.ROOT).split("X");
         if (split.length != 2) {
           valid = false;
           return 0;
@@ -147,8 +148,8 @@ public class AssemblerToken {
   public long getLongValue() {
     if (type == DEC_NUMBER) return Long.parseLong(value);
     else if (type == HEX_NUMBER) {
-      if (value.toUpperCase().contains("X")) {
-        String[] split = value.toUpperCase().split("X");
+      if (value.toUpperCase(Locale.ROOT).contains("X")) {
+        String[] split = value.toUpperCase(Locale.ROOT).split("X");
         if (split.length != 2) {
           valid = false;
           return 0;

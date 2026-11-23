@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.util.AbstractExecutionUnitWithLabelSupport;
 import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWithLabelSupport {
 
@@ -71,7 +72,7 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
 
   public Nios2ProgramControlInstructions() {
     for (int i = 0; i < AsmOpcodes.length; i++) {
-      Opcodes.add(AsmOpcodes[i].toLowerCase());
+      Opcodes.add(AsmOpcodes[i].toLowerCase(Locale.ROOT));
       OpcCodes.add(AsmOpcs[i]);
       OpxCodes.add(AsmOpxs[i]);
     }
@@ -196,8 +197,8 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
   @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
-    if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
-    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase());
+    if (!Opcodes.contains(instr.getOpcode().toLowerCase(Locale.ROOT))) return false;
+    operation = Opcodes.indexOf(instr.getOpcode().toLowerCase(Locale.ROOT));
     valid = true;
     long pc = instr.getProgramCounter();
     switch (operation) {
@@ -401,7 +402,7 @@ public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWit
 
   @Override
   public int getInstructionSizeInBytes(String instruction) {
-    if (Opcodes.contains(instruction.toLowerCase())) return 4;
+    if (Opcodes.contains(instruction.toLowerCase(Locale.ROOT))) return 4;
     return -1;
   }
 

@@ -125,7 +125,6 @@ public class Vhdl {
           AppPreferences.VhdlKeywordsUpperCase.get()
               ? keyword.toUpperCase(Locale.ROOT)
               : keyword.toLowerCase(Locale.ROOT)); // IMPORTANT!
-      
     }
     return keywords;
   }

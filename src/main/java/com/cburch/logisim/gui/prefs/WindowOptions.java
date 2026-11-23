@@ -22,6 +22,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -43,6 +44,7 @@ class WindowOptions extends OptionsPanel {
   private final PrefBoolean[] checks;
   private final PrefOptionList canvasPlacement;
   private final PrefOptionList toolbarPlacement;
+  private final PrefOptionList circuitOpenZoom;
 
   private final JButton resetWindowLayoutButton;
   private final ColorChooserButton canvasBgColor;
@@ -70,11 +72,14 @@ class WindowOptions extends OptionsPanel {
   private final JLabel zoomLabel;
   private final JTextArea zoomFactorImportant;
   private final JComboBox<String> lookAndFeel;
+  private final PrefBoolean followSystemTheme;
   private final JLabel editorThemeLabel;
   private final JComboBox<String> editorTheme;
   private final JComboBox<String> appFont;
   private final LookAndFeelInfo[] lookAndFeelInfos;
   private int index = 0;
+  // Kept in a field because preference listeners are held weakly.
+  private final PropertyChangeListener lookAndFeelListener = event -> syncLookAndFeel();
 
   private String initialAppFont;
   private String initialLookAndFeel;
@@ -91,9 +96,14 @@ class WindowOptions extends OptionsPanel {
 
     checks =
         new PrefBoolean[] {
+          new PrefBoolean(AppPreferences.UI_ANTIALIASING, S.getter("layoutAntiAliasing")),
+          new PrefBoolean(AppPreferences.USE_HEADER_BAR, S.getter("windowUseHeaderBar")),
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
           new PrefBoolean(
               AppPreferences.SEARCH_DOUBLE_SHIFT, S.getter("windowSearchDoubleShift")),
+          new PrefBoolean(
+              AppPreferences.RECENTER_ON_DOUBLE_MIDDLE_MOUSE,
+              S.getter("windowRecenterOnDoubleMiddleMouse")),
         };
 
     canvasPlacement =
@@ -117,11 +127,24 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
 
+    circuitOpenZoom =
+        new PrefOptionList(
+            AppPreferences.OPEN_CIRCUIT_ZOOM,
+            S.getter("windowCircuitOpenZoom"),
+            new PrefOption[] {
+              new PrefOption(AppPreferences.ZOOM_OPEN_FIT, S.getter("windowCircuitOpenZoomFit")),
+              new PrefOption(
+                  AppPreferences.ZOOM_OPEN_LAST_USED, S.getter("windowCircuitOpenZoomLastUsed"))
+            });
+
     panel.add(canvasPlacement.getJLabel());
     panel.add(canvasPlacement.getJComboBox());
 
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
+
+    panel.add(circuitOpenZoom.getJLabel());
+    panel.add(circuitOpenZoom.getJComboBox());
 
     canvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
     canvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
@@ -196,6 +219,10 @@ class WindowOptions extends OptionsPanel {
       }
     }
 
+    followSystemTheme =
+        new PrefBoolean(AppPreferences.FollowSystemTheme, S.getter("windowFollowSystemTheme"));
+    lookAndFeel.setEnabled(!followSystemTheme.isSelected());
+
     editorTheme = new JComboBox<>();
     editorTheme.addItem("Default");
     editorTheme.addItem("Dark");
@@ -223,6 +250,11 @@ class WindowOptions extends OptionsPanel {
     panel.add(lookfeelLabel);
     panel.add(lookAndFeel);
     lookAndFeel.addActionListener(listener);
+    AppPreferences.LookAndFeel.addPropertyChangeListener(lookAndFeelListener);
+
+    panel.add(new JLabel());
+    panel.add(followSystemTheme);
+    followSystemTheme.addActionListener(listener);
 
     panel.add(editorThemeLabel);
     panel.add(editorTheme);
@@ -255,7 +287,7 @@ class WindowOptions extends OptionsPanel {
     add(panel);
   }
 
-  private void applyLookAndFeelGlobally(String lafClassName) {
+  static void applyLookAndFeelGlobally(String lafClassName) {
     try {
       UIManager.setLookAndFeel(lafClassName);
       for (final var win : Window.getWindows()) {
@@ -275,6 +307,20 @@ class WindowOptions extends OptionsPanel {
         | InstantiationException
         | ClassNotFoundException ignored) {
     }
+  }
+
+  // The look and feel can change without the combo boxes, when following the system theme.
+  private void syncLookAndFeel() {
+    SwingUtilities.invokeLater(() -> {
+      final var current = AppPreferences.LookAndFeel.get();
+      for (var i = 0; i < lookAndFeelInfos.length; i++) {
+        if (lookAndFeelInfos[i].getClassName().equals(current) && i != index) {
+          index = i;
+          lookAndFeel.setSelectedIndex(i);
+        }
+      }
+      updateEditorThemeSelection();
+    });
   }
 
   private void updateEditorThemeSelection() {
@@ -307,8 +353,10 @@ class WindowOptions extends OptionsPanel {
       check.localeChanged();
     }
     toolbarPlacement.localeChanged();
+    circuitOpenZoom.localeChanged();
     zoomLabel.setText(S.get("windowToolbarZoomfactor"));
     lookfeelLabel.setText(S.get("windowToolbarLookandfeel"));
+    followSystemTheme.localeChanged();
     editorThemeLabel.setText(S.get("windowEditorTheme"));
     appFontLabel.setText(S.get("windowAppFont"));
     restartWarning.setText(S.get("windowRestartWarning"));
@@ -347,12 +395,16 @@ class WindowOptions extends OptionsPanel {
         int newIndex = lookAndFeel.getSelectedIndex();
         if (newIndex != index && newIndex >= 0 && newIndex < lookAndFeelInfos.length) {
           index = newIndex;
+          SystemThemeWatcher.remember(lookAndFeelInfos[index].getClassName());
           AppPreferences.LookAndFeel.set(lookAndFeelInfos[index].getClassName());
+          // The theme preference listeners have loaded this theme's colors before this refresh.
           AppPreferences.applyThemeColors();
           applyLookAndFeelGlobally(lookAndFeelInfos[index].getClassName());
           updateEditorThemeSelection();
         }
         checkRestartWarning();
+      } else if (e.getSource().equals(followSystemTheme)) {
+        lookAndFeel.setEnabled(!followSystemTheme.isSelected());
       } else if (e.getSource().equals(editorTheme)) {
         final var selectedIndex = editorTheme.getSelectedIndex();
         if (selectedIndex >= 0 && selectedIndex < AppPreferences.EDITOR_THEMES.length) {
@@ -377,6 +429,7 @@ class WindowOptions extends OptionsPanel {
       } else if (e.getActionCommand().equals(cmdResetGridColors)) {
         //        AppPreferences.resetWindow();
         final var nowOpen = Projects.getOpenProjects();
+        // Reset only the colors stored for the currently selected theme.
         AppPreferences.setDefaultGridColors();
         for (final var proj : nowOpen) {
           proj.getFrame().repaint();

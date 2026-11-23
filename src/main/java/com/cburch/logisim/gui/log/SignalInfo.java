@@ -243,7 +243,13 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     if (log == null) return Value.NIL;
     var cur = root;
     for (var i = 0; i < n - 1; i++) cur = circ[i].getSubcircuitFactory().getSubstate(cur, path[i]);
-    return log.getLogValue(cur, option);
+    final var v = log.getLogValue(cur, option);
+    if (v != null && v.getWidth() > 0 && v.getWidth() != width) {
+      if (!recomputeName() && width != v.getWidth()) {
+        width = v.getWidth();
+      }
+    }
+    return v;
   }
 
   public Component getComponent() {
@@ -256,6 +262,19 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
   public int getDepth() {
     return n;
+  }
+
+  // Package-private accessors for ClockSource dialog label building
+  int getPathLength() {
+    return n;
+  }
+
+  Component getPathComponent(int i) {
+    return (i >= 0 && i < n) ? path[i] : null;
+  }
+
+  Circuit getPathCircuit(int i) {
+    return (i >= 0 && i < n) ? circ[i] : null;
   }
 
   public boolean isInput(Object option) {
@@ -324,7 +343,6 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   public static void paintIcon(Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
     if (comp == null) return;
     if (opt != null) {
-      // todo
       g.setColor(Color.MAGENTA);
       g.fillRect(x + 3, x + 3, 15, 15);
     } else {
