@@ -66,6 +66,7 @@ public class SimOptions extends OptionsPanel {
   private final ColorChooserButton clockFrequencyColor;
   private final JLabel clockFrequencyColorTitle = new JLabel();
   private final ColorChooserButton widthErrorBackgroundColor;
+  private final JLabel colorPresetsTitle = new JLabel();
   private final JComboBox<String> colorPresetsCombo = new JComboBox<>();
   private final JLabel kmap1ColorTitle = new JLabel();
   private final JLabel kmap2ColorTitle = new JLabel();
@@ -316,7 +317,9 @@ public class SimOptions extends OptionsPanel {
 
     gbc.gridx = 0;
     gbc.gridy++;
-    gbc.gridwidth = 4;
+    add(colorPresetsTitle, gbc);
+    gbc.gridx++;
+    gbc.gridwidth = 2;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     colorPresetsCombo.addActionListener(mcol);
     add(colorPresetsCombo, gbc);
@@ -355,6 +358,7 @@ public class SimOptions extends OptionsPanel {
     widthErrorHighlightColorTitle.setText(S.get("simWidthErrorHighlightTitle"));
     widthErrorBackgroundColorTitle.setText(S.get("simWidthErrorBackgroundTitle"));
     clockFrequencyColorTitle.setText(S.get("simClockFrequencyTitle"));
+    colorPresetsTitle.setText(S.get("simPresetTitle"));
     colorPresetsCombo.removeActionListener(mcol);
     colorPresetsCombo.removeAllItems();
     colorPresetsCombo.addItem(S.get("simDefaultColors"));
