@@ -104,19 +104,20 @@ public class RV32imNiosVVendorSpecific implements AssemblerExecutionInterface {
       if (func3 != 2 && func3 != 1) {
         return false;
       }
-      operation = -1;
       final var immValue = RV32imSupport.getImmediateValue(instruction, RV32imSupport.I_TYPE);
-      for (var i = 0; i < AsmOpcodes.length; i++) {
-        if (immValue == AsmBinCodes[i]) {
-          operation = i;
-          break;
+      if (func3 == 1) {
+        if (immValue != AsmBinCodes[fenceIIdx]) {
+          return false;
         }
-      }
-      if (operation == fenceIIdx && func3 != 1) {
-        return false;
-      }
-      if (operation < fenceIIdx && func3 == 1) {
-        return false;
+        operation = fenceIIdx;
+      } else {
+        operation = -1;
+        for (var i = 0; i < AsmOpcodes.length; i++) {
+          if (immValue == AsmBinCodes[i]) {
+            operation = i;
+            break;
+          }
+        }
       }
       if (operation < 0) {
         return false;

@@ -84,7 +84,11 @@ public class IntToFp extends InstanceFactory {
     final var a_val = a.toBigInteger(unsigned);
 
     final var out_val = a.isFullyDefined() ? a_val.doubleValue() : Double.NaN;
-    final var out = Value.createKnown(dataWidthOut, out_val);
+    // Going through a double rounds twice, which can be one step off for inputs wider than 53 bits
+    final var out =
+        a.isFullyDefined() && dataWidthOut.getWidth() == 32
+            ? Value.createKnown(a_val.floatValue())
+            : Value.createKnown(dataWidthOut, out_val);
 
     // propagate them
     final var delay = (dataWidthIn.getWidth() + 2) * PER_DELAY;
