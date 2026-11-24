@@ -703,6 +703,15 @@ public class AppPreferences {
               new String[] {ZOOM_OPEN_FIT, ZOOM_OPEN_LAST_USED},
               ZOOM_OPEN_FIT));
 
+  public static final String EXPLORER_VIEW_LIST = "list";
+  public static final String EXPLORER_VIEW_TILES = "tiles";
+  public static final PrefMonitor<String> EXPLORER_VIEW =
+      create(
+          new PrefMonitorStringOpts(
+              "explorerViewMode",
+              new String[] {EXPLORER_VIEW_LIST, EXPLORER_VIEW_TILES},
+              EXPLORER_VIEW_LIST));
+
   public static final PrefMonitor<Boolean> USE_HEADER_BAR =
       create(new PrefMonitorBoolean("useHeaderBar", true));
 

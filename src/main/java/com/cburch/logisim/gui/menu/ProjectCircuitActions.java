@@ -224,6 +224,23 @@ public class ProjectCircuitActions {
     analyzer.toFront();
   }
 
+  public static boolean canMoveUp(Project proj, Circuit cur) {
+    if (proj == null || cur == null || proj.getLogisimFile() == null) return false;
+    final var tools = proj.getLogisimFile().getTools();
+    final var tool = proj.getLogisimFile().getAddTool(cur);
+    if (tool == null) return false;
+    final var idx = tools.indexOf(tool);
+    return idx > 0;
+  }
+
+  public static boolean canMoveDown(Project proj, Circuit cur) {
+    if (proj == null || cur == null || proj.getLogisimFile() == null) return false;
+    final var tools = proj.getLogisimFile().getTools();
+    final var tool = proj.getLogisimFile().getAddTool(cur);
+    if (tool == null) return false;
+    final var idx = tools.indexOf(tool);
+    return idx >= 0 && idx < tools.size() - 1;
+  }
   public static void doMoveCircuit(Project proj, Circuit cur, int delta) {
     final var tool = proj.getLogisimFile().getAddTool(cur);
     if (tool != null) {
