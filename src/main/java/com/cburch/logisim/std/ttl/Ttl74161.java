@@ -9,9 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import static com.cburch.logisim.data.Value.falseColor;
-import static com.cburch.logisim.data.Value.trueColor;
-
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -19,10 +16,16 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 
 public class Ttl74161 extends AbstractTtlGate {
   /**
@@ -65,6 +68,14 @@ public class Ttl74161 extends AbstractTtlGate {
   };
   private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15};
 
+  /** Counter block. A click on a vertical slice toggles Q0..Q3 from left to right. */
+  private static final int COUNTER_LEFT = 13;
+
+  private static final int COUNTER_TOP = 28;
+  private static final int COUNTER_RIGHT = 137;
+  private static final int COUNTER_BOTTOM = 38;
+  private static final int[] BIT_SPLIT = {13, 44, 75, 106, 137};
+
   public Ttl74161() {
     super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
     super.setInstancePoker(Poker.class);
@@ -80,25 +91,24 @@ public class Ttl74161 extends AbstractTtlGate {
 
     private boolean isInside(InstanceState state, MouseEvent e) {
       final var p = getTranslatedTtlXY(state, e);
-      var inside = false;
-      for (var i = 0; i < 4; i++) {
-        final var dx = p.x - (56 + i * 10);
-        final var dy = p.y - 30;
-        final var d2 = dx * dx + dy * dy;
-        inside |= (d2 < 4 * 4);
-      }
-      return inside;
+      return bitAt(p.x, p.y) >= 0;
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
       final var p = getTranslatedTtlXY(state, e);
-      for (var i = 0; i < 4; i++) {
-        int dx = p.x - (56 + i * 10);
-        int dy = p.y - 30;
-        int d2 = dx * dx + dy * dy;
-        if (d2 < 4 * 4) return 3 - i;
+      final var bit = bitAt(p.x, p.y);
+      return bit < 0 ? 0 : bit;
+    }
+
+    /** Four vertical slices of the counter, one per Q, so a click still toggles that bit. */
+    private static int bitAt(int px, int py) {
+      if (py < COUNTER_TOP || py > COUNTER_BOTTOM) return -1;
+      if (px < COUNTER_LEFT || px > COUNTER_RIGHT) return -1;
+      for (var bit = 0; bit < BIT_SPLIT.length - 1; bit++) {
+        final var right = bit == BIT_SPLIT.length - 2 ? COUNTER_RIGHT : BIT_SPLIT[bit + 1] - 1;
+        if (px <= right) return bit;
       }
-      return 0;
+      return -1;
     }
 
     @Override
@@ -124,31 +134,148 @@ public class Ttl74161 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    final var gfx = (Graphics2D) painter.getGraphics();
+    final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
-    Drawgates.paintPortNames(
-        painter,
-        x,
-        y,
-        height,
-        new String[] {
-          "nClr", "Clk", "A", "B", "C", "D", "EnP", "nLD", "EnT", "Qd", "Qc", "Qb", "Qa", "RC0"
-        });
-    TtlRegisterData data = (TtlRegisterData) painter.getData();
-    drawState(gfx, x, y, height, data);
+    g.setColor(Color.BLACK);
+    drawCounter(g, x, y, height);
   }
 
-  private void drawState(Graphics2D gfx, int x, int y, int height, TtlRegisterData state) {
-    if (state == null) return;
-    final var value = state.getValue().toLongValue();
-    for (var i = 0; i < 4; i++) {
-      final var isSetBitValue = (value & (1 << (3 - i))) != 0;
-      gfx.setColor(isSetBitValue ? trueColor : falseColor);
-      gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
-      gfx.setColor(Color.WHITE);
-      GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
+  /**
+   * One counter. Inputs sit on the bottom, outputs on the top. D and Q are buses. CEP and CET meet
+   * in the enable gate; the carry output and CET meet in the terminal-count gate.
+   */
+  private static void drawCounter(Graphics g, int x, int y, int height) {
+    final var pinTop = y + AbstractTtlGate.PIN_HEIGHT;
+    final var pinBottom = y + height - AbstractTtlGate.PIN_HEIGHT;
+    final var counterLeft = x + COUNTER_LEFT;
+    final var counterTop = y + COUNTER_TOP;
+    final var counterBottom = y + COUNTER_BOTTOM;
+
+    final var previousFont = g.getFont();
+    g.setFont(new Font(Font.DIALOG, Font.PLAIN, 5));
+    g.drawRect(counterLeft, counterTop, COUNTER_RIGHT - COUNTER_LEFT, COUNTER_BOTTOM - COUNTER_TOP);
+    final var counterMidY = (counterTop + counterBottom) / 2;
+    GraphicsUtil.drawText(
+        g, "COUNTER", x + (COUNTER_LEFT + COUNTER_RIGHT) / 2, counterMidY,
+        GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+    g.drawLine(x + 28, counterBottom, x + 30, counterMidY);
+    g.drawLine(x + 32, counterBottom, x + 30, counterMidY);
+    paintAndUp(g, x + 30, y + 11, 9, 10);
+    g.drawRect(x + 114, y + 40, 8, 11);
+    drawGateMark(g, x + 118, y + 45);
+    g.setFont(previousFont);
+
+    g.drawLine(x + 30, y + 11, x + 30, pinTop);
+    g.drawLine(x + 28, y + 20, x + 28, counterTop);
+
+    g.drawLine(x + 32, y + 24, x + 32, y + 20);
+    g.drawLine(x + 32, y + 24, x + 141, y + 24);
+    g.drawLine(x + 130, pinTop, x + 130, y + 24);
+    drawNode(g, x + 130, y + 24);
+    g.drawLine(x + 141, y + 24, x + 141, y + 44);
+    g.drawLine(x + 141, y + 44, x + 122, y + 44);
+
+    // Straight bus out to the far face of the thick end stub. The stub shares that
+    // centre, so the bar covers the joint; a turn cuts the upper half short.
+    bus(g, x + 49.5f, y + 16, x + 111f, y + 16);
+    bus(g, x + 110, y + 16, x + 110, counterTop);
+    g.drawLine(x + 50, pinTop, x + 50, y + 16);
+    g.drawLine(x + 70, pinTop, x + 70, y + 16);
+    g.drawLine(x + 90, pinTop, x + 90, y + 16);
+    g.drawLine(x + 110, pinTop, x + 110, y + 16);
+
+    busPath(
+        g,
+        new float[] {x + 49.5f, x + 69, x + 69},
+        new float[] {y + 48, y + 48, counterBottom});
+    bus(g, x + 69, y + 48, x + 110.5f, y + 48);
+    g.drawLine(x + 50, pinBottom, x + 50, y + 48);
+    g.drawLine(x + 70, pinBottom, x + 70, y + 48);
+    g.drawLine(x + 90, pinBottom, x + 90, y + 48);
+    g.drawLine(x + 110, pinBottom, x + 110, y + 48);
+
+    g.drawOval(x + 16, counterBottom, 2, 2);
+    g.drawLine(x + 10, pinBottom, x + 10, y + 48);
+    g.drawLine(x + 10, y + 48, x + 17, y + 48);
+    g.drawLine(x + 17, y + 48, x + 17, y + 40);
+
+    g.drawLine(x + 30, pinBottom, x + 30, counterBottom);
+
+    g.drawOval(x + 131, counterBottom, 2, 2);
+    g.drawLine(x + 150, pinTop, x + 150, y + 42);
+    g.drawLine(x + 150, y + 42, x + 132, y + 42);
+    g.drawLine(x + 132, y + 42, x + 132, y + 40);
+
+    g.drawLine(x + 114, y + 45, x + 99, y + 45);
+    g.drawLine(x + 99, y + 45, x + 99, counterBottom);
+    g.drawLine(x + 130, pinBottom, x + 130, y + 48);
+    g.drawLine(x + 130, y + 48, x + 122, y + 48);
+  }
+
+  /** Thick bus. The butt end sits half a pixel outside the outermost tap. */
+  private static void busPath(Graphics g, float[] xs, float[] ys) {
+    if (!(g instanceof Graphics2D g2) || xs.length == 0) {
+      for (var i = 1; i < xs.length; i++) {
+        g.drawLine(Math.round(xs[i - 1]), Math.round(ys[i - 1]), Math.round(xs[i]), Math.round(ys[i]));
+      }
+      return;
     }
-    gfx.setColor(Color.BLACK);
+    final var previous = g2.getStroke();
+    g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+    final var path = new Path2D.Float();
+    path.moveTo(xs[0], ys[0]);
+    for (var i = 1; i < xs.length; i++) {
+      path.lineTo(xs[i], ys[i]);
+    }
+    g2.draw(path);
+    g2.setStroke(previous);
+  }
+
+  /** Thick bus. The butt end sits half a pixel outside the outermost tap. */
+  private static void bus(Graphics g, float x1, float y1, float x2, float y2) {
+    if (!(g instanceof Graphics2D g2)) {
+      g.drawLine(Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2));
+      return;
+    }
+    final var previous = g2.getStroke();
+    g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+    g2.draw(new Line2D.Float(x1, y1, x2, y2));
+    g2.setStroke(previous);
+  }
+
+  /** AND with the output on top. A label that does not fit becomes the arc form. */
+  private static void paintAndUp(Graphics g, int outX, int outY, int depth, int span) {
+    final var left = outX - span / 2;
+    if (rectangularGates() && gateMarkFits(g, span, depth)) {
+      g.drawRect(left, outY, span, depth);
+      drawGateMark(g, outX, outY + depth / 2);
+      return;
+    }
+    final var radius = depth / 2;
+    GraphicsUtil.drawCenteredArc(g, outX, outY + radius, radius, 0, 180);
+    final var back = outY + depth;
+    g.drawLine(outX - radius, outY + radius, left, back);
+    g.drawLine(outX + radius, outY + radius, left + span, back);
+    g.drawLine(left, back, left + span, back);
+  }
+
+  private static boolean rectangularGates() {
+    return AppPreferences.SHAPE_RECTANGULAR.equals(AppPreferences.GATE_SHAPE.get());
+  }
+
+  private static boolean gateMarkFits(Graphics g, int width, int height) {
+    final var bounds =
+        GraphicsUtil.getTextBounds(
+            g, "&", 0, 0, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+    return bounds.width < width && bounds.height < height;
+  }
+
+  private static void drawGateMark(Graphics g, int cx, int cy) {
+    GraphicsUtil.drawText(g, "&", cx, cy, GraphicsUtil.H_CENTER, GraphicsUtil.V_CENTER_OVERALL);
+  }
+
+  private static void drawNode(Graphics g, int x, int y) {
+    g.fillOval(x - 1, y - 1, 2, 2);
   }
 
   public static void updateState(InstanceState state, Long value) {
