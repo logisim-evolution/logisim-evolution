@@ -155,7 +155,7 @@ public class ToolboxModel implements ProjectListener, LibraryListener, PropertyC
     for (final var tool : file.getTools()) {
       if (tool instanceof AddTool addTool) {
         final var factory = addTool.getFactory(false);
-        if (factory instanceof SubcircuitFactory) {
+        if (factory instanceof SubcircuitFactory || factory instanceof VhdlEntity) {
           result.add(addTool);
         }
       }

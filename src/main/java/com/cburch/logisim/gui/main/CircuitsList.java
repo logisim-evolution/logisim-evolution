@@ -26,6 +26,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
@@ -33,6 +35,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -57,6 +61,7 @@ public class CircuitsList extends JPanel implements ToolboxModel.Listener {
   private final JPanel headerBox;
   private final JLabel headerLabel;
   private final JPanel itemsPanel;
+  private final JScrollPane scrollPane;
   private Tool hoveredTool = null;
   private volatile SimStatus currentSimStatus = SimStatus.IDLE;
 
@@ -85,7 +90,25 @@ public class CircuitsList extends JPanel implements ToolboxModel.Listener {
     itemsPanel.setOpaque(false);
     itemsPanel.setBorder(BorderFactory.createEmptyBorder(2, 6, 6, 6));
 
-    add(itemsPanel, BorderLayout.CENTER);
+    scrollPane = new JScrollPane(itemsPanel);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    scrollPane.setOpaque(false);
+    scrollPane.getViewport().setOpaque(false);
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    scrollPane.putClientProperty("JScrollPane.smoothScrolling", true);
+
+    add(scrollPane, BorderLayout.CENTER);
+
+    addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        final var circuits = model != null ? model.getCircuits() : null;
+        if (circuits != null && circuits.size() > 5) {
+          revalidate();
+        }
+      }
+    });
 
     updateBorder();
     model.addListener(this);
@@ -166,6 +189,39 @@ public class CircuitsList extends JPanel implements ToolboxModel.Listener {
   }
 
   @Override
+  public Dimension getPreferredSize() {
+    final var superSize = super.getPreferredSize();
+    final var circuits = model != null ? model.getCircuits() : null;
+    final int count = circuits != null ? circuits.size() : 0;
+
+    final int headerH = headerBox != null ? headerBox.getPreferredSize().height : AppPreferences.getScaled(26);
+    final int rowH = AppPreferences.getScaled(24);
+    final int spacing = AppPreferences.getScaled(2);
+    final int padding = AppPreferences.getScaled(10);
+    final int triggerCount = 5;
+
+    int computedH;
+    if (count <= triggerCount) {
+      computedH = headerH + count * (rowH + spacing) + padding;
+    } else {
+      final int baseH = headerH + triggerCount * (rowH + spacing) + padding;
+      final double extraLog = AppPreferences.getScaled(22) * Math.log(1.0 + (count - triggerCount));
+
+      // Viewport-relative ceiling: allocate up to 40% of parent height (if not, fallback to scaled 230)
+      final var parent = getParent();
+      final int parentH = (parent != null && parent.getHeight() > 0)
+          ? parent.getHeight()
+          : (getRootPane() != null ? (int) (getRootPane().getHeight() * 0.5) : 0);
+      final int maxCap = (parentH > 0)
+          ? Math.max(baseH, (int) (parentH * 0.40))
+          : AppPreferences.getScaled(230);
+
+      computedH = (int) Math.min(baseH + extraLog, maxCap);
+    }
+    return new Dimension(superSize.width, computedH);
+  }
+
+  @Override
   public void updateUI() {
     super.updateUI();
     updateBorder();
@@ -185,6 +241,14 @@ public class CircuitsList extends JPanel implements ToolboxModel.Listener {
     for (final var tool : circuits) {
       itemsPanel.add(new CircuitRow(tool));
       itemsPanel.add(Box.createVerticalStrut(AppPreferences.getScaled(2)));
+    }
+
+    final int triggerCount = 5;
+    if (scrollPane != null) {
+      scrollPane.setVerticalScrollBarPolicy(
+          circuits.size() > triggerCount
+              ? ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+              : ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     }
 
     revalidate();
