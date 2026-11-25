@@ -310,7 +310,10 @@ public class CircuitsList extends JPanel implements ToolboxModel.Listener {
 
       final var isActive = model.isCircuitActive(tool);
       final var isArmed = (model.getArmedTool() == tool);
-      icon = new CircuitGlyphIcon(isActive, AppPreferences.getScaled(16));
+      final var fact = tool.getFactory(false);
+      final boolean isVhdl = fact instanceof VhdlEntity;
+      final String name = tool.getDisplayName();
+      icon = new CircuitGlyphIcon(isActive, isVhdl, name, AppPreferences.getScaled(20));
 
       label = new JLabel(tool.getDisplayName(), icon, SwingConstants.LEFT) {
         @Override

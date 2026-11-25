@@ -467,7 +467,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
         if (isCircuit) {
           isCurrentCircuit = viewed;
-          CircuitGlyphIcon circIcon = new CircuitGlyphIcon(viewed);
+          final var fact = ((AddTool) tool).getFactory(false);
+          final boolean isVhdl = fact instanceof VhdlEntity;
+          CircuitGlyphIcon circIcon = new CircuitGlyphIcon(
+              viewed, isVhdl, tool.getDisplayName(), AppPreferences.getScaled(20));
           if (viewed) {
             circIcon.setColor(accent);
             label.setForeground(selected ? Color.WHITE : accent);

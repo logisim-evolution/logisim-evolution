@@ -227,7 +227,10 @@ public class TileGrid extends JPanel implements ToolboxModel.Listener {
       if (tool instanceof AddTool addTool && addTool.getFactory(false) instanceof SubcircuitFactory sub) {
         final var circ = sub.getSubcircuit();
         boolean isViewed = (circ != null && model.getCurrentCircuit() == circ);
-        icon = new CircuitGlyphIcon(isViewed, AppPreferences.getScaled(36));
+        icon = new CircuitGlyphIcon(isViewed, false, tool.getDisplayName(), AppPreferences.getScaled(40));
+      } else if (tool instanceof AddTool addTool && addTool.getFactory(false) instanceof VhdlEntity) {
+        boolean isViewed = model.isCircuitActive(addTool);
+        icon = new CircuitGlyphIcon(isViewed, true, tool.getDisplayName(), AppPreferences.getScaled(40));
       } else {
         icon = ComponentGlyphCache.getIcon(tool, AppPreferences.getScaled(40));
       }
