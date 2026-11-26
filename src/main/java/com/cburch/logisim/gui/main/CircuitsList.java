@@ -303,6 +303,7 @@ public class CircuitsList extends JPanel implements ToolboxModel.Listener {
       super(new BorderLayout());
       this.tool = tool;
       setOpaque(false);
+      setToolTipText(tool.getDescription());
 
       final var rowH = AppPreferences.getScaled(24);
       setPreferredSize(new Dimension(-1, rowH));
