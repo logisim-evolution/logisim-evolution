@@ -66,8 +66,8 @@ public class SimOptions extends OptionsPanel {
   private final ColorChooserButton clockFrequencyColor;
   private final JLabel clockFrequencyColorTitle = new JLabel();
   private final ColorChooserButton widthErrorBackgroundColor;
-  private final JButton defaultButton = new JButton();
-  private final JButton colorBlindButton = new JButton();
+  private final JLabel colorPresetsTitle = new JLabel();
+  private final JComboBox<String> colorPresetsCombo = new JComboBox<>();
   private final JLabel kmap1ColorTitle = new JLabel();
   private final JLabel kmap2ColorTitle = new JLabel();
   private final JLabel kmap3ColorTitle = new JLabel();
@@ -317,14 +317,14 @@ public class SimOptions extends OptionsPanel {
 
     gbc.gridx = 0;
     gbc.gridy++;
+    add(colorPresetsTitle, gbc);
+    gbc.gridx++;
     gbc.gridwidth = 2;
-    defaultButton.setActionCommand("default");
-    defaultButton.addActionListener(mcol);
-    add(defaultButton, gbc);
-    gbc.gridx += 2;
-    colorBlindButton.setActionCommand("colorblind");
-    colorBlindButton.addActionListener(mcol);
-    add(colorBlindButton, gbc);
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    colorPresetsCombo.addActionListener(mcol);
+    add(colorPresetsCombo, gbc);
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.gridwidth = 1;
 
     localeChanged();
   }
@@ -358,8 +358,12 @@ public class SimOptions extends OptionsPanel {
     widthErrorHighlightColorTitle.setText(S.get("simWidthErrorHighlightTitle"));
     widthErrorBackgroundColorTitle.setText(S.get("simWidthErrorBackgroundTitle"));
     clockFrequencyColorTitle.setText(S.get("simClockFrequencyTitle"));
-    defaultButton.setText(S.get("simDefaultColors"));
-    colorBlindButton.setText(S.get("simColorBlindColors"));
+    colorPresetsTitle.setText(S.get("simPresetTitle"));
+    colorPresetsCombo.removeActionListener(mcol);
+    colorPresetsCombo.removeAllItems();
+    colorPresetsCombo.addItem(S.get("simDefaultColors"));
+    colorPresetsCombo.addItem(S.get("simColorBlindColors"));
+    colorPresetsCombo.addActionListener(mcol);
     kmap1ColorTitle.setText(S.get("simKmapColors", 1));
     kmap2ColorTitle.setText(S.get("simKmapColors", 2));
     kmap3ColorTitle.setText(S.get("simKmapColors", 3));
@@ -380,18 +384,7 @@ public class SimOptions extends OptionsPanel {
   }
 
   private void setDefaults() {
-    AppPreferences.TRUE_COLOR.set(AppPreferences.DEFAULT_TRUE_COLOR);
-    AppPreferences.FALSE_COLOR.set(AppPreferences.DEFAULT_FALSE_COLOR);
-    AppPreferences.UNKNOWN_COLOR.set(AppPreferences.DEFAULT_UNKNOWN_COLOR);
-    AppPreferences.ERROR_COLOR.set(AppPreferences.DEFAULT_ERROR_COLOR);
-    AppPreferences.NIL_COLOR.set(AppPreferences.DEFAULT_NIL_COLOR);
-    AppPreferences.BUS_COLOR.set(AppPreferences.DEFAULT_BUS_COLOR);
-    AppPreferences.STROKE_COLOR.set(AppPreferences.DEFAULT_STROKE_COLOR);
-    AppPreferences.WIDTH_ERROR_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_COLOR);
-    AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_CAPTION_COLOR);
-    AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_HIGHLIGHT_COLOR);
-    AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(AppPreferences.DEFAULT_WIDTH_ERROR_BACKGROUND_COLOR);
-    AppPreferences.CLOCK_FREQUENCY_COLOR.set(AppPreferences.DEFAULT_CLOCK_FREQUENCY_COLOR);
+    AppPreferences.resetSimulationColors();
     AppPreferences.KMAP1_COLOR.set(0x810000);
     AppPreferences.KMAP2_COLOR.set(0xE7194B);
     AppPreferences.KMAP3_COLOR.set(0xFABEBF);
@@ -408,16 +401,18 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.KMAP14_COLOR.set(0xE7BEFF);
     AppPreferences.KMAP15_COLOR.set(0xAAFFC4);
     AppPreferences.KMAP16_COLOR.set(0xF032E7);
+    for (final var proj : Projects.getOpenProjects()) proj.getFrame().repaint();
     repaint();
   }
 
   private void setColorBlind() {
+    final var isDark = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
     AppPreferences.TRUE_COLOR.set(0xF4EB42);
     AppPreferences.FALSE_COLOR.set(0x203BE8);
     AppPreferences.UNKNOWN_COLOR.set(0x01BC9D);
     AppPreferences.ERROR_COLOR.set(0x00C10000);
     AppPreferences.NIL_COLOR.set(0x818181);
-    AppPreferences.BUS_COLOR.set(1);
+    AppPreferences.BUS_COLOR.set(isDark ? AppPreferences.DARK_BUS_COLOR : 1);
     AppPreferences.STROKE_COLOR.set(0xBBBBBB);
     AppPreferences.WIDTH_ERROR_COLOR.set(0xC413DB);
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
@@ -440,6 +435,8 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.KMAP14_COLOR.set(0xFFFF6D);
     AppPreferences.KMAP15_COLOR.set(0x009292);
     AppPreferences.KMAP16_COLOR.set(0xFFB677);
+    AppPreferences.applyThemeColors();
+    for (final var proj : Projects.getOpenProjects()) proj.getFrame().repaint();
     repaint();
   }
 
@@ -513,9 +510,10 @@ public class SimOptions extends OptionsPanel {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      if (e.getActionCommand().equals("default")) {
+      final var idx = colorPresetsCombo.getSelectedIndex();
+      if (idx == 0) {
         setDefaults();
-      } else if (e.getActionCommand().equals("colorblind")) {
+      } else if (idx == 1) {
         setColorBlind();
       }
     }
