@@ -245,10 +245,12 @@ public class TileGrid extends JPanel implements ToolboxModel.Listener {
       textPanel.setOpaque(false);
       textPanel.setBorder(BorderFactory.createEmptyBorder(0, 4, AppPreferences.getScaled(6), 4));
 
-      final var isArmed = (model.getArmedTool() == tool);
-      Color fgMain = isArmed
-          ? Color.WHITE
-          : (AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? new Color(230, 232, 235) : new Color(31, 30, 29));
+      Color fgMain = UIManager.getColor("Label.foreground");
+      if (fgMain == null) {
+        fgMain = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get())
+            ? new Color(230, 232, 235)
+            : new Color(31, 30, 29);
+      }
 
       final var sq = model.getSearchQuery();
       String rawName = tool.getDisplayName();
