@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+
+* v5.1.0 (2026-11-26)
   * Fixed multi-bit buses turning black with dark themes when selecting simulation color presets,
     and replaced the preset buttons with a dropdown in Simulation Preferences(@friendsgamingyt611-sys).
   * Fixed the Unified Header Bar not displaying or listing VHDL entities (@friendsgamingyt611-sys).
