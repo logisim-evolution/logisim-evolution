@@ -33,6 +33,8 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -366,8 +368,14 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   public void updateTitle() {
     if (circuitPickerButton == null || project == null)
       return;
-    Circuit current = project.getCurrentCircuit();
-    String name = (current != null) ? current.getName() : "main";
+    HdlModel hdl = project.getCurrentHdl();
+    String name;
+    if (hdl != null) {
+      name = hdl.getName();
+    } else {
+      Circuit current = project.getCurrentCircuit();
+      name = (current != null) ? current.getName() : "main";
+    }
     circuitPickerButton.setText(name);
     circuitPickerButton.repaint();
   }
@@ -448,13 +456,26 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   // ---------------------------------------------------------------------------
   private void showCircuitMenu(JButton parent) {
     JPopupMenu menu = new JPopupMenu();
+    HdlModel currentHdl = project.getCurrentHdl();
     for (Circuit c : project.getLogisimFile().getCircuits()) {
       JMenuItem item = new JMenuItem(c.getName());
-      if (c == project.getCurrentCircuit()) {
+      if (currentHdl == null && c == project.getCurrentCircuit()) {
         item.setFont(item.getFont().deriveFont(Font.BOLD));
       }
       item.addActionListener(e -> project.setCurrentCircuit(c));
       menu.add(item);
+    }
+    final var vhdlList = project.getLogisimFile().getVhdlContents();
+    if (!vhdlList.isEmpty()) {
+      menu.add(new JSeparator());
+      for (VhdlContent vhdl : vhdlList) {
+        JMenuItem item = new JMenuItem(vhdl.getName());
+        if (vhdl == currentHdl) {
+          item.setFont(item.getFont().deriveFont(Font.BOLD));
+        }
+        item.addActionListener(e -> project.setCurrentHdlModel(vhdl));
+        menu.add(item);
+      }
     }
     menu.show(parent, 0, parent.getHeight() + 2);
   }
