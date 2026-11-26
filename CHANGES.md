@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed the Unified Header Bar not displaying or listing VHDL entities (@friendsgamingyt611-sys).
   * Fixed the Int to FP component rounding some integers wider than 53 bits one step wrong when
     converting them to 32 bit floats (@emincan2000).
   * Drew the internal logic diagram of TTL 74161 (@Vadimatorik).
