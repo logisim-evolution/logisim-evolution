@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseTreeModelListenerContract;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -23,6 +24,7 @@ import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.ColorUtil;
+import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringUtil;
@@ -66,6 +68,8 @@ import javax.swing.tree.TreeSelectionModel;
  */
 public class ProjectExplorer extends JTree implements LocaleListener {
   public static final Color MAGNIFYING_INTERIOR = ColorUtil.MAGNIFYING_INTERIOR;
+  public static final String CURRENT_VIEW_SUFFIX_UNICODE = "●";
+  public static final String CURRENT_VIEW_SUFFIX = "·";
   private static final long serialVersionUID = 1L;
 
   private final Project proj;
@@ -287,57 +291,50 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         boolean hasFocus) {
       java.awt.Component ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
       final var plainFont = AppPreferences.getScaledFont(ret.getFont());
-      final var boldFont = new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize());
       ret.setFont(plainFont);
       if (ret instanceof JComponent comp) {
         comp.setToolTipText(null);
-      }
-      if (value instanceof ProjectExplorerToolNode toolNode) {
-        final var tool = toolNode.getValue();
-        if (ret instanceof JLabel label) {
-          var viewed = false;
-          if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
-            Circuit circ = null;
-            VhdlContent vhdl = null;
-            final var fact = ((AddTool) tool).getFactory(false);
-            if (fact instanceof SubcircuitFactory sub) {
-              circ = sub.getSubcircuit();
-            } else if (fact instanceof VhdlEntity vhdlEntity) {
-              vhdl = vhdlEntity.getContent();
+        if (comp instanceof JLabel label) {
+          if (value instanceof ProjectExplorerToolNode toolNode) {
+            final var tool = toolNode.getValue();
+            var viewed = false;
+            if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
+              Circuit circ = null;
+              VhdlContent vhdl = null;
+              final var fact = ((AddTool) tool).getFactory(false);
+              if (fact instanceof SubcircuitFactory sub) {
+                circ = sub.getSubcircuit();
+              } else if (fact instanceof VhdlEntity vhdlEntity) {
+                vhdl = vhdlEntity.getContent();
+              }
+              viewed =
+                  (proj.getFrame().getHdlEditorView() == null)
+                      ? (circ != null && circ == proj.getCurrentCircuit())
+                      : (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
             }
-            viewed =
-                (proj.getFrame().getHdlEditorView() == null)
-                    ? (circ != null && circ == proj.getCurrentCircuit())
-                    : (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
-          }
-          label.setFont(viewed ? boldFont : plainFont);
-          label.setText(
-              highlightFilterMatches(
-                  viewed ? tool.getDisplayName() + " ●" : tool.getDisplayName(), selected));
-          label.setIcon(new ToolIcon(tool));
-          label.setToolTipText(tool.getDescription());
+            final var font = viewed ? new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize()) : plainFont;
+            label.setFont(font);
+            label.setText(
+                highlightFilterMatches(
+                    viewed ? tool.getDisplayName() + " " + FontUtil.getDisplayableString(font, CURRENT_VIEW_SUFFIX_UNICODE, CURRENT_VIEW_SUFFIX) : tool.getDisplayName(), selected));
+            label.setIcon(new ToolIcon(tool));
+            label.setToolTipText(tool.getDescription());
 
-          if (viewed) {
-            label.setForeground(ColorUtil.getThemeAccentColor());
-          } else {
-            label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
-          }
-        }
-      } else if (value instanceof ProjectExplorerLibraryNode libNode) {
-        final var lib = libNode.getValue();
+            if (viewed) {
+              label.setForeground(ColorUtil.getThemeAccentColor());
+            } else {
+              label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
+            }
+          } else if (value instanceof ProjectExplorerLibraryNode libNode) {
+            final var lib = libNode.getValue();
+            var text = "";
+            if (lib.isDirty()) {
+              text = FontUtil.getDisplayableString(plainFont, Main.DIRTY_MARKER_UNICODE, Main.DIRTY_MARKER) + " ";
+            }
+            text += lib.getDisplayName();
 
-        if (ret instanceof JLabel) {
-          final var baseName = lib.getDisplayName();
-          var text = baseName;
-          if (lib.isDirty()) {
-            // TODO: Would be nice to use DIRTY_MARKER here instead of "*" but it does not render
-            // corectly in project tree, font seem to have the character as frame title is fine.
-            // Needs to figure out what is different (java fonts?). Keep "*" unless bug is resolved.
-            final var DIRTY_MARKER_LOCAL = "*"; // useless var for easy DIRTY_MARKER hunt in future.
-            text = DIRTY_MARKER_LOCAL + baseName;
+            label.setText(highlightFilterMatches(text, selected));
           }
-
-          ((JLabel) ret).setText(highlightFilterMatches(text, selected));
         }
       }
       return ret;

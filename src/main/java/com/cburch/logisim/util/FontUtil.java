@@ -38,4 +38,8 @@ public final class FontUtil {
       default -> "??";
     };
   }
+
+  public static String getDisplayableString(Font font, String unicode, String fallback) {
+    return font.canDisplayUpTo(unicode) == -1 ? unicode : fallback;
+  }
 }

@@ -46,6 +46,7 @@ import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
@@ -88,6 +89,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -608,7 +610,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     final var title = new StringBuilder();
 
     title
-        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + " ") : "")
+        .append((project.isFileDirty()) ? FontUtil.getDisplayableString(UIManager.getFont("Label.font"), Main.DIRTY_MARKER_UNICODE, Main.DIRTY_MARKER) + " " : "")
         .append(
             (circuit != null)
                 ? S.get("titleCircFileKnown", circuit.getName(), name)
