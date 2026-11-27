@@ -54,14 +54,14 @@ class Measures {
     }
 
     // compute character sizes
-    FontMetrics fm = g == null ? null : g.getFontMetrics(hex.getFont());
+    final var font = hex.getFont();
+    final var fm = g != null ? g.getFontMetrics(font) : (font != null ? hex.getFontMetrics(font) : null);
     int charWidth;
     int spaceWidth;
     int lineHeight;
     if (fm == null) {
       charWidth = 8;
       spaceWidth = 6;
-      final var font = hex.getFont();
       lineHeight = (font == null) ? 16 : font.getSize();
     } else {
       guessed = false;
