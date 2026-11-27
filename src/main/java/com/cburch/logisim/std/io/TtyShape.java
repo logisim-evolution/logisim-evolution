@@ -36,16 +36,17 @@ public class TtyShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
+    final var attrs = path.leaf().getAttributeSet();
+    final var rows = Tty.resolveRowCount(attrs);
+    final var cols = Tty.resolveColumnCount(attrs);
+    final var font = attrs.getValue(Tty.ATTR_FONT);
+
+    // Follow the referenced TTY component's rows, columns, and content font, even while editing an
+    // appearance without active simulation data.
+    final var layout = Tty.computeBounds(bounds.getX(), bounds.getY(), rows, cols, font);
+    setBounds(layout.getWidth(), layout.getHeight());
+
     final var data = state == null ? null : (TtyState) getData(state);
-    if (data != null) {
-      final var rows = data.getNrRows();
-      final var cols = data.getNrCols();
-      var width = 2 * Tty.BORDER + cols * Tty.COL_WIDTH;
-      if (width < 30) width = 30;
-      var height = 2 * Tty.BORDER + rows * Tty.ROW_HEIGHT;
-      if (height < 30) height = 30;
-      setBounds(width, height);
-    }
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.YELLOW);
     g.fillRoundRect(
@@ -64,18 +65,19 @@ public class TtyShape extends DynamicElement {
         2 * Tty.BORDER,
         2 * Tty.BORDER);
     if (data != null) {
-      final var rows = data.getNrRows();
-      final var rowData = new String[rows];
+      final var dataRows = data.getNrRows();
+      final var rowData = new String[dataRows];
       synchronized (data) {
-        for (var i = 0; i < rows; i++) rowData[i] = data.getRowString(i);
+        for (var i = 0; i < dataRows; i++) rowData[i] = data.getRowString(i);
       }
-      g.setFont(Tty.DEFAULT_FONT);
+      g.setFont(font);
       final var fm = g.getFontMetrics();
+      final var rowHeight = Tty.getRowHeight(fm);
       final var x = bounds.getX() + Tty.BORDER;
-      var y = bounds.getY() + Tty.BORDER + (Tty.ROW_HEIGHT + fm.getAscent()) / 2;
-      for (var i = 0; i < rows; i++) {
+      var y = bounds.getY() + Tty.BORDER + (rowHeight + fm.getAscent()) / 2;
+      for (var i = 0; i < dataRows; i++) {
         g.drawString(rowData[i], x, y);
-        y += Tty.ROW_HEIGHT;
+        y += rowHeight;
       }
     }
   }

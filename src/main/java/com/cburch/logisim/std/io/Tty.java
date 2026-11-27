@@ -31,6 +31,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 
 public class Tty extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -63,11 +64,77 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
   private static final Color DEFAULT_BACKGROUND = new Color(0, 0, 0, 64);
   public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 11);
 
-  private static final Attribute<Integer> ATTR_COLUMNS =
+  public static final Attribute<Font> ATTR_FONT =
+      Attributes.forFont("font", S.getter("ttyFontAttr"));
+
+  static final Attribute<Integer> ATTR_COLUMNS =
       Attributes.forIntegerRange("cols", S.getter("ttyColsAttr"), 1, 120);
 
-  private static final Attribute<Integer> ATTR_ROWS =
+  static final Attribute<Integer> ATTR_ROWS =
       Attributes.forIntegerRange("rows", S.getter("ttyRowsAttr"), 1, 48);
+
+  /** Resolves the clamped row count from an attribute set, applying the legacy fallback. */
+  static int resolveRowCount(AttributeSet attrs) {
+    return getRowCount(attrs.getValue(ATTR_ROWS));
+  }
+
+  /** Resolves the clamped column count from an attribute set, applying the legacy fallback. */
+  static int resolveColumnCount(AttributeSet attrs) {
+    return getColumnCount(attrs.getValue(ATTR_COLUMNS));
+  }
+
+  /**
+   * Width of a single terminal column for the given font.
+   *
+   * <p>The TTY input is 7-bit and {@link TtyState} ignores ISO control characters, so a column is
+   * sized conservatively from the widest advance among the printable ASCII characters (32 through
+   * 126). This avoids assuming {@code 'W'} is widest or that the selected font is monospaced, which
+   * keeps the contents from overflowing the component shape.
+   */
+  public static int getColWidth(FontMetrics fm) {
+    var colWidth = 0;
+    for (var c = 32; c <= 126; c++) {
+      final var advance = fm.charWidth(c);
+      if (advance > colWidth) colWidth = advance;
+    }
+    if (colWidth <= 0) colWidth = COL_WIDTH;
+    return colWidth;
+  }
+
+  /**
+   * Height of a single terminal row for the given font.
+   *
+   * <p>The legacy layout used a fixed {@link #ROW_HEIGHT} for the default font. To preserve that
+   * footprint for existing circuits while still preventing overflow with larger fonts, the row
+   * height is scaled by the ratio of the font's height to the default font's height and floored at
+   * {@link #ROW_HEIGHT}. The default font therefore reproduces exactly the historical row height.
+   */
+  public static int getRowHeight(FontMetrics fm) {
+    final var defaultHeight = getFontMetrics(DEFAULT_FONT).getHeight();
+    if (defaultHeight <= 0) return Math.max(ROW_HEIGHT, fm.getHeight());
+    final var scaled = (int) Math.round((double) ROW_HEIGHT * fm.getHeight() / defaultHeight);
+    return Math.max(ROW_HEIGHT, scaled);
+  }
+
+  /** Shared, font-aware component/shape bounds so ordinary and dynamic layouts agree. */
+  public static Bounds computeBounds(int x, int y, int rows, int cols, Font font) {
+    final var fm = getFontMetrics(font);
+    var width = 2 * BORDER + cols * getColWidth(fm);
+    if (width < 30) width = 30;
+    var height = 2 * BORDER + rows * getRowHeight(fm);
+    if (height < 30) height = 30;
+    return Bounds.create(x, y, width, height);
+  }
+
+  private static FontMetrics getFontMetrics(Font font) {
+    final var tempImage =
+        new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+    final var tempGraphics = tempImage.getGraphics();
+    tempGraphics.setFont(font);
+    final var fm = tempGraphics.getFontMetrics();
+    tempGraphics.dispose();
+    return fm;
+  }
 
   public Tty() {
     super(_ID, S.getter("ttyComponent"));
@@ -75,11 +142,12 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
         new Attribute[] {
           ATTR_ROWS,
           ATTR_COLUMNS,
+          ATTR_FONT,
           StdAttr.EDGE_TRIGGER,
           IoLibrary.ATTR_COLOR,
           IoLibrary.ATTR_BACKGROUND
         },
-        new Object[] {8, 32, StdAttr.TRIG_RISING, Color.BLACK, DEFAULT_BACKGROUND});
+        new Object[] {8, 32, DEFAULT_FONT, StdAttr.TRIG_RISING, Color.BLACK, DEFAULT_BACKGROUND});
     setIcon(new TtyIcon());
 
     final var ps = new Port[4];
@@ -103,20 +171,9 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     final var rows = getRowCount(attrs.getValue(ATTR_ROWS));
     final var cols = getColumnCount(attrs.getValue(ATTR_COLUMNS));
-
-    var tempImage = new java.awt.image.BufferedImage(1, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
-    var tempGraphics = tempImage.getGraphics();
-    tempGraphics.setFont(DEFAULT_FONT);
-
-    int dynamicColWidth = tempGraphics.getFontMetrics().charWidth('W');
-    tempGraphics.dispose();
-
-    var width = 2 * BORDER + cols * dynamicColWidth;
-
-    if (width < 30) width = 30;
-    var height = 2 * BORDER + rows * ROW_HEIGHT;
-    if (height < 30) height = 30;
-    return Bounds.create(0, 10 - height, width, height);
+    final var font = attrs.getValue(ATTR_FONT);
+    final var bds = computeBounds(0, 0, rows, cols, font);
+    return Bounds.create(0, 10 - bds.getHeight(), bds.getWidth(), bds.getHeight());
   }
 
   private TtyState getTtyState(InstanceState state) {
@@ -134,7 +191,7 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == ATTR_ROWS || attr == ATTR_COLUMNS) {
+    if (attr == ATTR_ROWS || attr == ATTR_COLUMNS || attr == ATTR_FONT) {
       instance.recomputeBounds();
     }
   }
@@ -182,18 +239,19 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
         curCol = state.getCursorColumn();
       }
 
-      g.setFont(DEFAULT_FONT);
+      g.setFont(painter.getAttributeValue(ATTR_FONT));
       g.setColor(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
       final var fm = g.getFontMetrics();
+      final var rowHeight = getRowHeight(fm);
       int x = bds.getX() + BORDER;
-      int y = bds.getY() + BORDER + (ROW_HEIGHT + fm.getAscent()) / 2;
+      int y = bds.getY() + BORDER + (rowHeight + fm.getAscent()) / 2;
       for (var i = 0; i < rows; i++) {
         g.drawString(rowData[i], x, y);
         if (i == curRow) {
           final var x0 = x + fm.stringWidth(rowData[i].substring(0, curCol));
           g.drawLine(x0, y - fm.getAscent(), x0, y);
         }
-        y += ROW_HEIGHT;
+        y += rowHeight;
       }
     } else {
       var str = S.get("ttyDesc", "" + rows, "" + cols);
