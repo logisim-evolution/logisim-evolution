@@ -16,10 +16,8 @@ import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
@@ -173,9 +171,9 @@ public final class LogisimFileActions {
               final var circ1 = LibraryTools.getCircuitFromLibs(source, circName);
               if (circ1 == null) {
                 OptionPane.showMessageDialog(
-                    null,
+                    mergelib.getMainCircuit() == null ? null : mergelib.getMainCircuit().getProject().getFrame(),
                     "Fatal internal error: Cannot find a referenced circuit",
-                    "LogosimFileAction:",
+                    "LogisimFileAction:",
                     OptionPane.ERROR_MESSAGE);
                 canContinue = false;
               } else {

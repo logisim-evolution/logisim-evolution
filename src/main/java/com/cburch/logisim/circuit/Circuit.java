@@ -973,7 +973,7 @@ public class Circuit {
     // and (2) they cannot have a label
     if (changed)
       OptionPane.showMessageDialog(
-          null, "\"" + label + "\" : " + S.get("ComponentLabelCollisionError"));
+          proj.getFrame(), "\"" + label + "\" : " + S.get("ComponentLabelCollisionError"));
   }
 
   public void removeCircuitListener(CircuitListener what) {

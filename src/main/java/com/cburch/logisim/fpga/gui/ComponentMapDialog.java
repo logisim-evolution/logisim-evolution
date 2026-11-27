@@ -19,12 +19,12 @@ import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -177,20 +177,24 @@ public class ComponentMapDialog
     gbc.gridwidth = 3;
     gbc.fill = GridBagConstraints.BOTH;
     panel.add(boardPicture, gbc);
-    panel.setLocationRelativeTo(null);
-    panel.setVisible(true);
     localeChanged();
-    int ScreenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    int ScreenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    int ImageWidth = boardPicture.getWidth();
-    int ImageHeight = boardPicture.getHeight();
-    int ImageXBorder = panel.getWidth() - ImageWidth;
-    int ImageYBorder = panel.getHeight() - ImageHeight;
-    ScreenWidth -= ImageXBorder;
-    ScreenHeight -= (ImageYBorder + (ImageYBorder >> 2));
-    int zoomX = (ScreenWidth * 100) / ImageWidth;
-    int zoomY = (ScreenHeight * 100) / ImageHeight;
+
+    final var screen = GraphicsUtil.getScreenBounds(parentFrame);
+    var screenWidth = screen.width;
+    var screenHeight = screen.height;
+    final var imageWidth = boardPicture.getWidth();
+    final var imageHeight = boardPicture.getHeight();
+    final var imageBorderX = panel.getWidth() - imageWidth;
+    final var imageBorderY = panel.getHeight() - imageHeight;
+    screenWidth -= imageBorderX;
+    screenHeight -= (imageBorderY + (imageBorderY >> 2));
+    final var zoomX = (screenWidth * 100) / imageWidth;
+    final var zoomY = (screenHeight * 100) / imageHeight;
     boardPicture.setMaxZoom(Math.min(zoomX, zoomY));
+
+    panel.setLocationRelativeTo(parentFrame);
+    panel.toFront();
+    panel.setVisible(true);
   }
 
   public boolean run() {
@@ -245,12 +249,10 @@ public class ComponentMapDialog
   private void load() {
     final var fc = JFileChoosers.createAt(new File(oldDirectory));
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-    // FIXME: hardcoded string
-    fc.setDialogTitle("Choose XML board description file to use");
+    fc.setDialogTitle(S.get("BoardMapLoadTitle"));
     fc.setFileFilter(XmlFileFilter.XML_FILTER);
     fc.setAcceptAllFileFilterUsed(false);
-    panel.setVisible(false);
-    final var retVal = fc.showOpenDialog(null);
+    final var retVal = fc.showOpenDialog(panel.getContentPane());
     if (retVal == JFileChooser.APPROVE_OPTION) {
       final var file = fc.getSelectedFile();
       final var fileName = file.getName();
@@ -259,13 +261,10 @@ public class ComponentMapDialog
       final var parse = new ComponentMapParser(file, mappableComponents, boardInfo);
       final var result = parse.parseFile();
       if (result == 0) {
-        panel.setVisible(true);
         boardPicture.update();
       } else {
-        // FIXME: hardcoded string
         OptionPane.showMessageDialog(
-            null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
-        panel.setVisible(true);
+            panel.getContentPane(), parse.getError(result), S.get("BoardMapLoadError"), OptionPane.ERROR_MESSAGE);
       }
     }
   }
@@ -274,7 +273,7 @@ public class ComponentMapDialog
     panel.setVisible(false);
     mappableComponents.save();
     OptionPane.showMessageDialog(
-        null, S.get("BoarMapFileSaved"), "", OptionPane.INFORMATION_MESSAGE);
+        panel, S.get("BoardMapFileSaved"), "", OptionPane.INFORMATION_MESSAGE);
     panel.setVisible(true);
   }
 

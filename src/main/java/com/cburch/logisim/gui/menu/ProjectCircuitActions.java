@@ -26,6 +26,7 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -218,10 +219,12 @@ public class ProjectCircuitActions {
     final var analyzer = AnalyzerManager.getAnalyzer(proj.getFrame());
     analyzer.getModel().setCurrentCircuit(proj, circuit);
     configureAnalyzer(proj, circuit, analyzer, pinNames, inputVars, outputVars);
-    if (!analyzer.isVisible()) {
-      analyzer.setVisible(true);
+    final var frameState = analyzer.getExtendedState();
+    if ((frameState & Frame.ICONIFIED) != 0) {
+      analyzer.setExtendedState(frameState & ~Frame.ICONIFIED);
     }
     analyzer.toFront();
+    analyzer.setVisible(true);
   }
 
   public static void doMoveCircuit(Project proj, Circuit cur, int delta) {

@@ -323,7 +323,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     Object[] options = {S.get("FPGADownloadOk"), S.get("FPGADownloadCancel")};
     if (useGui)
       if (OptionPane.showOptionDialog(
-              null,
+              parent,
               S.get("FPGAVerifyMsg1"),
               S.get("FPGAVerifyMsg2"),
               OptionPane.YES_NO_OPTION,

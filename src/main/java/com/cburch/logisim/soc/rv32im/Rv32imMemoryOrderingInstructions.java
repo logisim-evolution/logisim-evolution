@@ -49,7 +49,7 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
-    OptionPane.showMessageDialog(null, S.get("Rv32imMOINotImplmented"));
+    OptionPane.showMessageDialog(cState.getProject().getFrame(), S.get("Rv32imMOINotImplmented"));
     return true;
   }
 

@@ -120,8 +120,9 @@ public class AssemblyWindow
 
     windows = new LFrame.Dialog(null);
     windows.setJMenuBar(winMenuBar);
-    windows.toFront();
     windows.setAlwaysOnTop(true);
+    windows.setLocationRelativeTo(proj.getFrame());
+    windows.toFront();
     windows.setVisible(false);
     windows.addWindowListener(this);
     windows.addKeyListener(this);

@@ -12,7 +12,9 @@ package com.cburch.logisim.proj;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -48,12 +50,10 @@ public final class Projects {
     @Override
     public void windowClosing(WindowEvent event) {
       final var frame = (Frame) event.getSource();
-      if ((frame.getExtendedState() & Frame.ICONIFIED) == 0) {
-        mostRecentFrame = frame;
-        try {
-          frameLocations.put(frame, frame.getLocationOnScreen());
-        } catch (Exception ignored) {
-        }
+      mostRecentFrame = frame;
+      try {
+        frameLocations.put(frame, frame.getLocation());
+      } catch (Exception ignored) {
       }
     }
 
@@ -152,6 +152,7 @@ public final class Projects {
     frame.removeWindowListener(listener);
     openProjects.remove(proj);
     proj.getSimulator().shutDown();
+    proj.getLogisimFile().stopAutosaveThread(true);
     propertySupport.firePropertyChange(PROJECT_LIST_PROPERTY, null, null);
   }
 
@@ -164,38 +165,49 @@ public final class Projects {
     propertySupport.removePropertyChangeListener(propertyName, listener);
   }
 
-  static void windowCreated(Project proj, Frame oldFrame, Frame frame) {
-    if (oldFrame != null) {
-      projectRemoved(proj, oldFrame, myListener);
-    }
-
+  static void windowCreated(Project proj, Frame frame, int offset) {
     if (frame == null) {
       return;
     }
 
-    // locate the window
-    Point lowest = null;
+    // Locate the lowest existing project window
+    Rectangle lowest = null;
+
     for (final var p : openProjects) {
       final var f = p.getFrame();
-      if (f == null) {
-        continue;
-      }
-      final var loc = p.getFrame().getLocation();
-      if (lowest == null || loc.y > lowest.y) {
-        lowest = loc;
+      if (f == null || f == frame) continue;
+
+      final var bounds = f.getBounds();
+      if (lowest == null || bounds.y > lowest.y) {
+        lowest = bounds;
       }
     }
+
     if (lowest != null) {
-      final var sz = frame.getToolkit().getScreenSize();
-      int x = Math.min(lowest.x + 20, sz.width - 200);
-      int y = Math.min(lowest.y + 20, sz.height - 200);
-      if (x < 0) {
-        x = 0;
+      // Position the new window slightly below and to the right, if the existing frame is not a blank project
+      final int x = lowest.x + offset;
+      final int y = lowest.y + offset;
+
+      // Check whether the proposed window intersects any available screen
+      final var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      final var bounds = new Rectangle(x, y, frame.getWidth(), frame.getHeight());
+
+      boolean visible = false;
+
+      for (final var device : ge.getScreenDevices()) {
+        if (device.getDefaultConfiguration().getBounds().intersects(bounds)) {
+          visible = true;
+          break;
+        }
       }
-      if (y < 0) {
-        y = 0;
+
+      // If completely off-screen, fall back to the primary monitor
+      if (!visible) {
+        final var screen = ge.getDefaultScreenDevice().getDefaultConfiguration().getBounds();
+        frame.setLocation(screen.x + offset, screen.y + offset);
+      } else {
+        frame.setLocation(x, y);
       }
-      frame.setLocation(x, y);
     }
 
     if (frame.isVisible() && !openProjects.contains(proj)) {

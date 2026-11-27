@@ -155,7 +155,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       final var newname = event.getCircuit().getName();
       if (isNameInUse(newname, event.getCircuit())) {
         OptionPane.showMessageDialog(
-                null,
+                main == null ? null : main.getProject().getFrame(),
                 "\"" + newname + "\": " + S.get("circuitNameExists"),
                 "",
                 OptionPane.ERROR_MESSAGE);

@@ -384,7 +384,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       fc.setDialogTitle(S.get("BoardManipLoadPng"));
       fc.setFileFilter(PngFileFilter.PNG_FILTER);
       fc.setAcceptAllFileFilterUsed(false);
-      final var retVal = fc.showOpenDialog(this);
+      final var retVal = fc.showOpenDialog(ioComps.getParentFrame());
       if (retVal == JFileChooser.APPROVE_OPTION) {
         final var file = fc.getSelectedFile();
         try {

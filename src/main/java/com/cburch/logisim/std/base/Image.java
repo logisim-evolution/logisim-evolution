@@ -127,14 +127,14 @@ public class Image extends InstanceFactory {
 
             if (origW == targetW && origH == targetH) {
               JOptionPane.showMessageDialog(
-                  null,
+                  proj.getFrame(),
                   String.format(S.get("imageAlreadyOptimizedMessage"), origW, origH),
                   S.get("imageOptimizeConfirmTitle"),
                   JOptionPane.INFORMATION_MESSAGE);
               return;
             }
             final var choice = JOptionPane.showConfirmDialog(
-                null,
+                proj.getFrame(),
                 String.format(S.get("imageOptimizeConfirmMessage"), origW, origH, targetW, targetH),
                 S.get("imageOptimizeConfirmTitle"),
                 JOptionPane.YES_NO_OPTION,

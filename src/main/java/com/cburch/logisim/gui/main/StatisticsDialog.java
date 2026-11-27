@@ -67,6 +67,8 @@ public class StatisticsDialog extends JDialog implements ActionListener {
     final var stats = FileStatistics.compute(file, circuit);
     final var dlog =
         new StatisticsDialog(parent, circuit.getName(), new StatisticsTableModel(stats));
+    dlog.setLocationRelativeTo(parent);
+    dlog.toFront();
     dlog.setVisible(true);
   }
 

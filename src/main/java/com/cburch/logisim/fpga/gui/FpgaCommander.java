@@ -36,6 +36,7 @@ import com.cburch.logisim.util.StringGetter;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -278,7 +279,7 @@ public class FpgaCommander
     FrequencyPanel.updateFrequencyList(circuitName);
     rebuildBoardSelectionPanel();
 
-    panel = new JFrame();
+    panel = new JFrame(Main.getFrame().getGraphicsConfiguration());
     panel.setResizable(false);
     panel.setAlwaysOnTop(false);
     panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -324,14 +325,16 @@ public class FpgaCommander
     ReporterGui = new FpgaReportTabbedPane(MyProject);
     gbc.gridy = 4;
     panel.add(ReporterGui, gbc);
-    panel.setLocationRelativeTo(null);
-    panel.setVisible(false);
 
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
     Reporter.report.setGuiLogger(ReporterGui);
     Reporter.report.setProgressBar(Progress);
     localeChanged();
     updateCircuitBoard(circuitName);
+
+    panel.setLocationRelativeTo(Main.getFrame());
+    panel.toFront();
+    panel.setVisible(true);
   }
 
   public FpgaReportTabbedPane getReporterGui() {
@@ -390,7 +393,7 @@ public class FpgaCommander
     if (e.getActionCommand().equals("annotate")) {
       annotate(annotationList.getSelectedIndex() == 0);
     } else if (e.getActionCommand().equals("Settings")) {
-      PreferencesFrame.showFPGAPreferences();
+      PreferencesFrame.showFPGAPreferences(MyProject.getFrame());
     } else if (e.getActionCommand().equals("ToolPath")) {
       selectToolPath(MyBoardInformation.fpga.getVendor());
       handleHdlOnly();
@@ -487,7 +490,7 @@ public class FpgaCommander
     int retval;
     boolean ok = false;
     do {
-      retval = fc.showOpenDialog(null);
+      retval = fc.showOpenDialog(java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow());
       if (retval == JFileChooser.APPROVE_OPTION) {
         File file = fc.getSelectedFile();
         ToolPath = file.getPath();
@@ -498,7 +501,7 @@ public class FpgaCommander
           ok = true;
         } else {
           OptionPane.showMessageDialog(
-              null,
+              java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
               S.get("FpgaToolsNotFound", ToolPath),
               S.get("FpgaGuiSoftwareSelect"),
               OptionPane.ERROR_MESSAGE);
@@ -518,12 +521,12 @@ public class FpgaCommander
   }
 
   public void showGui() {
-    if (!panel.isVisible()) {
-      panel.setVisible(true);
-    } else {
-      panel.setVisible(false);
-      panel.setVisible(true);
+    final var frameState = panel.getExtendedState();
+    if ((frameState & Frame.ICONIFIED) != 0) {
+      panel.setExtendedState(frameState & ~Frame.ICONIFIED);
     }
+    panel.toFront();
+    panel.setVisible(true);
   }
 
   @Override

@@ -87,6 +87,21 @@ public class Project {
     }
   }
 
+  public boolean isBlank() {
+    final var file = getLogisimFile();
+    final var main = file.getMainCircuit();
+    final var builtInLibs = file.getLoader().getBuiltin().getLibraries();
+
+    return Projects.getOpenProjects().size() == 1 &&
+        !isFileDirty() &&
+        main != null &&
+        main.getComponents().isEmpty() &&
+        file.getLoader().getMainFile() == null &&
+        file.getCircuitCount() == 1 &&
+        file.getVhdlContents().isEmpty() &&
+        file.getLibraries().stream().filter(lib -> !builtInLibs.contains(lib)).toList().isEmpty();
+  }
+
   private static class ActionData {
     final CircuitState circuitState;
     final HdlModel hdlModel;
@@ -560,11 +575,9 @@ public class Project {
     file.setDirty(true);
   }
 
-  public void setFrame(Frame value) {
-    if (frame == value) return;
-    final var oldValue = frame;
+  public void setFrame(Frame value, int offset) {
     frame = value;
-    Projects.windowCreated(this, oldValue, value);
+    Projects.windowCreated(this, value, offset);
     value.getCanvas().getSelection().addListener(myListener);
   }
 
@@ -574,6 +587,7 @@ public class Project {
       for (final var l : fileListeners) {
         old.removeLibraryListener(l);
       }
+      old.stopAutosaveThread(true);
     }
     if (optionsFrame != null) {
       optionsFrame.dispose();

@@ -63,7 +63,7 @@ public class Nios2CustomInstructions implements AssemblerExecutionInterface {
     if (!done.equals(Value.TRUE) && !done.equals(Value.FALSE)) {
       custActive = false;
       OptionPane.showMessageDialog(
-          null, S.get("Nios2DonePinError"), "Nios2s", OptionPane.ERROR_MESSAGE);
+          circuitState.getProject().getFrame(), S.get("Nios2DonePinError"), "Nios2s", OptionPane.ERROR_MESSAGE);
       state.getSimState().errorInExecution();
       return true;
     }

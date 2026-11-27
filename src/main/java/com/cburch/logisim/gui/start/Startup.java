@@ -868,7 +868,7 @@ public class Startup implements AWTEventListener {
     if (initialized) {
       final var toPrint = ProjectActions.doOpen(null, null, file);
       Print.doPrint(toPrint);
-      toPrint.getFrame().dispose();
+      ProjectActions.doClose(toPrint);
     } else {
       filesToPrint.add(file);
     }
