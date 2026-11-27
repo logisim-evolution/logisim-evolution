@@ -1,0 +1,59 @@
+# This workflow builds and tests fork pull requests with no secret access,
+# then uploads the build output fork-pr-sonar needs as an artifact.
+name: "Fork PR build and tests"
+
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  JDK_VERSION: 21
+  JDK_DISTRO: 'temurin'
+
+jobs:
+  build:
+    name: "Gradle builder"
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name != github.repository
+
+    steps:
+    - name: "Checkout sources"
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
+
+    - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
+      uses: actions/setup-java@v6
+      with:
+        java-version: ${{ env.JDK_VERSION }}
+        distribution: ${{ env.JDK_DISTRO }}
+
+    - name: "Build with Gradle"
+      run: |
+        chmod +x gradlew
+        ./gradlew build -x checkstyleMain -x checkstyleTest
+
+    # fork-pr-sonar must not run Gradle, so the jars the code compiles against are
+    # collected here and passed to Sonar as sonar.java.libraries.
+    - name: "Collect dependency jars for Sonar"
+      run: |
+        cat > "$RUNNER_TEMP/sonar-libs.gradle" <<'EOF'
+        allprojects {
+          tasks.register('copySonarLibs', Copy) {
+            into layout.buildDirectory.dir('sonar-libs')
+            into('main') { from configurations.compileClasspath; include '*.jar' }
+            into('test') { from configurations.testCompileClasspath; include '*.jar' }
+          }
+        }
+        EOF
+        ./gradlew --init-script "$RUNNER_TEMP/sonar-libs.gradle" copySonarLibs
+
+    - name: "Save compiled classes"
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output-${{ github.event.pull_request.number }}
+        retention-days: 1
+        path: |
+          build/classes/
+          build/generated/
+          build/sonar-libs/
