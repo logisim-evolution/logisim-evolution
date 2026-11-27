@@ -55,7 +55,15 @@ public class RamAttributes extends AbstractAttributeSet {
           new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTE_ENABLES});
   static final Attribute<Boolean> CLEAR_PIN =
       Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
-  private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
+
+  /** Number of independent access ports. Only exposed for the plain RAM component. */
+  static final Attribute<Integer> ATTR_PORTS =
+      Attributes.forIntegerRange("ports", S.getter("ramPortsAttr"), 1, RamState.MAX_PORTS);
+
+  private ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
+
+  /** Whether this attribute set belongs to the multi-port capable RAM component. */
+  private final boolean multiPortAllowed;
 
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
@@ -73,8 +81,14 @@ public class RamAttributes extends AbstractAttributeSet {
   private Boolean allowMisaligned = false;
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
   private AttributeOption ramType = VOLATILE;
+  private int ports = 1;
 
   RamAttributes() {
+    this(false);
+  }
+
+  RamAttributes(boolean multiPortAllowed) {
+    this.multiPortAllowed = multiPortAllowed;
     updateAttributes();
   }
 
@@ -87,9 +101,21 @@ public class RamAttributes extends AbstractAttributeSet {
     return bus == null || bus.equals(BUS_SEP) || bus.equals(BUS_SEP_CONTROLLED);
   }
 
+  /** Returns the number of independent access ports configured for the given attribute set. */
+  public static int getNrPorts(AttributeSet attrs) {
+    if (attrs == null) return 1;
+    final Object value = attrs.getValue(ATTR_PORTS);
+    if (value instanceof Integer n) {
+      return Math.max(1, Math.min(RamState.MAX_PORTS, n));
+    }
+    return 1;
+  }
+
   public boolean updateAttributes() {
     final var newList = new ArrayList<Attribute<?>>();
-    var changes = false;
+    if (multiPortAllowed) {
+      newList.add(ATTR_PORTS);
+    }
     newList.add(Mem.ADDR_ATTR);
     newList.add(Mem.DATA_ATTR);
     newList.add(Mem.ENABLES_ATTR);
@@ -98,42 +124,37 @@ public class RamAttributes extends AbstractAttributeSet {
     if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
       newList.add(StdAttr.TRIGGER);
       if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {
-        changes |= !myAttributes.contains(Mem.ASYNC_READ);
         newList.add(Mem.ASYNC_READ);
         if (!asynchronousRead) {
-          changes |= !myAttributes.contains(Mem.READ_ATTR);
           newList.add(Mem.READ_ATTR);
-        } else changes |= myAttributes.contains(Mem.READ_ATTR);
+        }
         if (dataBits.getWidth() > 8) {
-          changes |= !myAttributes.contains(ATTR_ByteEnables);
           newList.add(ATTR_ByteEnables);
-        } else changes |= myAttributes.contains(ATTR_ByteEnables);
-      } else changes |= myAttributes.contains(Mem.ASYNC_READ);
+        }
+      }
       newList.add(ATTR_DBUS);
-      changes |= myAttributes.contains(Mem.LINE_ATTR);
-      changes |= myAttributes.contains(Mem.ALLOW_MISALIGNED);
     } else {
       newList.add(Mem.LINE_ATTR);
       newList.add(Mem.ALLOW_MISALIGNED);
       newList.add(StdAttr.TRIGGER);
       newList.add(ATTR_DBUS);
-      changes |= !myAttributes.contains(Mem.LINE_ATTR);
-      changes |= !myAttributes.contains(Mem.ALLOW_MISALIGNED);
     }
     newList.add(StdAttr.LABEL);
     newList.add(StdAttr.LABEL_FONT);
     newList.add(StdAttr.LABEL_VISIBILITY);
     newList.add(StdAttr.APPEARANCE);
-    if (changes) {
+    final var changed = !newList.equals(myAttributes);
+    if (changed) {
       myAttributes.clear();
       myAttributes.addAll(newList);
     }
-    return changes;
+    return changed;
   }
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
     final var d = (RamAttributes) dest;
+    d.myAttributes = new ArrayList<>(myAttributes);
     d.addrBits = addrBits;
     d.dataBits = dataBits;
     d.trigger = trigger;
@@ -148,6 +169,7 @@ public class RamAttributes extends AbstractAttributeSet {
     d.allowMisaligned = allowMisaligned;
     d.typeOfEnables = typeOfEnables;
     d.ramType = ramType;
+    d.ports = ports;
   }
 
   @Override
@@ -158,6 +180,9 @@ public class RamAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
+    if (attr == ATTR_PORTS) {
+      return (V) Integer.valueOf(ports);
+    }
     if (attr == Mem.ADDR_ATTR) {
       return (V) addrBits;
     }
@@ -180,7 +205,8 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) readWriteBehavior;
     }
     if (attr == ATTR_DBUS) {
-      return (V) busStyle;
+      // Multi-port memories always use separate data buses for every port.
+      return (V) (ports > 1 ? BUS_SEP : busStyle);
     }
     if (attr == StdAttr.LABEL_FONT) {
       return (V) labelFont;
@@ -211,7 +237,18 @@ public class RamAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    if (attr == Mem.ADDR_ATTR) {
+    if (attr == ATTR_PORTS) {
+      final int newPorts =
+          Math.max(1, Math.min(RamState.MAX_PORTS, ((Number) value).intValue()));
+      if (ports == newPorts) return;
+      ports = newPorts;
+      if (ports > 1) {
+        // A multi-port memory cannot share one bidirectional data bus between its ports.
+        busStyle = BUS_SEP;
+      }
+      if (updateAttributes()) fireAttributeListChanged();
+      fireAttributeValueChanged(attr, value, null);
+    } else if (attr == Mem.ADDR_ATTR) {
       final var newAddr = (BitWidth) value;
       if (addrBits == newAddr) return;
       addrBits = newAddr;
@@ -265,6 +302,10 @@ public class RamAttributes extends AbstractAttributeSet {
       }
     } else if (attr == ATTR_DBUS) {
       final var newStyle = (AttributeOption) value;
+      if (ports > 1) {
+        // Forced to separate buses while more than one port is active.
+        return;
+      }
       if (busStyle.equals(newStyle)) return;
       busStyle = newStyle;
       fireAttributeValueChanged(attr, value, null);
