@@ -61,6 +61,9 @@ class TextFieldCaret implements Caret, TextFieldListener, TextEditActions {
     this.pos = pos;
     this.end = pos;
 
+    final var font = field.getFont();
+    if (font != null) g.setFont(font);
+
     field.addTextFieldListener(this);
   }
 
