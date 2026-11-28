@@ -9,12 +9,12 @@
 
 package com.cburch.logisim.gui.generic;
 
+import com.cburch.logisim.gui.icons.symbolic.VectorBaseIcon;
+
 import com.cburch.contracts.BaseMouseListenerContract;
-import com.cburch.contracts.BaseTreeModelListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.gui.icons.TreeIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
@@ -22,41 +22,51 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
-import com.cburch.logisim.util.ColorUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 
+import com.cburch.logisim.gui.icons.symbolic.CircuitGlyphIcon;
+import com.cburch.logisim.gui.main.ComponentGlyphCache;
+import com.formdev.flatlaf.FlatClientProperties;
+
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-
-import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -65,7 +75,7 @@ import javax.swing.tree.TreeSelectionModel;
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 public class ProjectExplorer extends JTree implements LocaleListener {
-  public static final Color MAGNIFYING_INTERIOR = ColorUtil.MAGNIFYING_INTERIOR;
+  public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
   private static final long serialVersionUID = 1L;
 
   private final Project proj;
@@ -74,17 +84,20 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   private final DeleteAction deleteAction = new DeleteAction();
   private Listener listener = null;
   private Tool haloedTool = null;
-
-  /** Expansion state the tree had before filtering started, to be brought back once it is over. */
-  private List<TreePath> unfilteredExpandedPaths = null;
+  private int hoverRow = -1;
 
   public ProjectExplorer(Project proj, boolean showMouseTools) {
+    this(proj, showMouseTools, true);
+  }
+
+  public ProjectExplorer(Project proj, boolean showMouseTools, boolean includeCircuits) {
     super();
     this.proj = proj;
 
-    setModel(new ProjectExplorerModel(proj, this, showMouseTools));
-    getModel().addTreeModelListener(myListener);
-    setRootVisible(true);
+    setModel(new ProjectExplorerModel(proj, this, showMouseTools, includeCircuits));
+    setRootVisible(false);
+    setShowsRootHandles(true);
+    setOpaque(false);
     addMouseListener(myListener);
     ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -100,13 +113,254 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     ActionMap amap = getActionMap();
     amap.put(deleteAction, deleteAction);
 
+    // Enter key toggles group expansion or activates tool/circuit
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "toggleOrActivate");
+    amap.put("toggleOrActivate", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        final var path = getSelectionPath();
+        if (path == null) return;
+        final var node = path.getLastPathComponent();
+        if (!getModel().isLeaf(node)) {
+          if (isExpanded(path)) {
+            collapsePath(path);
+          } else {
+            expandPath(path);
+          }
+        } else if (listener != null) {
+          listener.doubleClicked(new Event(path));
+        }
+      }
+    });
+
+    // Arrow keys expand and collapse
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "expandNode");
+    amap.put("expandNode", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        final var path = getSelectionPath();
+        if (path != null && !isExpanded(path)) {
+          expandPath(path);
+        }
+      }
+    });
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "collapseNode");
+    amap.put("collapseNode", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        final var path = getSelectionPath();
+        if (path != null && isExpanded(path)) {
+          collapsePath(path);
+        }
+      }
+    });
+
     proj.addProjectListener(myListener);
     AppPreferences.GATE_SHAPE.addPropertyChangeListener(myListener);
-    AppPreferences.UI_ANTIALIASING.addPropertyChangeListener(myListener);
     LocaleManager.addLocaleListener(this);
-    DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) getCellRenderer();
-    renderer.setClosedIcon(new TreeIcon(true));
-    renderer.setOpenIcon(new TreeIcon(false));
+
+    setToggleClickCount(0);
+    setRowHeight(AppPreferences.getScaled(24));
+    setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 6));
+    putClientProperty(FlatClientProperties.STYLE, "showCellFocusIndicator: false; rowHeight: 24; wideSelection: true;");
+
+    configureTreeUi();
+
+    addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
+      public void mouseMoved(MouseEvent e) {
+        int row = getRowForLocation(e.getX(), e.getY());
+        if (row != hoverRow) {
+          hoverRow = row;
+          repaint();
+        }
+      }
+    });
+
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseExited(MouseEvent e) {
+        if (hoverRow != -1) {
+          hoverRow = -1;
+          repaint();
+        }
+      }
+    });
+  }
+
+  private void configureTreeUi() {
+    setUI(new javax.swing.plaf.basic.BasicTreeUI() {
+      @Override
+      protected void installDefaults() {
+        super.installDefaults();
+        setLeftChildIndent(AppPreferences.getScaled(16));
+        setRightChildIndent(0);
+        if (tree != null) {
+          tree.setOpaque(false);
+        }
+      }
+
+      @Override
+      protected boolean isLocationInExpandControl(TreePath path, int mouseX, int mouseY) {
+        if (path == null || treeModel.isLeaf(path.getLastPathComponent())) {
+          return false;
+        }
+        final var b = getPathBounds(tree, path);
+        if (b == null) return false;
+        final var cx = b.x - AppPreferences.getScaled(10);
+        final var cy = b.y + b.height / 2;
+        final var hitRadius = AppPreferences.getScaled(12);
+        return Math.abs(mouseX - cx) <= hitRadius && Math.abs(mouseY - cy) <= hitRadius;
+      }
+
+      @Override
+      protected void paintExpandControl(
+          Graphics g,
+          Rectangle clip,
+          Insets ins,
+          Rectangle b,
+          TreePath path,
+          int row,
+          boolean expanded,
+          boolean hasBeen,
+          boolean leaf) {
+        if (leaf) return;
+        final var g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setStroke(new BasicStroke(AppPreferences.getScaled(1.6f), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        boolean isSel = tree != null && tree.isRowSelected(row);
+        Color chevronColor = isSel
+            ? Color.WHITE
+            : (AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? new Color(184, 191, 198) : new Color(74, 74, 74));
+        g2.setColor(chevronColor);
+
+        int cx = b.x - AppPreferences.getScaled(10);
+        int cy = b.y + b.height / 2;
+        final var p = new Path2D.Float();
+        float arm = AppPreferences.getScaled(3.0f);
+        if (expanded) {
+          p.moveTo(cx - arm, cy - arm * 0.5f);
+          p.lineTo(cx, cy + arm * 0.7f);
+          p.lineTo(cx + arm, cy - arm * 0.5f);
+        } else {
+          p.moveTo(cx - arm * 0.5f, cy - arm);
+          p.lineTo(cx + arm * 0.7f, cy);
+          p.lineTo(cx - arm * 0.5f, cy + arm);
+        }
+        g2.draw(p);
+        g2.dispose();
+      }
+    });
+    setOpaque(false);
+  }
+
+  @Override
+  public void updateUI() {
+    super.updateUI();
+    configureTreeUi();
+    if (renderer != null) {
+      SwingUtilities.updateComponentTreeUI(renderer);
+    }
+    repaint();
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    final var g2 = (Graphics2D) g.create();
+    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+    final var isDarkTree = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    Color accent = isDarkTree ? new Color(0x4C, 0xAF, 0x50) : new Color(0x2E, 0x7D, 0x32);
+    Color hoverFill = isDarkTree
+        ? new Color(255, 255, 255, 14)
+        : new Color(0, 0, 0, 12);
+    int treeW = getWidth();
+
+    for (int r = 0; r < getRowCount(); r++) {
+      Rectangle b = getRowBounds(r);
+      if (b == null) continue;
+      boolean isArmed = isRowSelected(r);
+      boolean isHover = (r == hoverRow);
+
+      if (isArmed) {
+        g2.setColor(accent);
+        g2.fill(new RoundRectangle2D.Float(6, b.y + 1, treeW - 12, b.height - 2, 6, 6));
+      } else if (isHover) {
+        g2.setColor(hoverFill);
+        g2.fill(new RoundRectangle2D.Float(6, b.y + 1, treeW - 12, b.height - 2, 6, 6));
+      }
+    }
+
+    // Vertical Tree Indent Guide Lines
+    int rowCount = getRowCount();
+    if (rowCount > 0) {
+      final Map<TreePath, int[]> spans = new LinkedHashMap<>();
+      for (int r = 0; r < rowCount; r++) {
+        TreePath path = getPathForRow(r);
+        if (path == null) continue;
+        for (TreePath anc = path.getParentPath(); anc != null && anc.getPathCount() >= 2; anc = anc.getParentPath()) {
+          int ancRow = getRowForPath(anc);
+          if (ancRow >= 0 && isExpanded(anc)) {
+            int[] span = spans.get(anc);
+            if (span == null) {
+              Rectangle pb = getRowBounds(ancRow);
+              int cx = (pb != null) ? (pb.x - AppPreferences.getScaled(10)) : -1;
+              spans.put(anc, new int[]{ancRow, r, cx});
+            } else {
+              span[1] = r;
+            }
+          }
+        }
+      }
+
+      Color guideColor = isDarkTree ? new Color(255, 255, 255, 42) : new Color(0, 0, 0, 36);
+      g2.setColor(guideColor);
+      g2.setStroke(new BasicStroke(1.0f));
+
+      for (int[] span : spans.values()) {
+        int ancRow = span[0];
+        int lastRow = span[1];
+        int cx = span[2];
+        if (cx < 0 || lastRow <= ancRow) continue;
+
+        Rectangle startB = getRowBounds(ancRow);
+        Rectangle endB = getRowBounds(lastRow);
+        if (startB == null || endB == null) continue;
+
+        int startY = startB.y + startB.height;
+        int endY = endB.y + endB.height / 2;
+        if (endY > startY) {
+          g2.drawLine(cx, startY, cx, endY);
+        }
+      }
+    }
+
+    g2.dispose();
+    super.paintComponent(g);
+  }
+
+  public void setFilterText(String text) {
+    setFilter(text);
+  }
+
+  public void setFilter(String filter) {
+    if (getModel() instanceof ProjectExplorerModel m) {
+      m.setFilter(filter);
+      if (filter != null && !filter.isBlank()) {
+        expandAllNodes();
+      }
+    }
+  }
+
+  public void expandAllNodes() {
+    for (int i = 0; i < getRowCount(); i++) {
+      expandRow(i);
+    }
+  }
+
+  private static String escapeHtml(String text) {
+    if (text == null) return "";
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 
   public Tool getSelectedTool() {
@@ -122,124 +376,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   public void updateStructure() {
     ProjectExplorerModel model = (ProjectExplorerModel) getModel();
     model.updateStructure();
-  }
-
-  /**
-   * Shows only the elements matching filter texts, Matching is done on component and library names,
-   * and is case insensitive. Filter treats each word separately so word order does not matter
-   * as long as all words are present in the subject (i.e. "foo bar" and "bar foo" would both match
-   * the "foo and bar" name). Empty text disables filtering and and brings the whole tree back
-   * along with the expansion state it had before filtering started.
-   */
-  public void setFilterText(String text) {
-    final var model = (ProjectExplorerModel) getModel();
-    if (!model.isFiltering()) unfilteredExpandedPaths = getExpandedPaths();
-
-    model.setFilter(text);
-
-    if (model.isFiltering()) {
-      expandAllRows();
-    } else if (unfilteredExpandedPaths != null) {
-      for (final var path : unfilteredExpandedPaths) {
-        expandPath(path);
-      }
-      unfilteredExpandedPaths = null;
-    }
-  }
-
-  private List<TreePath> getExpandedPaths() {
-    final var root = getModel().getRoot();
-    if (root == null) return null;
-
-    final var result = new ArrayList<TreePath>();
-    final var rootPath = new TreePath(root);
-    if (isExpanded(rootPath)) result.add(rootPath);
-    final var descendants = getExpandedDescendants(rootPath);
-    if (descendants != null) {
-      while (descendants.hasMoreElements()) {
-        result.add(descendants.nextElement());
-      }
-    }
-    return result;
-  }
-
-  private void expandAllRows() {
-    // Row count grows as rows get expanded, so this walks down the whole (filtered) tree.
-    for (var row = 0; row < getRowCount(); row++) {
-      expandRow(row);
-    }
-  }
-
-  /**
-   * Marks the parts of given name the current filter matches.
-   */
-  private String highlightFilterMatches(String name, boolean selected) {
-    final var model = (ProjectExplorerModel) getModel();
-    final var words = model.getFilterWords();
-    if (StringUtil.isNullOrEmpty(name) || words.isEmpty()) return name;
-
-    // Only the names matching on their own get marked.
-    if (!model.matchesFilter(name)) return name;
-
-    final var marked = markMatchedCharacters(name, words);
-    if (marked == null) return name;
-    final var background =
-        UIManager.getColor(selected ? "Tree.textBackground" : "Tree.selectionBackground");
-    if (background == null) return name;
-    final var foreground = ColorUtil.getComplementaryBlackWhite(background);
-
-    final var html = new StringBuilder("<html>");
-    var pos = 0;
-    while (pos < name.length()) {
-      final var runStart = pos;
-      final var marks = marked[pos];
-      while (pos < name.length() && marked[pos] == marks) {
-        pos++;
-      }
-
-      final var run = escapeHtml(name.substring(runStart, pos));
-      if (marks) {
-        html.append("<span style=\"background-color:")
-            .append(toHtmlColor(background))
-            .append(";color:")
-            .append(toHtmlColor(foreground))
-            .append("\">")
-            .append(run)
-            .append("</span>");
-      } else {
-        html.append(run);
-      }
-    }
-    return html.append("</html>").toString();
-  }
-
-  /**
-   * Flags every character of given name covered by any of the filter words. Expects a name that
-   * matches the filter, so that each of the words is bound to be found in it. Returns {@code null}
-   * when the marks cannot be aligned with the name.
-   */
-  private static boolean[] markMatchedCharacters(String name, List<String> words) {
-    final var lowercased = name.toLowerCase();
-    // Safety check - lowercasing grows the text in some languages (Turkish, Lithuanian),
-    // that would misalign the marks. Low impact for now, still…
-    if (lowercased.length() != name.length()) return null;
-
-    final var marked = new boolean[name.length()];
-    for (final var word : words) {
-      // Stepping by one rather than by the word length, as occurrences may overlap each other.
-      for (var at = lowercased.indexOf(word); at >= 0; at = lowercased.indexOf(word, at + 1)) {
-        Arrays.fill(marked, at, at + word.length(), true);
-      }
-    }
-    return marked;
-  }
-
-  private static String toHtmlColor(Color color) {
-    return String.format("#%06X", color.getRGB() & 0xFFFFFF);
-  }
-
-  private static String escapeHtml(String text) {
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
   }
 
   @Override
@@ -272,9 +408,21 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
   }
 
-  private class MyCellRenderer extends DefaultTreeCellRenderer {
+  private class MyCellRenderer extends JPanel implements javax.swing.tree.TreeCellRenderer {
 
     private static final long serialVersionUID = 1L;
+    private final JLabel label = new JLabel();
+    private boolean isCurrentCircuit = false;
+    private boolean isHovered = false;
+    private boolean isRowSelected = false;
+
+    MyCellRenderer() {
+      super(new BorderLayout());
+      setOpaque(false);
+      setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 4, 0, 10));
+      label.setIconTextGap(AppPreferences.getScaled(8));
+      add(label, BorderLayout.CENTER);
+    }
 
     @Override
     public java.awt.Component getTreeCellRendererComponent(
@@ -285,71 +433,116 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         boolean leaf,
         int row,
         boolean hasFocus) {
-      java.awt.Component ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-      final var plainFont = AppPreferences.getScaledFont(ret.getFont());
+
+      final var plainFont = AppPreferences.getScaledFont(tree.getFont()).deriveFont(Font.PLAIN);
       final var boldFont = new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize());
-      ret.setFont(plainFont);
-      if (ret instanceof JComponent comp) {
-        comp.setToolTipText(null);
-      }
+
+      isRowSelected = selected;
+      isHovered = (row == hoverRow);
+      isCurrentCircuit = false;
+
+      Color fgMain = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? new Color(235, 235, 235) : new Color(30, 30, 30); // #EBEBEB in Dark, #1E1E1E in Light
+      final var isDarkRow = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+      Color accent = isDarkRow ? new Color(0x4C, 0xAF, 0x50) : new Color(0x2E, 0x7D, 0x32);
+
+      label.setFont(plainFont);
+
       if (value instanceof ProjectExplorerToolNode toolNode) {
         final var tool = toolNode.getValue();
-        if (ret instanceof JLabel label) {
-          var viewed = false;
-          if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
-            Circuit circ = null;
-            VhdlContent vhdl = null;
-            final var fact = ((AddTool) tool).getFactory(false);
-            if (fact instanceof SubcircuitFactory sub) {
-              circ = sub.getSubcircuit();
-            } else if (fact instanceof VhdlEntity vhdlEntity) {
-              vhdl = vhdlEntity.getContent();
-            }
-            viewed =
-                (proj.getFrame().getHdlEditorView() == null)
-                    ? (circ != null && circ == proj.getCurrentCircuit())
-                    : (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
-          }
-          label.setFont(viewed ? boldFont : plainFont);
-          label.setText(
-              highlightFilterMatches(
-                  viewed ? tool.getDisplayName() + " ●" : tool.getDisplayName(), selected));
-          label.setIcon(new ToolIcon(tool));
-          label.setToolTipText(tool.getDescription());
+        boolean isCircuit = false;
+        boolean viewed = false;
 
-          if (viewed) {
-            label.setForeground(ColorUtil.getThemeAccentColor());
-          } else {
-            label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
+        if (tool instanceof AddTool addTool && proj != null && proj.getFrame() != null) {
+          final var fact = addTool.getFactory(false);
+          if (fact instanceof SubcircuitFactory sub) {
+            isCircuit = true;
+            Circuit circ = sub.getSubcircuit();
+            viewed = (circ != null && circ == proj.getCurrentCircuit());
+          } else if (fact instanceof VhdlEntity vhdlEntity) {
+            isCircuit = true;
+            VhdlContent vhdl = vhdlEntity.getContent();
+            viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
           }
         }
+
+        if (isCircuit) {
+          isCurrentCircuit = viewed;
+          final var fact = ((AddTool) tool).getFactory(false);
+          final boolean isVhdl = fact instanceof VhdlEntity;
+          CircuitGlyphIcon circIcon = new CircuitGlyphIcon(
+              viewed, isVhdl, tool.getDisplayName(), AppPreferences.getScaled(20));
+          if (viewed) {
+            circIcon.setColor(accent);
+            label.setForeground(selected ? Color.WHITE : accent);
+            label.setFont(boldFont);
+          } else {
+            circIcon.setColor(selected ? Color.WHITE : fgMain);
+            label.setForeground(selected ? Color.WHITE : fgMain);
+            label.setFont(plainFont);
+          }
+          label.setIcon(circIcon);
+        } else {
+          final var icon = ComponentGlyphCache.getIcon(tool, AppPreferences.getScaled(20));
+          label.setIcon(icon != null ? icon : new ToolIcon(tool));
+          label.setForeground(selected ? Color.WHITE : fgMain);
+          label.setFont(plainFont);
+        }
+
+        final var rawName = tool.getDisplayName();
+        final var filter = (getModel() instanceof ProjectExplorerModel pem) ? pem.getFilter() : null;
+        if (filter != null && !filter.isBlank() && rawName.toLowerCase().contains(filter)) {
+          int idx = rawName.toLowerCase().indexOf(filter);
+          String b = escapeHtml(rawName.substring(0, idx));
+          String m = escapeHtml(rawName.substring(idx, idx + filter.length()));
+          String a = escapeHtml(rawName.substring(idx + filter.length()));
+          label.setText("<html>" + b + "<span style='color: #3584e4; font-weight: bold;'>" + m + "</span>" + a + "</html>");
+        } else {
+          label.setText(rawName);
+        }
+        setToolTipText(tool.getDescription());
       } else if (value instanceof ProjectExplorerLibraryNode libNode) {
         final var lib = libNode.getValue();
+        final var baseName = lib.getDisplayName();
+        var text = baseName;
 
-        if (ret instanceof JLabel) {
-          final var baseName = lib.getDisplayName();
-          var text = baseName;
-          if (lib.isDirty()) {
-            // TODO: Would be nice to use DIRTY_MARKER here instead of "*" but it does not render
-            // corectly in project tree, font seem to have the character as frame title is fine.
-            // Needs to figure out what is different (java fonts?). Keep "*" unless bug is resolved.
-            final var DIRTY_MARKER_LOCAL = "*"; // useless var for easy DIRTY_MARKER hunt in future.
-            text = DIRTY_MARKER_LOCAL + baseName;
-          }
-
-          ((JLabel) ret).setText(highlightFilterMatches(text, selected));
+        if (lib.isDirty()) {
+          text = baseName + " \u25cf";
         }
+
+        int count = libNode.getChildCount();
+        if (count > 0) {
+          String badgeColor = selected ? "#ffffff" : (AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? "#8B949E" : "#6E7781");
+          text = "<html>" + escapeHtml(text) + "&nbsp;&nbsp;<span style='color: " + badgeColor + "; font-size: 9pt;'>(" + count + ")</span></html>";
+        }
+
+        label.setText(text);
+        Icon catIcon = getCategoryIcon(baseName, expanded, selected ? Color.WHITE : fgMain);
+        label.setIcon(catIcon);
+        label.setForeground(selected ? Color.WHITE : fgMain);
+        label.setFont(plainFont);
+        setToolTipText(null);
+      } else {
+        label.setText(value != null ? value.toString() : "");
+        label.setIcon(null);
       }
-      return ret;
+
+      return this;
+    }
+
+    private final VectorBaseIcon moduleLibraryIcon = new com.cburch.logisim.gui.icons.symbolic.CategoryModuleIcon();
+
+    private Icon getCategoryIcon(String name, boolean expanded, Color color) {
+      if (name == null) return null;
+      return moduleLibraryIcon;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
     }
   }
 
-  private class MyListener
-      implements BaseMouseListenerContract,
-          BaseTreeModelListenerContract,
-          TreeSelectionListener,
-          ProjectListener,
-          PropertyChangeListener {
+  private class MyListener implements BaseMouseListenerContract, TreeSelectionListener, ProjectListener, PropertyChangeListener {
     private void checkForPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
         final var path = getPathForLocation(e.getX(), e.getY());
@@ -366,8 +559,17 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     public void mouseClicked(MouseEvent e) {
       if (e.getClickCount() == 2) {
         final var path = getPathForLocation(e.getX(), e.getY());
-        if (path != null && listener != null) {
-          listener.doubleClicked(new Event(path));
+        if (path != null) {
+          final var node = path.getLastPathComponent();
+          if (node instanceof ProjectExplorerToolNode && listener != null) {
+            listener.doubleClicked(new Event(path));
+          } else if (node instanceof ProjectExplorerLibraryNode) {
+            if (isExpanded(path)) {
+              collapsePath(path);
+            } else {
+              expandPath(path);
+            }
+          }
         }
       }
     }
@@ -411,21 +613,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-      if (AppPreferences.GATE_SHAPE.isSource(event)
-          || AppPreferences.UI_ANTIALIASING.isSource(event)) {
+      if (AppPreferences.GATE_SHAPE.isSource(event)) {
         ProjectExplorer.this.repaint();
-      }
-    }
-
-    //
-    // TreeModelListener methods
-    //
-    @Override
-    public void treeStructureChanged(TreeModelEvent event) {
-      // Tree struct change collapses the tree but while filtering the change
-      // is expected so we enforce tree expansion to keep all matches visible.
-      if (((ProjectExplorerModel) getModel()).isFiltering()) {
-        SwingUtilities.invokeLater(ProjectExplorer.this::expandAllRows);
       }
     }
 
@@ -480,7 +669,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
 
     private boolean isPathValid(TreePath path) {
-      return path != null && path.getLastPathComponent() instanceof ProjectExplorerToolNode;
+      return isTool(path);
     }
 
     @Override
@@ -499,6 +688,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         super.setSelectionPaths(paths);
       }
     }
+  }
+
+  private static boolean isTool(TreePath path) {
+    return path != null && path.getLastPathComponent() instanceof ProjectExplorerToolNode;
   }
 
   private class ToolIcon implements Icon {
@@ -549,14 +742,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
 
       // draw tool icon
-      g.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
+      g.setColor((AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get()) ? new Color(220, 220, 220) : new Color(40, 40, 40)));
       final var gfxIcon = g.create();
-      if (gfxIcon instanceof java.awt.Graphics2D g2d && AppPreferences.UI_ANTIALIASING.getBoolean()) {
-        g2d.setRenderingHint(
-            java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(
-            java.awt.RenderingHints.KEY_STROKE_CONTROL, java.awt.RenderingHints.VALUE_STROKE_PURE);
-      }
       final var context = new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(
           context,
@@ -580,30 +767,19 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           y + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 2),
           ty - 1
         };
-        final var magFill = ColorUtil.getMagnifyingInterior(ProjectExplorer.this);
-        final var magBorder = ColorUtil.getThemeAccentColor();
-
-        final var gfxMag = g.create();
-        if (gfxMag instanceof java.awt.Graphics2D g2d && AppPreferences.UI_ANTIALIASING.getBoolean()) {
-          g2d.setRenderingHint(
-              java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-          g2d.setRenderingHint(
-              java.awt.RenderingHints.KEY_STROKE_CONTROL, java.awt.RenderingHints.VALUE_STROKE_PURE);
-        }
-        gfxMag.setColor(magFill);
-        gfxMag.fillOval(
+        g.setColor(MAGNIFYING_INTERIOR);
+        g.fillOval(
             x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
-        gfxMag.setColor(magBorder);
-        gfxMag.drawOval(
+        g.setColor(new Color(139, 69, 19));
+        g.drawOval(
             x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
             AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
-        gfxMag.fillPolygon(xp, yp, xp.length);
-        gfxMag.dispose();
+        g.fillPolygon(xp, yp, xp.length);
       }
     }
   }

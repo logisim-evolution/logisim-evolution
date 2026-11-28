@@ -188,6 +188,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       final var fontStyle = AppPreferences.getPreferredFontStyle(appFont);
       bottomTab.setFont(AppPreferences.getScaledFont(new Font(appFont, fontStyle, 9)));
     }
+    bottomTab.putClientProperty("JTabbedPane.tabType", "underline");
+    bottomTab.putClientProperty("JTabbedPane.showContentSeparator", true);
+    final var isDarkBottom = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    final var tabGreenBottom = isDarkBottom ? "#4CAF50" : "#2E7D32";
+    bottomTab.putClientProperty(
+        com.formdev.flatlaf.FlatClientProperties.STYLE,
+        "underlineColor: " + tabGreenBottom + "; inactiveUnderlineColor: " + tabGreenBottom + ";");
     bottomTab.add(attrTable = new AttrTable(this));
     regTabContent = new RegTabContent(this);
     bottomTab.add(regTabContent);
@@ -218,6 +225,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     } else {
       topTab.setFont(topTab.getFont().deriveFont(Font.BOLD));
     }
+    topTab.putClientProperty("JTabbedPane.tabType", "underline");
+    topTab.putClientProperty("JTabbedPane.showContentSeparator", true);
+    final var isDarkTop = AppPreferences.isDarkTheme(AppPreferences.LookAndFeel.get());
+    final var tabGreenTop = isDarkTop ? "#4CAF50" : "#2E7D32";
+    topTab.putClientProperty(
+        com.formdev.flatlaf.FlatClientProperties.STYLE,
+        "underlineColor: " + tabGreenTop + "; inactiveUnderlineColor: " + tabGreenTop + ";");
     topTab.add(explPanel);
     topTab.add(simPanel);
 
@@ -663,7 +677,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public String getEditorView() {
-    return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
+    if (getHdlEditorView() != null) return EDIT_HDL;
+    return mainPanel != null ? mainPanel.getView() : EDIT_LAYOUT;
   }
 
   public void computeEditMenuEnabled() {
@@ -948,7 +963,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   public HdlModel getHdlEditorView() {
-    return hdlEditor.getHdlModel();
+    return hdlEditor != null ? hdlEditor.getHdlModel() : null;
   }
 
   private void setHdlEditorView(HdlModel hdl) {

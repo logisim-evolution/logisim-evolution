@@ -46,13 +46,24 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
    */
   private Map<TreeNode, List<TreeNode>> visibleChildren = null;
 
+  private final boolean includeCircuits;
+
   ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools) {
+    this(proj, gui, showMouseTools, true);
+  }
+
+  ProjectExplorerModel(Project proj, JTree gui, boolean showMouseTools, boolean includeCircuits) {
     super(null);
     this.proj = proj;
     this.showMouseTools = showMouseTools;
-    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(), gui, showMouseTools));
+    this.includeCircuits = includeCircuits;
+    setRoot(new ProjectExplorerLibraryNode(this, proj.getLogisimFile(), gui, showMouseTools, includeCircuits));
     proj.addProjectListener(this);
     uiElement = gui;
+  }
+
+  public String getFilter() {
+    return filterWords.isEmpty() ? null : String.join(" ", filterWords);
   }
 
   Node<Tool> findTool(Tool tool) {
@@ -228,7 +239,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     setRoot(
         (file == null)
             ? null
-            : new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
+            : new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools, includeCircuits));
     fireStructureChanged();
   }
 
