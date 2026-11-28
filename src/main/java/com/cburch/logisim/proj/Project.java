@@ -92,14 +92,14 @@ public class Project {
     final var main = file.getMainCircuit();
     final var builtInLibs = file.getLoader().getBuiltin().getLibraries();
 
-    return Projects.getOpenProjects().size() == 1 &&
-        !isFileDirty() &&
-        main != null &&
-        main.getComponents().isEmpty() &&
-        file.getLoader().getMainFile() == null &&
-        file.getCircuitCount() == 1 &&
-        file.getVhdlContents().isEmpty() &&
-        file.getLibraries().stream().filter(lib -> !builtInLibs.contains(lib)).toList().isEmpty();
+    return Projects.getOpenProjects().size() == 1
+        && !isFileDirty()
+        && main != null
+        && main.getComponents().isEmpty()
+        && file.getLoader().getMainFile() == null
+        && file.getCircuitCount() == 1
+        && file.getVhdlContents().isEmpty()
+        && file.getLibraries().stream().filter(lib -> !builtInLibs.contains(lib)).toList().isEmpty();
   }
 
   private static class ActionData {

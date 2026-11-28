@@ -1007,7 +1007,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       setAttrTableModel(new AttrTableComponentModel(project, circ, comp));
     }
   }
-  
+
   @Override
   public void dispose() {
     timer.cancel();

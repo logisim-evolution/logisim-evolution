@@ -51,7 +51,7 @@ public class MenuFpga extends JMenu implements ActionListener {
         Editor.setActive();
       }
     } else if (src == FPGACommander) {
-       if (Commander == null) {
+      if (Commander == null) {
         Commander = new FpgaCommander(ThisCircuit);
       } else {
         Commander.showGui();

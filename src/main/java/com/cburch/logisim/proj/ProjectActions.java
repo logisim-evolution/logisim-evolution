@@ -496,11 +496,11 @@ public final class ProjectActions {
   public static void doClose(Project proj) {
     final var frame = proj.getFrame();
     if (!frame.confirmClose()) {
-        return;
+      return;
     }
     frame.getCanvas().closeCanvas();
     frame.dispose();
-}
+  }
 
   public static void doQuit() {
     final var top = Projects.getTopFrame();

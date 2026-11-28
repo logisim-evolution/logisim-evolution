@@ -223,7 +223,7 @@ public class FpgaReportTabbedPane extends JTabbedPane
     consoleMessagesQueue.add(message + "\n");
 
     if (consoleUpdatePending.compareAndSet(false, true)) {
-        SwingUtilities.invokeLater(this::flushConsoleMessages);
+      SwingUtilities.invokeLater(this::flushConsoleMessages);
     }
   }
 
