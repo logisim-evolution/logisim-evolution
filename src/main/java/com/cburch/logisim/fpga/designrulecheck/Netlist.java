@@ -931,19 +931,22 @@ public class Netlist {
       final var combinedEnd = ends.get(0);
       var rootNet = -1;
       /* We search for the root net in the list of nets */
-      for (var i = 0; i < myNets.size() && rootNet < 0; i++) {
+      for (var i = 0; i < myNets.size(); i++) {
         if (myNets.get(i).contains(combinedEnd.getLocation())) {
           rootNet = i;
-          // FIXME: shouldn't we `break` once we found it?
+          break;
         }
       }
       if (rootNet < 0) {
-        Reporter.report.addFatalErrorFmt(
-            "BUG: Splitter without a bus connection\n ==> %s:%d\n",
-            this.getClass().getName().replace(".", "/"),
-            Thread.currentThread().getStackTrace()[2].getLineNumber());
-        this.clear();
-        return false;
+        final var warn =
+            new SimpleDrcContainer(
+                    myCircuit,
+                    S.get("NetList_NoEndSplitterConnections"),
+                    SimpleDrcContainer.LEVEL_SEVERE,
+                    SimpleDrcContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp);
+        Reporter.report.addWarning(warn);
+        continue;
       }
       // Now we process all the other ends to find the child busses/nets
       // of this root bus
@@ -1068,7 +1071,7 @@ public class Netlist {
             if (connectedBus < 0) {
               // This should never happen as we already checked in the first pass.
               Reporter.report.addFatalErrorFmt(
-                  "BUG: This is embarasing as this should never happen\n ==> %s:%d\n",
+                  "BUG: This is embarrasing as this should never happen\n ==> %s:%d\n",
                   this.getClass().getName().replace(".", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
               this.clear();
@@ -1814,8 +1817,7 @@ public class Netlist {
           final var rootNetBitIndex = getRootNetIndex(connection, (byte) bitid);
           if (rootNetBitIndex < 0) {
             Reporter.report.addFatalErrorFmt(
-                // FIXME: Some "BUG:" have 2 spaces, other just 1. Is this intentional or all can have 1 (multiple places)?
-                "BUG:  Unable to find a root-net bit-index for a normal component\n ==> %s:%d\n",
+                "BUG: Unable to find a root-net bit-index for a normal component\n ==> %s:%d\n",
                 this.getClass().getName().replace(".", "/"),
                 Thread.currentThread().getStackTrace()[2].getLineNumber());
             return false;
@@ -1855,7 +1857,7 @@ public class Netlist {
       final var subPortIndex = subNetlist.getPortInfo(subPins[pinId].getAttributeValue(StdAttr.LABEL));
       if (subPortIndex < 0) {
         Reporter.report.addFatalErrorFmt(
-            "BUG:  Unable to find pin in sub-circuit\n ==> %s:%d\n",
+            "BUG: Unable to find pin in sub-circuit\n ==> %s:%d\n",
             this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
@@ -1865,7 +1867,7 @@ public class Netlist {
         final var rootNet = getRootNet(connection);
         if (rootNet == null) {
           Reporter.report.addFatalErrorFmt(
-              "BUG:  Unable to find a root net for sub-circuit\n ==> %s:%d\n",
+              "BUG: Unable to find a root net for sub-circuit\n ==> %s:%d\n",
               this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
@@ -1874,7 +1876,7 @@ public class Netlist {
           final var rootNetBitIndex = getRootNetIndex(connection, bitid);
           if (rootNetBitIndex < 0) {
             Reporter.report.addFatalErrorFmt(
-                "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> %s:%d\n",
+                "BUG: Unable to find a root-net bit-index for sub-circuit\n ==> %s:%d\n",
                 this.getClass().getName().replace(".", "/"),
                 Thread.currentThread().getStackTrace()[2].getLineNumber());
             return false;
