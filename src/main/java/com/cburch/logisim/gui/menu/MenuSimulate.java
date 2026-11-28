@@ -61,7 +61,6 @@ public class MenuSimulate extends Menu {
   private CircuitState currentState = null;
   private CircuitState bottomState = null;
   private Simulator currentSim = null;
-  private final int menuMask;
 
   public MenuSimulate(LogisimMenuBar menubar) {
     this.menubar = menubar;
@@ -81,7 +80,6 @@ public class MenuSimulate extends Menu {
     menubar.registerItem(LogisimMenuBar.TICK_HALF, tickHalf);
     menubar.registerItem(LogisimMenuBar.TICK_FULL, tickFull);
 
-    menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     /* Allow user itself to set the mask */
     runToggle.setAccelerator(((PrefMonitorKeyStroke)
         AppPreferences.HOTKEY_SIM_AUTO_PROPAGATE).getWithMask(0));
@@ -177,19 +175,21 @@ public class MenuSimulate extends Menu {
   public static List<String> getTickFrequencyStrings() {
     final var result = new ArrayList<String>();
     for (final var supportedTickFrequency : SUPPORTED_TICK_FREQUENCIES) {
-      if (supportedTickFrequency < 1000) {
-        final var small =
-            (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency)) < 0.0001);
-        final var freqHz =
-            "" + ((small) ? (int) Math.round(supportedTickFrequency) : supportedTickFrequency);
-        result.add(S.get("simulateTickFreqItem", freqHz));
-      } else {
-        final var kf = Math.round(supportedTickFrequency / 100) / 10.0;
-        final var freqKhz = "" + ((kf == Math.round(kf)) ? (int) kf : kf);
-        result.add(S.get("simulateTickKFreqItem", freqKhz));
-      }
+      result.add(getTickFrequencyString(supportedTickFrequency));
     }
     return result;
+  }
+
+  public static String getTickFrequencyString(double freq) {
+    if (freq < 1000.0) {
+      final var small = (Math.abs(freq - Math.round(freq)) < 0.01);
+      final var freqHz = "" + (small ? Math.round(freq) : freq);
+      return S.get("simulateTickFreqItem", freqHz);
+    } else {
+      final var kf = Math.round(freq / 100) / 10.0;
+      final var freqKhz = "" + ((kf == Math.round(kf)) ? (int) kf : kf);
+      return S.get("simulateTickKFreqItem", freqKhz);
+    }
   }
 
   private void clearItems(ArrayList<CircuitStateMenuItem> items) {
@@ -474,16 +474,7 @@ public class MenuSimulate extends Menu {
     }
 
     public void localeChanged() {
-      double f = freq;
-      if (f < 1000) {
-        final var small = Math.abs(f - Math.round(f)) < 0.0001;
-        final var freqHz = "" + (small ? (int) Math.round(f) : f);
-        setText(S.get("simulateTickFreqItem", freqHz));
-      } else {
-        final var kf = Math.round(f / 100) / 10.0;
-        final var freqKhz = "" + ((kf == Math.round(kf)) ? (int) kf : kf);
-        setText(S.get("simulateTickKFreqItem", freqKhz));
-      }
+      setText(getTickFrequencyString(freq));
     }
   }
 }
