@@ -379,15 +379,19 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
           } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_NORTH)
               .compare(code, modifier)) {
             setFacing(canvas, Direction.NORTH);
+            event.consume();
           } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_SOUTH)
               .compare(code, modifier)) {
             setFacing(canvas, Direction.SOUTH);
+            event.consume();
           } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_WEST)
               .compare(code, modifier)) {
             setFacing(canvas, Direction.WEST);
+            event.consume();
           } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_DIR_EAST)
               .compare(code, modifier)) {
             setFacing(canvas, Direction.EAST);
+            event.consume();
           } else if (((PrefMonitorKeyStroke) AppPreferences.HOTKEY_ADD_TOOL_ROTATE)
               .compare(code, modifier)) {
             final var current = getFacing();
