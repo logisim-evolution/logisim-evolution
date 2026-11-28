@@ -20,7 +20,6 @@ import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
@@ -38,6 +37,7 @@ import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.WindowEvent;
@@ -218,10 +218,12 @@ public class ProjectCircuitActions {
     final var analyzer = AnalyzerManager.getAnalyzer(proj.getFrame());
     analyzer.getModel().setCurrentCircuit(proj, circuit);
     configureAnalyzer(proj, circuit, analyzer, pinNames, inputVars, outputVars);
-    if (!analyzer.isVisible()) {
-      analyzer.setVisible(true);
+    final var frameState = analyzer.getExtendedState();
+    if ((frameState & Frame.ICONIFIED) != 0) {
+      analyzer.setExtendedState(frameState & ~Frame.ICONIFIED);
     }
     analyzer.toFront();
+    analyzer.setVisible(true);
   }
 
   public static void doMoveCircuit(Project proj, Circuit cur, int delta) {

@@ -20,10 +20,10 @@ import com.cburch.logisim.gui.search.providers.MenuSearchProvider;
 import com.cburch.logisim.gui.start.About;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
+import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.MacCompatibility;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
@@ -138,11 +138,12 @@ class MenuHelp extends Menu implements ActionListener {
           helpFrame = new LFrame.Dialog(null);
           helpFrame.setTitle(S.get("helpWindowTitle"));
           helpFrame.getContentPane().add(helpComponent);
-          helpFrame.setPreferredSize(
-              new Dimension(
-                  (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth() >> 1,
-                  (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() >> 1));
+          final var screen = GraphicsUtil.getScreenBounds(menubar.getParentFrame());
+          helpFrame.setPreferredSize(new Dimension(screen.width >> 1, screen.height >> 1));
           helpFrame.pack();
+          helpFrame.setLocationRelativeTo(menubar.getParentFrame());
+          helpFrame.toFront();
+          helpFrame.setVisible(true);
         } else {
           helpFrame.getContentPane().removeAll();
           helpFrame.getContentPane().add(helpComponent);

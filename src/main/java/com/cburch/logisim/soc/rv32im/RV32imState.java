@@ -309,7 +309,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
         if (simState.breakPointReached()) {
           bPanel.gotoLine(breakPoints.get(pc) - 1);
           OptionPane.showMessageDialog(
-              null,
+              cState.getProject().getFrame(),
               S.get("RV32imBreakPointReached"),
               SocSupport.getMasterName(cState, RV32imState.this.getName()),
               OptionPane.INFORMATION_MESSAGE);
@@ -331,7 +331,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
           .initializeTransaction(trans, attachedBus.getBusId(), cState);
       if (trans.hasError()) {
         OptionPane.showMessageDialog(
-            null,
+            cState.getProject().getFrame(),
             trans.getErrorMessage(),
             SocSupport.getMasterName(cState, RV32imState.this.getName())
                 + S.get("RV32imFetchTransaction"),
@@ -351,7 +351,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       }
       if (exe == null) {
         OptionPane.showMessageDialog(
-            null,
+            cState.getProject().getFrame(),
             S.get("RV32imFetchInvalidInstruction"),
             SocSupport.getMasterName(cState, RV32imState.this.getName())
                 + S.get("RV32imFetchTransaction"),
@@ -370,7 +370,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null) s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(
-            null,
+            cState.getProject().getFrame(),
             s.toString(),
             SocSupport.getMasterName(cState, RV32imState.this.getName())
                 + S.get("RV32imFetchTransaction"),

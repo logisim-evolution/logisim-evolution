@@ -91,7 +91,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     reset.setEnabled(false);
 
     Container contents = getContentPane();
-    panel.setPreferredSize(new Dimension(450, 300));
+    panel.setPreferredSize(new Dimension(600, 300));
     contents.add(statusPanel, BorderLayout.NORTH);
     contents.add(panel, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
@@ -99,6 +99,9 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     LocaleManager.addLocaleListener(myListener);
     myListener.localeChanged();
     pack();
+    setLocationRelativeTo(project.getFrame());
+    toFront();
+    setVisible(true);
   }
 
   private static String computeTitle(Model data, Project proj) {

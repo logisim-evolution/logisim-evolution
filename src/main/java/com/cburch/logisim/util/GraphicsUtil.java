@@ -18,7 +18,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -308,4 +311,15 @@ public final class GraphicsUtil {
     }
   }
 
+  public static Rectangle getScreenBounds(java.awt.Component c) {
+    GraphicsConfiguration gc = (c != null) ? c.getGraphicsConfiguration() : null;
+    if (gc == null) {
+      gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+    }
+    final var b = gc.getBounds();
+    final var in = Toolkit.getDefaultToolkit().getScreenInsets(gc); // taskbar, dock
+    return new Rectangle(
+        b.x + in.left, b.y + in.top,
+        b.width - in.left - in.right, b.height - in.top - in.bottom);
+  }
 }

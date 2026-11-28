@@ -13,6 +13,7 @@ import com.cburch.contracts.BaseListDataListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.FpgaCommanderListModel;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -32,6 +33,7 @@ public class FpgaCommanderListWindow extends JFrame
   private final boolean count;
   private final FpgaCommanderListModel model;
   private final JScrollPane textMessages;
+  private boolean displayed = false;
 
   public FpgaCommanderListWindow(
       String Title, Color fg, boolean count, FpgaCommanderListModel model) {
@@ -56,11 +58,20 @@ public class FpgaCommanderListWindow extends JFrame
     textMessages.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textMessages.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     add(textMessages);
-    setLocationRelativeTo(null);
-    pack();
     addWindowListener(this);
     this.count = count;
     this.model = model;
+  }
+
+  public void display(java.awt.Component parent) {
+    if (!displayed) {
+      getContentPane().setPreferredSize(new Dimension(parent.getWidth(), 400));
+      pack();
+      FpgaWindowPlacer.place(this, parent);
+      displayed = true;
+    }
+    toFront();
+    setVisible(true);
   }
 
   public boolean isActivated() {

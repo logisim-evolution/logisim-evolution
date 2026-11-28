@@ -47,7 +47,7 @@ class MacOsAdapter {
         // can fail, but just ignore it.
       }
       try {
-        dt.setPreferencesHandler(e -> PreferencesFrame.showPreferences());
+        dt.setPreferencesHandler(e -> PreferencesFrame.showPreferences(java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow()));
       } catch (Exception ignored) {
         // can fail, but just ignore it.
       }

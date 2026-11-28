@@ -12,6 +12,7 @@ package com.cburch.logisim.fpga.gui;
 import com.cburch.contracts.BaseKeyListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -32,6 +33,7 @@ public class FpgaCommanderTextWindow extends JFrame
   private final JTextArea textArea;
   private boolean IsActive = false;
   private final boolean count;
+  private boolean displayed = false;
 
   public FpgaCommanderTextWindow(String Title, Color fg, boolean count) {
     super((count) ? Title + " (0)" : Title);
@@ -53,12 +55,21 @@ public class FpgaCommanderTextWindow extends JFrame
     textMessages.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textMessages.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     add(textMessages);
-    setLocationRelativeTo(null);
     textArea.addKeyListener(this);
-    pack();
     addWindowListener(this);
     this.count = count;
     FontSize = textMessages.getFont().getSize();
+  }
+
+  public void display(java.awt.Component parent) {
+    if (!displayed) {
+      getContentPane().setPreferredSize(new Dimension(parent.getWidth(), 400));
+      pack();
+      FpgaWindowPlacer.place(this, parent);
+      displayed = true;
+    }
+    toFront();
+    setVisible(true);
   }
 
   public boolean isActivated() {
@@ -72,6 +83,17 @@ public class FpgaCommanderTextWindow extends JFrame
 
   public void set(String line, int LineCount) {
     textArea.setText(line);
+    if (count) setTitle(Title + " (" + LineCount + ")");
+    Rectangle rect = textArea.getBounds();
+    rect.x = 0;
+    rect.y = 0;
+    if (EventQueue.isDispatchThread()) textArea.paintImmediately(rect);
+    else textArea.repaint(rect);
+  }
+
+  public void append(String line, int LineCount) {
+    textArea.append(line);
+    textArea.setCaretPosition(textArea.getDocument().getLength());
     if (count) setTitle(Title + " (" + LineCount + ")");
     Rectangle rect = textArea.getBounds();
     rect.x = 0;

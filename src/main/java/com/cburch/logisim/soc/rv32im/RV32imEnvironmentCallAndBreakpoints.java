@@ -48,7 +48,7 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
       cpuState.machineReturn();
       return true;
     }
-    OptionPane.showMessageDialog(null, S.get("Rv32imECABNotImplmented"));
+    OptionPane.showMessageDialog(cState.getProject().getFrame(), S.get("Rv32imECABNotImplmented"));
     return true;
   }
 

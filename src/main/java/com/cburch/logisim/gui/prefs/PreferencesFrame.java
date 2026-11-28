@@ -18,6 +18,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
+import java.awt.Frame;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -70,18 +71,24 @@ public class PreferencesFrame extends LFrame.Dialog {
     MENU_MANAGER = new WindowMenuManager();
   }
 
-  public static void showPreferences() {
-    java.awt.Window activeWindow = java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
-    final var frame = MENU_MANAGER.getJFrame(true, activeWindow);
-    frame.setVisible(true);
-    // extra security for macOS
+  public static void showPreferences(java.awt.Component parent) {
+    final var frame = MENU_MANAGER.getJFrame(true, parent);
+    final var frameState = frame.getExtendedState();
+    if ((frameState & Frame.ICONIFIED) != 0) {
+      frame.setExtendedState(frameState & ~Frame.ICONIFIED);
+    }
     frame.toFront();
-    frame.requestFocus();
+    frame.setVisible(true);
   }
 
-  public static void showFPGAPreferences() {
-    final var frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, null);
+  public static void showFPGAPreferences(java.awt.Component parent) {
+    final var frame = (PreferencesFrame) MENU_MANAGER.getJFrame(true, parent);
     frame.setFpgaTab();
+    final var frameState = frame.getExtendedState();
+    if ((frameState & Frame.ICONIFIED) != 0) {
+      frame.setExtendedState(frameState & ~Frame.ICONIFIED);
+    }
+    frame.toFront();
     frame.setVisible(true);
   }
 

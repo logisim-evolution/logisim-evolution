@@ -156,15 +156,17 @@ public final class ProjectActions {
   }
 
   private static Frame createFrame(Project sourceProject, Project newProject) {
+    int offset = 0;
     if (sourceProject != null) {
       final var frame = sourceProject.getFrame();
       if (frame != null) {
         frame.savePreferences();
       }
+      if (!sourceProject.isBlank() && !newProject.isBlank()) {
+        offset = 20;
+      }
     }
-    final var newFrame = new Frame(newProject);
-    newProject.setFrame(newFrame);
-    return newFrame;
+    return new Frame(newProject, offset);
   }
 
   public static LogisimFile createNewFile(Project baseProject) {
@@ -489,6 +491,15 @@ public final class ProjectActions {
     final var ret = new Project(file);
     updatecircs(file, ret);
     return ret;
+  }
+
+  public static void doClose(Project proj) {
+    final var frame = proj.getFrame();
+    if (!frame.confirmClose()) {
+      return;
+    }
+    frame.getCanvas().closeCanvas();
+    frame.dispose();
   }
 
   public static void doQuit() {

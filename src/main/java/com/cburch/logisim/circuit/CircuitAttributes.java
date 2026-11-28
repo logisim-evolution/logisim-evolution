@@ -106,7 +106,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
         if (!NewName.equals(OldName)) {
           if (NewName.isEmpty()) {
             OptionPane.showMessageDialog(
-                null, S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
+                source.getProject().getFrame(), S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
             e.getSource().setValue(NAME_ATTR, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
@@ -120,7 +120,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
                 final var label = component.getAttributeSet().getValue(StdAttr.LABEL);
                 if (!label.isEmpty() && SyntaxChecker.namesEqualForCurrentHdl(label, NewName)) {
                   final var msg = S.get("CircuitSameInputOutputLabel");
-                  OptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
+                  OptionPane.showMessageDialog(source.getProject().getFrame(), "\"" + NewName + "\" : " + msg);
                   e.getSource().setValue(NAME_ATTR, OldName);
                   source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
                   return;

@@ -291,7 +291,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         if (simState.breakPointReached()) {
           bPanel.gotoLine(breakPoints.get(pc) - 1);
           OptionPane.showMessageDialog(
-              null,
+              cState.getProject().getFrame(),
               S.get("RV32imBreakPointReached"),
               SocSupport.getMasterName(cState, Nios2State.this.getName()),
               OptionPane.INFORMATION_MESSAGE);
@@ -315,7 +315,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
           .initializeTransaction(trans, attachedBus.getBusId(), cState);
       if (trans.hasError()) {
         OptionPane.showMessageDialog(
-            null,
+            cState.getProject().getFrame(),
             trans.getErrorMessage(),
             SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
@@ -334,7 +334,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       }
       if (exe == null) {
         OptionPane.showMessageDialog(
-            null,
+            cState.getProject().getFrame(),
             S.get("RV32imFetchInvalidInstruction"),
             SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);
@@ -353,7 +353,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         if (exe.getErrorMessage() != null)
           s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(
-            null,
+            cState.getProject().getFrame(),
             s.toString(),
             SocSupport.getMasterName(cState, Nios2State.this.getName()) + S.get("RV32imFetchTransaction"),
             OptionPane.ERROR_MESSAGE);

@@ -972,8 +972,7 @@ public class Circuit {
     // we do not have to check the wires as (1) Wire is a reserved keyword,
     // and (2) they cannot have a label
     if (changed)
-      OptionPane.showMessageDialog(
-          null, "\"" + label + "\" : " + S.get("ComponentLabelCollisionError"));
+      OptionPane.showMessageDialog(proj.getFrame(), "\"" + label + "\" : " + S.get("ComponentLabelCollisionError"));
   }
 
   public void removeCircuitListener(CircuitListener what) {

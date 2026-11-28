@@ -128,30 +128,27 @@ class MenuFile extends Menu implements ActionListener {
     if (src == newi) {
       ProjectActions.doNew(baseProj);
     } else if (src == merge) {
-      ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame(), baseProj);
     } else if (src == open) {
       final var newProj =
           ProjectActions.doOpen(
-              baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
-      if (newProj != null
-          && proj != null
-          && !proj.isFileDirty()
-          && proj.getLogisimFile().getLoader().getMainFile() == null) {
-        proj.getFrame().dispose();
+              baseProj == null ? null : baseProj.getFrame(), baseProj);
+      if (newProj != null && proj != null && proj.isBlank()) {
+        ProjectActions.doClose(proj);
       }
     } else if (src == close && proj != null) {
+      // If a single unedited project is open, don't reopen a new project
+      if (proj.isBlank()) return;
+
       var result = 0;
-      final var frame = proj.getFrame();
       if (proj.isFileDirty()) {
-        /* Must use hardcoded strings here, because the string management is rotten */
-        final var message =
-            "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
-        String[] options = {"Save", "Discard", "Cancel"};
+        final var message = String.format(S.get("confirmDiscardMessage"), proj.getLogisimFile().getName());
+        final String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
         result =
             OptionPane.showOptionDialog(
                 OptionPane.getFrameForComponent(this),
                 message,
-                "Confirm Close",
+                S.get("confirmCloseTitle"),
                 0,
                 OptionPane.QUESTION_MESSAGE,
                 null,
@@ -166,9 +163,8 @@ class MenuFile extends Menu implements ActionListener {
       // If "cancel" pressed do nothing, otherwise dispose the window,
       // opening one if this was the last opened window.
       if (result != 2) {
-        // Get the list of open projects
-        final var projectList = Projects.getOpenProjects();
-        if (projectList.size() == 1) {
+        final var frame = proj.getFrame();
+        if (Projects.getOpenProjects().size() == 1) {
           // Since we have a single window open, before closing the
           // current project open a new empty one
           ProjectActions.doNew(proj);
@@ -178,7 +174,7 @@ class MenuFile extends Menu implements ActionListener {
         frame.dispose();
       }
     } else if (src == prefs) {
-      PreferencesFrame.showPreferences();
+      PreferencesFrame.showPreferences(proj.getFrame());
     } else if (src == quit) {
       ProjectActions.doQuit();
     } else if (proj != null) {

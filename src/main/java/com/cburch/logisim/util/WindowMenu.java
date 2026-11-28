@@ -114,7 +114,6 @@ public class WindowMenu extends Menu {
     this.owner = owner;
     WindowMenuManager.addMenu(this);
 
-    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     minimize.setAccelerator(((PrefMonitorKeyStroke)
         AppPreferences.HOTKEY_WINDOW_MINIMIZE).getWithMask(0));
     close.setAccelerator(((PrefMonitorKeyStroke)
@@ -238,45 +237,29 @@ public class WindowMenu extends Menu {
 
   void doMinimize() {
     if (owner != null) {
-      owner.setExtendedState(Frame.ICONIFIED);
+      final var frameState = owner.getExtendedState();
+      if ((frameState & Frame.ICONIFIED) == 0) {
+        owner.setExtendedState(frameState | Frame.ICONIFIED);
+      }
     }
   }
 
   void doZoom() {
-    if (owner == null) {
-      return;
-    }
+    if (owner == null) return;
 
     owner.pack();
-    final var screenSize = owner.getToolkit().getScreenSize();
-    final var windowSize = owner.getPreferredSize();
-    final var windowLoc = owner.getLocation();
+    final var screen = GraphicsUtil.getScreenBounds(owner);
+    final var size = owner.getPreferredSize();
+    final var loc = owner.getLocation();
 
-    var locChanged = false;
-    var sizeChanged = false;
-    if (windowLoc.x + windowSize.width > screenSize.width) {
-      windowLoc.x = Math.max(0, screenSize.width - windowSize.width);
-      locChanged = true;
-      if (windowLoc.x + windowSize.width > screenSize.width) {
-        windowSize.width = screenSize.width - windowLoc.x;
-        sizeChanged = true;
-      }
-    }
-    if (windowLoc.y + windowSize.height > screenSize.height) {
-      windowLoc.y = Math.max(0, screenSize.height - windowSize.height);
-      locChanged = true;
-      if (windowLoc.y + windowSize.height > screenSize.height) {
-        windowSize.height = screenSize.height - windowLoc.y;
-        sizeChanged = true;
-      }
-    }
+    // Shift left/up first, then shrink if it still doesn't fit
+    loc.x = Math.max(screen.x, Math.min(loc.x, screen.x + screen.width - size.width));
+    loc.y = Math.max(screen.y, Math.min(loc.y, screen.y + screen.height - size.height));
+    size.width = Math.min(size.width, screen.x + screen.width - loc.x);
+    size.height = Math.min(size.height, screen.y + screen.height - loc.y);
 
-    if (locChanged) {
-      owner.setLocation(windowLoc);
-    }
-    if (sizeChanged) {
-      owner.setSize(windowSize);
-    }
+    owner.setLocation(loc);
+    owner.setSize(size);
   }
 
   void removeMenuItem(Object source, JRadioButtonMenuItem item) {

@@ -560,7 +560,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             autoLabeler.setLabel(label, canvas.getCircuit(), source);
             if (!okay) {
               OptionPane.showMessageDialog(
-                  null,
+                  canvas.getProject().getFrame(),
                   S.get("MatrixPlacerException"),
                   "Matrixplacer",
                   OptionPane.ERROR_MESSAGE);

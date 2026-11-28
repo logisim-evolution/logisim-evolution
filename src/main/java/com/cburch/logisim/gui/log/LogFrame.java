@@ -22,6 +22,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
+import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
@@ -208,37 +209,35 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     tabbedPane.addChangeListener(myChangeListener);
     myChangeListener.stateChanged(null);
 
-    final var contents = getContentPane();
-    final var w = Math.max(550, project.getFrame().getWidth());
-    var h = 300;
-    tabbedPane.setPreferredSize(new Dimension(w, h));
-    contents.add(tabbedPane, BorderLayout.CENTER);
+    final var frame = project.getFrame();
+    final var w = Math.max(550, frame.getContentPane().getWidth());
+    tabbedPane.setPreferredSize(new Dimension(w, 300));
+    getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
     LocaleManager.addLocaleListener(myListener);
     myListener.localeChanged();
+    setMinimumSize(new Dimension(300, 200));
     pack();
-    h = getSize().height;
 
     // Try to place below circuit window, or at least near bottom of screen,
     // using same width as circuit window.
-    final var d = Toolkit.getDefaultToolkit().getScreenSize();
-    final var r = project.getFrame().getBounds();
+    final var d = GraphicsUtil.getScreenBounds(frame);
+    final var r = frame.getBounds();
+    final var h = getSize().height;
     int x = r.x;
     int y = r.y + r.height;
-    if (y + h > d.height) { // too small below circuit
-      if (r.y >= h) {
-        // plenty of room above circuit
-        y = r.y - h;
-      } else if (r.y > d.height - h) {
-        // circuit is near bottom of screen
-        y = 0;
+    if (y + h > d.y + d.height) {      // too small below circuit
+      if (r.y - d.y >= h) {
+        y = r.y - h;                   // room above circuit
+      } else if (r.y > d.y + d.height - h) {
+        y = d.y;                       // circuit near bottom of screen
       } else {
-        // circuit is near top of screen
-        y = d.height - h;
+        y = d.y + d.height - h;        // circuit near top of screen
       }
     }
     setLocation(x, y);
-    setMinimumSize(new Dimension(300, 200));
+    toFront();
+    setVisible(true);
     // set initial focus to first panel
     addWindowListener(
         new WindowAdapter() {
