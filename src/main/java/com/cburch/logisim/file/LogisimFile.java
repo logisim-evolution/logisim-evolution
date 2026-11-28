@@ -170,9 +170,15 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     for (final var mylib : getLibraries()) {
       if (isNameInLibraries(mylib, name)) return true;
     }
-    for (final var mytool : this.getCircuits()) {
-      if (SyntaxChecker.namesEqualForCurrentHdl(name, mytool.getName()) && !mytool.equals(changed))
-        return true;
+    for (final var tool : this.getTools()) {
+      final var fact = tool.getFactory();
+      if (fact instanceof SubcircuitFactory factory) {
+        if (SyntaxChecker.namesEqualForCurrentHdl(name, tool.getName()) && !factory.getSubcircuit().equals(changed))
+          return true;
+      } else if (fact instanceof VhdlEntity) {
+        if (SyntaxChecker.namesEqualForCurrentHdl(name, tool.getName()))
+          return true;
+      }
     }
     return false;
   }
@@ -406,6 +412,15 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       }
     }
     return false;
+  }
+
+  public VhdlEntity getVhdlEntity(VhdlContent content) {
+    for (final var tool : tools) {
+      if (tool.getFactory() instanceof VhdlEntity factory) {
+        if (factory.getContent() == content) return factory;
+      }
+    }
+    return null;
   }
 
   private Tool findTool(Library lib, Tool query) {

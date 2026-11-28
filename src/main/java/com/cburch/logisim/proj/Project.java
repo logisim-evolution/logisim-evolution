@@ -33,6 +33,7 @@ import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.vhdl.base.HdlModel;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -113,9 +114,26 @@ public class Project {
         if (data instanceof AddTool) {
           Object factory = ((AddTool) data).getFactory();
           if (factory instanceof SubcircuitFactory fact) {
-            if (fact.getSubcircuit() == getCurrentCircuit()) {
+            final var circ = fact.getSubcircuit();
+            recentRootState.remove(circ);
+            allRootStates.removeIf(
+                state -> state.getCircuit() == circ
+            );
+            if (circ == getCurrentCircuit()) {
               setCurrentCircuit(file.getMainCircuit());
+            } else {
+              fireEvent(ProjectEvent.ACTION_SET_STATE, circuitState, circuitState);
             }
+          } else if (factory instanceof VhdlEntity) {
+            setCurrentCircuit(file.getMainCircuit());
+          }
+        }
+      } else if (action == LibraryEvent.ADD_TOOL) {
+        Object data = event.getData();
+        if (data instanceof AddTool addTool && addTool.getFactory() instanceof SubcircuitFactory fact) {
+          final var state = recentRootState.get(fact.getSubcircuit());
+          if (state != null && !allRootStates.contains(state)) {
+            allRootStates.add(state);
           }
         }
       }

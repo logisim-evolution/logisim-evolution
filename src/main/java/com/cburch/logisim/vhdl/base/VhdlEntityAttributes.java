@@ -45,14 +45,14 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     @SuppressWarnings("unchecked")
     @Override
     public <V> V getValue(Attribute<V> attr) {
-      if (attr == VhdlEntity.nameAttr) return (V) content.getName();
+      if (attr == VhdlEntity.NAME_ATTR) return (V) content.getName();
       if (attr == StdAttr.APPEARANCE) return (V) content.getAppearance();
       return null;
     }
 
     @Override
     public <V> void setValue(Attribute<V> attr, V value) {
-      if (attr == VhdlEntity.nameAttr && value instanceof String name) {
+      if (attr == VhdlEntity.NAME_ATTR && value instanceof String name) {
         final var oldName = content.getName();
         if (oldName.equals(name) || !content.setName(name)) return;
         @SuppressWarnings("unchecked")
@@ -125,7 +125,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   }
 
   private static final List<Attribute<?>> STATIC_ATTRIBUTES =
-      Arrays.asList(VhdlEntity.nameAttr, StdAttr.APPEARANCE);
+      Arrays.asList(VhdlEntity.NAME_ATTR, StdAttr.APPEARANCE);
 
   static AttributeSet createBaseAttrs(VhdlContent content) {
     return new VhdlContentAttributes(content);
@@ -160,7 +160,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   void setInstance(Instance value) {
     vhdlInstance = value;
-    if (vhdlInstance != null && listener != null) {
+    if (vhdlInstance != null && listener == null) {
       listener = new VhdlEntityListener(this);
       content.addHdlModelListener(listener);
     }
@@ -169,7 +169,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   void updateGenerics() {
     List<Attribute<Integer>> genericAttrs = content.getGenericAttributes();
     instanceAttrs = new ArrayList<>(6 + genericAttrs.size());
-    instanceAttrs.add(VhdlEntity.nameAttr);
+    instanceAttrs.add(VhdlEntity.NAME_ATTR);
     instanceAttrs.add(StdAttr.LABEL);
     instanceAttrs.add(StdAttr.LABEL_FONT);
     instanceAttrs.add(StdAttr.LABEL_VISIBILITY);
@@ -210,7 +210,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == VhdlEntity.nameAttr) {
+    if (attr == VhdlEntity.NAME_ATTR) {
       return (V) content.getName();
     }
     if (attr == StdAttr.LABEL) {
@@ -240,7 +240,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    if (attr == VhdlEntity.nameAttr) {
+    if (attr == VhdlEntity.NAME_ATTR) {
       final var newValue = (String) value;
       if (content.getName().equals(newValue)) return;
       if (!content.setName(newValue)) return;
@@ -316,7 +316,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       attrs.updateGenerics();
       attrs.vhdlInstance.fireInvalidated();
       attrs.vhdlInstance.recomputeBounds();
-      attrs.fireAttributeValueChanged(VhdlEntity.nameAttr, source.getName(), null);
+      attrs.fireAttributeValueChanged(VhdlEntity.NAME_ATTR, source.getName(), null);
     }
 
     @Override

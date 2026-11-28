@@ -47,7 +47,10 @@ class SimulationTreeTopNode extends SimulationTreeNode {
       children.add(node);
     }
     for (final var node : old.values()) {
-      if (!children.contains(node)) ((SimulationTreeCircuitNode) node).dispose();
+      if (!children.contains(node)) {
+        ((SimulationTreeCircuitNode) node).dispose();
+        changed = true;
+      }
     }
     if (changed) model.fireStructureChanged(this);
   }

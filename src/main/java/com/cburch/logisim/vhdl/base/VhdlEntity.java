@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   static final Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
-  static final Attribute<String> nameAttr = Attributes.forString("vhdlEntity", S.getter("vhdlEntityName"));
+  public static final Attribute<String> NAME_ATTR = Attributes.forString("vhdlEntity", S.getter("vhdlEntityName"));
   static final ArithmeticIcon icon = new ArithmeticIcon("VHDL");
 
   static final int WIDTH = 140;
@@ -325,6 +325,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   @Override
   public void contentSet(HdlModel source) {
     icon.setInvalid(!content.isValid());
+    appearanceChanged(source);
   }
 
   @Override
