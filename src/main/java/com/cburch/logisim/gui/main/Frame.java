@@ -1078,7 +1078,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         if (!getEditorView().equals(EDIT_APPEARANCE)) {
           final var oldTool = (Tool) event.getOldData();
           final var newTool = (Tool) event.getData();
-          viewAttributes(oldTool, newTool, false);
+          viewAttributes(oldTool, newTool, true);
         } else if (action == ProjectEvent.UNDO_COMPLETE || action == ProjectEvent.REDO_COMPLETE) {
           viewAttributes(project.getTool(), true);
         }
