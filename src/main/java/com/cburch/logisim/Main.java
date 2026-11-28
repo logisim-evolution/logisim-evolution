@@ -75,19 +75,19 @@ public class Main {
           final var tooltipFont = UIManager.get("ToolTip.font");
           if (tooltipFont != null) {
             UIManager.put("ToolTip.font",
-              ((Font)tooltipFont).deriveFont(Font.BOLD, AppPreferences.getScaled(12))
+                ((Font) tooltipFont).deriveFont(Font.BOLD, AppPreferences.getScaled(12))
             );
           }
           final var treeFont = UIManager.get("Tree.font");
           if (treeFont != null) {
             UIManager.put("Tree.font",
-              ((Font)treeFont).deriveFont(Font.BOLD, AppPreferences.getScaled(12))
+                ((Font) treeFont).deriveFont(Font.BOLD, AppPreferences.getScaled(12))
             );
           }
           final var menuItemFont = UIManager.get("MenuItem.acceleratorFont");
           if (menuItemFont != null) {
             UIManager.put("MenuItem.acceleratorFont",
-              ((Font)menuItemFont).deriveFont(Font.PLAIN, AppPreferences.getScaled(12))
+                ((Font) menuItemFont).deriveFont(Font.PLAIN, AppPreferences.getScaled(12))
             );
           }
         }
