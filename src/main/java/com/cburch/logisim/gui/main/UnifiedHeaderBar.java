@@ -9,10 +9,8 @@
 
 package com.cburch.logisim.gui.main;
 
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitEvent;
-import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Simulator;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.gui.icons.symbolic.ChevronDownIcon;
 import com.cburch.logisim.gui.icons.symbolic.PauseIcon;
@@ -25,16 +23,15 @@ import com.cburch.logisim.gui.icons.symbolic.TickFullIcon;
 import com.cburch.logisim.gui.icons.symbolic.TickHalfIcon;
 import com.cburch.logisim.gui.icons.symbolic.UndoIcon;
 import com.cburch.logisim.gui.icons.symbolic.VectorBaseIcon;
-import com.cburch.logisim.gui.prefs.PreferencesFrame;
+import com.cburch.logisim.gui.menu.MenuSimulate;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorKeyStroke;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.vhdl.base.HdlModel;
-import com.cburch.logisim.vhdl.base.VhdlContent;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.formdev.flatlaf.FlatClientProperties;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -64,9 +61,6 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.proj.ProjectEvent;
 
 /**
  * Unified HeaderBar for Logisim-Evolution.
@@ -159,13 +153,13 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     sidebarButton = createPillButton(new SidebarToggleIcon(), S.get("headerToggleSidebar"));
     sidebarButton.addActionListener(e -> frame.toggleSidebar());
 
-    undoButton = createPillButton(new UndoIcon(), S.get("editCantUndoItem") + " (Ctrl+Z)");
+    undoButton = createPillButton(new UndoIcon(), S.get("editCantUndoItem") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getDisplayString() + ")");
     undoButton.addActionListener(e -> {
       if (project != null)
         project.undoAction();
     });
 
-    redoButton = createPillButton(new RedoIcon(), S.get("editCantRedoItem") + " (Ctrl+Shift+Z)");
+    redoButton = createPillButton(new RedoIcon(), S.get("editCantRedoItem") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getDisplayString() + ")");
     redoButton.addActionListener(e -> {
       if (project != null)
         project.redoAction();
@@ -205,7 +199,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
         }
       }
     };
-    circuitPickerButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, AppPreferences.getScaled(13)));
+    circuitPickerButton.setFont(circuitPickerButton.getFont().deriveFont(Font.BOLD, AppPreferences.getScaled(13)));
     circuitPickerButton.setHorizontalTextPosition(SwingConstants.LEFT);
     circuitPickerButton.setIconTextGap(AppPreferences.getScaled(14));
     circuitPickerButton.putClientProperty(FlatClientProperties.STYLE,
@@ -237,7 +231,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     playPauseButton = new JToggleButton(playIcon);
     stylePillItem(playPauseButton);
-    playPauseButton.setToolTipText(S.get("headerSimAutoTickRun") + " (Ctrl+K)");
+    playPauseButton.setToolTipText(S.get("headerSimAutoTickRun") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getDisplayString() + ")");
     playPauseButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null) {
@@ -248,7 +242,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     stepButton = new JButton(new StepIcon(SIM_ICON_SIZE));
     stylePillItem(stepButton);
-    stepButton.setToolTipText(S.get("simulateStepTip"));
+    stepButton.setToolTipText(S.get("simulateStepTip") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getDisplayString() + ")");
     stepButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -257,7 +251,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickHalfButton = new JButton(new TickHalfIcon(SIM_ICON_SIZE));
     stylePillItem(tickHalfButton);
-    tickHalfButton.setToolTipText(S.get("simulateTickHalfTip"));
+    tickHalfButton.setToolTipText(S.get("simulateTickHalfTip") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getDisplayString() + ")");
     tickHalfButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
@@ -266,14 +260,14 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
 
     tickFullButton = new JButton(new TickFullIcon(SIM_ICON_SIZE));
     stylePillItem(tickFullButton);
-    tickFullButton.setToolTipText(S.get("simulateTickFullTip"));
+    tickFullButton.setToolTipText(S.get("simulateTickFullTip") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getDisplayString() + ")");
     tickFullButton.addActionListener(e -> {
       Simulator sim = project.getSimulator();
       if (sim != null)
         sim.tick(2);
     });
 
-    freqButton = new JButton("16 Hz", new ChevronDownIcon());
+    freqButton = new JButton(MenuSimulate.getTickFrequencyString(AppPreferences.TICK_FREQUENCY.get()), new ChevronDownIcon());
     freqButton.setHorizontalTextPosition(SwingConstants.LEFT);
     stylePillItem(freqButton);
     freqButton.setToolTipText(S.get("simulateTickFreqMenu"));
@@ -347,16 +341,6 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     }
 
     project.addProjectListener(this);
-
-    Circuit circ = project.getCurrentCircuit();
-    if (circ != null) {
-      circ.addCircuitListener(new CircuitListener() {
-        @Override
-        public void circuitChanged(CircuitEvent event) {
-          SwingUtilities.invokeLater(UnifiedHeaderBar.this::updateUndoRedo);
-        }
-      });
-    }
   }
 
   public void updateState() {
@@ -368,14 +352,9 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   public void updateTitle() {
     if (circuitPickerButton == null || project == null)
       return;
-    HdlModel hdl = project.getCurrentHdl();
-    String name;
-    if (hdl != null) {
-      name = hdl.getName();
-    } else {
-      Circuit current = project.getCurrentCircuit();
-      name = (current != null) ? current.getName() : "main";
-    }
+    final var circ = project.getCurrentCircuit();
+    final var hdl = project.getCurrentHdl();
+    final var name = circ != null ? circ.getName() : hdl != null ? hdl.getName() : "main";
     circuitPickerButton.setText(name);
     circuitPickerButton.repaint();
   }
@@ -392,11 +371,11 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       if (ticking) {
         pauseIcon.setColor(COLOR_HALTED);
         playPauseButton.setIcon(pauseIcon);
-        playPauseButton.setToolTipText(S.get("headerSimAutoTickPause") + " (Ctrl+K)");
+        playPauseButton.setToolTipText(S.get("headerSimAutoTickPause") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getDisplayString() + ")");
       } else {
         playIcon.setColor(COLOR_RUNNING);
         playPauseButton.setIcon(playIcon);
-        playPauseButton.setToolTipText(S.get("headerSimAutoTickRun") + " (Ctrl+K)");
+        playPauseButton.setToolTipText(S.get("headerSimAutoTickRun") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getDisplayString() + ")");
       }
 
       String detailedMsg = sim.getSingleStepMessage();
@@ -415,12 +394,7 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       }
 
       if (getWidth() >= 820) {
-        double hz = sim.getTickFrequency();
-        if (hz >= 1000.0) {
-          freqButton.setText(String.format("%.0f kHz", hz / 1000.0));
-        } else {
-          freqButton.setText(String.format("%.0f Hz", hz));
-        }
+        freqButton.setText(MenuSimulate.getTickFrequencyString(sim.getTickFrequency()));
       }
     }
   }
@@ -432,18 +406,18 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     final boolean canUndo = (last != null);
     undoButton.setEnabled(canUndo);
     if (canUndo) {
-      undoButton.setToolTipText(S.get("editUndoItem", last.getName()) + " · Ctrl+Z");
+      undoButton.setToolTipText(S.get("editUndoItem", last.getName()) + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getDisplayString() + ")");
     } else {
-      undoButton.setToolTipText(S.get("editCantUndoItem") + " · Ctrl+Z");
+      undoButton.setToolTipText(S.get("editCantUndoItem") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_UNDO).getDisplayString() + ")");
     }
 
     final var next = project.getCanRedo() ? project.getLastRedoAction() : null;
     final boolean canRedo = (next != null);
     redoButton.setEnabled(canRedo);
     if (canRedo) {
-      redoButton.setToolTipText(S.get("editRedoItem", next.getName()) + " · Ctrl+Shift+Z");
+      redoButton.setToolTipText(S.get("editRedoItem", next.getName()) + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getDisplayString() + ")");
     } else {
-      redoButton.setToolTipText(S.get("editCantRedoItem") + " · Ctrl+Shift+Z");
+      redoButton.setToolTipText(S.get("editCantRedoItem") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_EDIT_REDO).getDisplayString() + ")");
     }
   }
 
@@ -455,25 +429,24 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
   // Dropdown Popups
   // ---------------------------------------------------------------------------
   private void showCircuitMenu(JButton parent) {
-    JPopupMenu menu = new JPopupMenu();
-    HdlModel currentHdl = project.getCurrentHdl();
-    for (Circuit c : project.getLogisimFile().getCircuits()) {
-      JMenuItem item = new JMenuItem(c.getName());
-      if (currentHdl == null && c == project.getCurrentCircuit()) {
-        item.setFont(item.getFont().deriveFont(Font.BOLD));
-      }
-      item.addActionListener(e -> project.setCurrentCircuit(c));
-      menu.add(item);
-    }
-    final var vhdlList = project.getLogisimFile().getVhdlContents();
-    if (!vhdlList.isEmpty()) {
-      menu.add(new JSeparator());
-      for (VhdlContent vhdl : vhdlList) {
-        JMenuItem item = new JMenuItem(vhdl.getName());
-        if (vhdl == currentHdl) {
+    final JPopupMenu menu = new JPopupMenu();
+    for (final var tool : project.getLogisimFile().getTools()) {
+      final var fact = tool.getFactory();
+      if (fact instanceof final SubcircuitFactory factory) {
+        final var circ = factory.getSubcircuit();
+        final JMenuItem item = new JMenuItem(circ.getName());
+        if (project.getCurrentCircuit() == circ) {
           item.setFont(item.getFont().deriveFont(Font.BOLD));
         }
-        item.addActionListener(e -> project.setCurrentHdlModel(vhdl));
+        item.addActionListener(e -> project.setCurrentCircuit(circ));
+        menu.add(item);
+      } else if (fact instanceof final VhdlEntity vhdl) {
+        final var hdl = vhdl.getContent();
+        final JMenuItem item = new JMenuItem(hdl.getName());
+        if (project.getCurrentHdl() == hdl) {
+          item.setFont(item.getFont().deriveFont(Font.BOLD));
+        }
+        item.addActionListener(e -> project.setCurrentHdlModel(hdl));
         menu.add(item);
       }
     }
@@ -487,14 +460,14 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       return;
 
     // Clock Control Actions
-    JMenuItem resetItem = new JMenuItem(S.get("simulateResetItem") + " (Ctrl+R)", new ResetIcon());
+    JMenuItem resetItem = new JMenuItem(S.get("simulateResetItem") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_RESET).getDisplayString() + ")", new ResetIcon());
     resetItem.addActionListener(e -> {
       sim.reset();
       updateSimControls();
     });
     menu.add(resetItem);
 
-    JCheckBoxMenuItem autoTickItem = new JCheckBoxMenuItem(S.get("simulateTickItem") + " (Ctrl+K)", sim.isAutoTicking());
+    JCheckBoxMenuItem autoTickItem = new JCheckBoxMenuItem(S.get("simulateTickItem") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_ENABLED).getDisplayString() + ")", sim.isAutoTicking());
     autoTickItem.addActionListener(e -> {
       sim.setAutoTicking(!sim.isAutoTicking());
       updateSimControls();
@@ -504,14 +477,13 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
     menu.add(new JSeparator());
 
     // Frequency Presets
-    double[] freqs = { 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1000.0, 2000.0, 4000.0 };
-    double currentHz = sim.getTickFrequency();
+    final var currentHz = sim.getTickFrequency();
+    final var freqStrs = MenuSimulate.getTickFrequencyStrings();
 
-    for (double hz : freqs) {
-      String label = (hz >= 1000.0)
-          ? String.format("%.0f kHz", hz / 1000.0)
-          : String.format(hz < 1 ? "%.2f Hz" : "%.0f Hz", hz);
-      JCheckBoxMenuItem item = new JCheckBoxMenuItem(label, Math.abs(currentHz - hz) < 0.01);
+    for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
+      final var hz = MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i];
+      final var freqStr = freqStrs.get(i);
+      JCheckBoxMenuItem item = new JCheckBoxMenuItem(freqStr, Math.abs(currentHz - hz) < 0.01);
       item.addActionListener(e -> {
         sim.setTickFrequency(hz);
         updateSimControls();
@@ -663,8 +635,10 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
         || act == ProjectEvent.REDO_COMPLETE) {
       if (SwingUtilities.isEventDispatchThread()) {
         updateUndoRedo();
+        updateTitle();
       } else {
         SwingUtilities.invokeLater(this::updateUndoRedo);
+        SwingUtilities.invokeLater(this::updateTitle);
       }
     }
   }
@@ -688,13 +662,13 @@ public class UnifiedHeaderBar extends JPanel implements LocaleListener, ProjectL
       sidebarButton.setToolTipText(S.get("headerToggleSidebar"));
     }
     if (stepButton != null) {
-      stepButton.setToolTipText(S.get("simulateStepTip"));
+      stepButton.setToolTipText(S.get("simulateStepTip") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_STEP).getDisplayString() + ")");
     }
     if (tickHalfButton != null) {
-      tickHalfButton.setToolTipText(S.get("simulateTickHalfTip"));
+      tickHalfButton.setToolTipText(S.get("simulateTickHalfTip") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_HALF).getDisplayString() + ")");
     }
     if (tickFullButton != null) {
-      tickFullButton.setToolTipText(S.get("simulateTickFullTip"));
+      tickFullButton.setToolTipText(S.get("simulateTickFullTip") + " (" + ((PrefMonitorKeyStroke) AppPreferences.HOTKEY_SIM_TICK_FULL).getDisplayString() + ")");
     }
     if (freqButton != null) {
       freqButton.setToolTipText(S.get("simulateTickFreqMenu"));
