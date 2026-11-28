@@ -185,13 +185,8 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       final var typedWires = myTypedWires.getTypedWires();
       if (!typedWires.isEmpty()) {
         body.empty().addRemarkBlock("The type defined signals are defined here");
-        final var sortedWires = new TreeSet<>(typedWires.keySet());
-        var maxNameLength = 0;
-        for (final var wire : sortedWires)
-          maxNameLength = Math.max(maxNameLength, typedWires.get(wire).length());
-        for (final var wire : sortedWires) {
-          final var typeName = typedWires.get(wire);
-          body.add(LineBuffer.format("{{1}}{{2}} {{3}};", typeName, " ".repeat(maxNameLength - typeName.length()), wire));
+        for (final var wire : new TreeSet<>(typedWires.keySet())) {
+          body.add(myTypedWires.getDeclaration(wire));
         }
       }
       body.empty()

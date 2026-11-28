@@ -22,6 +22,10 @@ public class HdlTypes {
     String getTypeDefinition();
 
     String getTypeName();
+
+    default String getDeclaration(String wireName) {
+      return getTypeName() + " " + wireName + ";";
+    }
   }
 
   private static class HdlEnum implements HdlType {
@@ -107,16 +111,20 @@ public class HdlTypes {
                   LineBuffer.formatVhdl(
                       " " + "{{downto}} 0);")); // Important: The leading space is required
         }
-      } else {
-        contents
-            .append("typedef logic [")
-            .append(
-                myGenericBitWidth == null
-                    ? Integer.toString(myBitWidth - 1)
-                    : String.format("%s - 1", myGenericBitWidth))
-            .append(String.format(":0] %s [%d:0];", myTypeName, myNrOfEntries));
       }
+      // Verilog doesn't support custom types
       return contents.toString();
+    }
+
+    @Override
+    public String getDeclaration(String wireName) {
+      return String.format(
+          "reg [%s:0] %s [%d:0];",
+          myGenericBitWidth == null
+              ? Integer.toString(myBitWidth - 1)
+              : String.format("%s - 1", myGenericBitWidth),
+          wireName,
+          myNrOfEntries);
     }
 
     @Override
@@ -162,8 +170,15 @@ public class HdlTypes {
 
   public List<String> getTypeDefinitions() {
     final var defs = LineBuffer.getHdlBuffer();
-    for (final var entry : myTypes.keySet()) defs.add(myTypes.get(entry).getTypeDefinition());
+    for (final var entry : myTypes.keySet()) {
+      final var def = myTypes.get(entry).getTypeDefinition();
+      if (!def.isEmpty()) defs.add(def);
+    }
     return defs.getWithIndent();
+  }
+
+  public String getDeclaration(String wire) {
+    return myTypes.get(myWires.get(wire)).getDeclaration(wire);
   }
 
   public Map<String, String> getTypedWires() {

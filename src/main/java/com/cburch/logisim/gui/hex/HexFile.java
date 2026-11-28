@@ -247,7 +247,7 @@ public class HexFile {
       final var f = chooser.getSelectedFile();
       try {
         open(dst, f);
-        mem.setCurrentImage(instance, f);
+        if (mem != null) mem.setCurrentImage(instance, f);
       } catch (IOException e) {
         OptionPane.showMessageDialog(parent, e.getMessage(), S.get("ramLoadErrorTitle"), OptionPane.ERROR_MESSAGE);
       }

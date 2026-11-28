@@ -424,10 +424,9 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
      * on the FPGA.
      *
      * IMPORTANT:
-     *  1) in case of a gated clock (hence the RAM is not connected to a clock component) this
+     * In case of a gated clock (hence the RAM is not connected to a clock component) this
      * HDL-description will NOT work on the FPGA and the simulation in logisim and on an FPGA are for
      * sure not identical!
-     *  2) This module uses system Verilog features.
      */
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
