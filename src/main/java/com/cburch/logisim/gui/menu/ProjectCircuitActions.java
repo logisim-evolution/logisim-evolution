@@ -281,7 +281,7 @@ public class ProjectCircuitActions {
         } catch (CircuitException ex) {
           OptionPane.showMessageDialog(proj.getFrame(), ex.getMessage());
         }
-        
+
         break;
       }
     }
