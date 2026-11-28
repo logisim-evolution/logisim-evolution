@@ -104,7 +104,8 @@ public class Main {
   public static boolean headless = false;
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
-  public static final String DIRTY_MARKER = "\ud83d\udcbe";
+  public static final String DIRTY_MARKER_UNICODE = "💾";
+  public static final String DIRTY_MARKER = "*";
 
   public static boolean hasGui() {
     return !headless;

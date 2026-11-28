@@ -11,9 +11,10 @@ package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.gui.generic.ProjectExplorer;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.ColorUtil;
-import java.awt.Color;
+import com.cburch.logisim.util.FontUtil;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -25,7 +26,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
   private static final long serialVersionUID = 1L;
-  private static final String CURRENT_VIEW_SUFFIX = " ●";
   private int preferredWidthAdjustment;
 
   @Override
@@ -52,17 +52,18 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
         final var baseFont = tree.getFont() != null ? tree.getFont() : label.getFont();
         final var plainFont = AppPreferences.getScaledFont(baseFont);
         final var boldFont = plainFont.deriveFont(Font.BOLD);
+        final var font = viewed ? boldFont : plainFont;
 
-        label.setFont(viewed ? boldFont : plainFont);
+        label.setFont(font);
         if (viewed) {
-          label.setText(node.toString() + CURRENT_VIEW_SUFFIX);
+          label.setText(node.toString() + " " + FontUtil.getDisplayableString(font, ProjectExplorer.CURRENT_VIEW_SUFFIX_UNICODE, ProjectExplorer.CURRENT_VIEW_SUFFIX));
           label.setForeground(ColorUtil.getThemeAccentColor());
         } else {
           final var plainTextWidth = label.getFontMetrics(plainFont).stringWidth(label.getText());
           final var currentViewTextWidth =
               label
                   .getFontMetrics(boldFont)
-                  .stringWidth(node.toString() + CURRENT_VIEW_SUFFIX);
+                  .stringWidth(node.toString() + " " + FontUtil.getDisplayableString(font, ProjectExplorer.CURRENT_VIEW_SUFFIX_UNICODE, ProjectExplorer.CURRENT_VIEW_SUFFIX));
           preferredWidthAdjustment = Math.max(0, currentViewTextWidth - plainTextWidth);
           label.setForeground(selected ? getTextSelectionColor() : getTextNonSelectionColor());
         }
