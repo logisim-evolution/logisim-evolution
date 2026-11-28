@@ -104,6 +104,7 @@ class MainTest {
           final var actual = UIManager.getFont(key);
           assertEquals(Font.MONOSPACED, actual.getFamily(), key);
           final var speciallySized = key.equals("ToolTip.font")
+              || key.equals("Tree.font")
               || key.equals("MenuItem.acceleratorFont");
           assertEquals(speciallySized ? Font.BOLD : font.getStyle(), actual.getStyle(), key);
           assertEquals(speciallySized ? 18 : font.getSize(), actual.getSize(), key);
