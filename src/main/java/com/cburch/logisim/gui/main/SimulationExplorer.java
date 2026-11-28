@@ -81,7 +81,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
   @Override
   public void projectChanged(ProjectEvent event) {
     int action = event.getAction();
-    if (action == ProjectEvent.ACTION_SET_STATE) {
+    if (action == ProjectEvent.ACTION_SET_STATE || action == ProjectEvent.UNDO_COMPLETE) {
       model.updateSimulationList(project.getRootCircuitStates());
       model.setCurrentView(project.getCircuitState());
       TreePath path = model.mapToPath(project.getCircuitState());

@@ -75,6 +75,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
         final var factory = addTool.getFactory();
         if (factory instanceof SubcircuitFactory circFact) {
           ProjectCircuitActions.doRemoveCircuit(proj, circFact.getSubcircuit());
+        } else if (factory instanceof VhdlEntity vhdl) {
+          ProjectCircuitActions.doRemoveVhdl(proj, vhdl.getContent());
         }
       }
     }
@@ -94,6 +96,24 @@ class ToolboxManip implements ProjectExplorer.Listener {
           setDefaultTool(lastSelected, proj);
         } else if (source instanceof VhdlEntity vhdl) {
           proj.setCurrentHdlModel(vhdl.getContent());
+        }
+      }
+    }
+  }
+
+  @Override
+  public void renameRequested(ProjectExplorer.Event event) {
+    final var clicked = event.getTarget();
+    if (clicked instanceof ProjectExplorerToolNode clickedNode) {
+      clickedNode.fireNodeChanged();
+      final var baseTool = ((ProjectExplorerToolNode) clicked).getValue();
+      if (baseTool instanceof AddTool tool) {
+        final var source = tool.getFactory();
+        if (source instanceof SubcircuitFactory circFact) {
+          ProjectCircuitActions.doRenameCircuit(proj, circFact.getSubcircuit());
+          proj.getFrame().viewAttributes(tool);
+        } else if (source instanceof VhdlEntity vhdl) {
+          ProjectCircuitActions.doRenameVhdl(proj, vhdl.getContent());
         }
       }
     }
@@ -154,6 +174,12 @@ class ToolboxManip implements ProjectExplorer.Listener {
           if (proj.getCurrentCircuit() == circ) {
             proj.getFrame().setAttrTableModel(new AttrTableCircuitModel(proj, circ));
             setDefaultTool(lastSelected, proj);
+            return;
+          }
+        } else if (source instanceof VhdlEntity vhdl) {
+          final var hdl = vhdl.getContent();
+          if (proj.getCurrentHdl() == hdl) {
+            proj.getFrame().setAttrTableModel(new AttrTableHdlModel(proj, hdl));
             return;
           }
         }

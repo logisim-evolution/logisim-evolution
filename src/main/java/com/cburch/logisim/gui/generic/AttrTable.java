@@ -102,8 +102,6 @@ public class AttrTable extends JPanel implements LocaleListener {
     localeChanged();
   }
 
-  private String scrollInitialValue = null;
-  private String scrollFinalValue = null;
   private AttrTableModelRow scrollRow = null;
   private Timer scrollTimer = null;
   private long lastWheelTime = 0;
@@ -183,10 +181,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     if (scrollRow != row || !scrollTimer.isRunning()) {
       finishMouseWheelScroll();
       scrollRow = row;
-      scrollInitialValue = valStr;
     }
-
-    scrollFinalValue = finalValStr;
 
     try {
       row.setValue(parent, finalValStr);
@@ -202,8 +197,6 @@ public class AttrTable extends JPanel implements LocaleListener {
       scrollTimer.stop();
     }
     scrollRow = null;
-    scrollInitialValue = null;
-    scrollFinalValue = null;
   }
 
   public AttrTableModel getAttrTableModel() {

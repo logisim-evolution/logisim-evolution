@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.SplitterAttributes;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
@@ -18,6 +19,8 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.gui.HdlColorRenderer;
+import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.awt.Component;
 import java.awt.Window;
 import java.util.ArrayList;
@@ -127,6 +130,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
       if (index >= 0) {
         fireValueChanged(index);
       }
+    }
+    if (attr == StdAttr.LABEL || attr == CircuitAttributes.NAME_ATTR || attr == VhdlEntity.NAME_ATTR) {
+      fireTitleChanged();
     }
   }
 

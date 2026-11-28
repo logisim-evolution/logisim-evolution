@@ -54,6 +54,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
             mutation.setForCircuit(attr, value);
             final var action = mutation.toAction(null);
             proj.doAction(action);
+            if (attr.equals(CircuitAttributes.NAME_ATTR)) fireTitleChanged();
           } catch (CircuitException ex) {
             OptionPane.showMessageDialog(proj.getFrame(), ex.getMessage());
           }

@@ -19,13 +19,16 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.AnalyzeException;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
+import com.cburch.logisim.circuit.CircuitException;
+import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.SubcircuitFactory;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
+import com.cburch.logisim.gui.main.ToolAttributeAction;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -102,34 +105,42 @@ public class ProjectCircuitActions {
   public static void doAddCircuit(Project proj) {
     String initialValue = "";
     while (true) {
-      final var name = promptForCircuitName(proj.getFrame(), proj.getLogisimFile(), initialValue);
+      final var name = promptForNewName(proj.getFrame(), proj.getLogisimFile(), initialValue, false);
       if (name == null) break;
 
-      String error = null;
-      /* Checking for valid names */
-      if (name.isEmpty()) {
-        error = S.get("circuitNameMissingError");
-      } else if (CorrectLabel.isKeyword(name, AppPreferences.HdlType.get(), false)) {
-        error = "\"" + name + "\": " + S.get("circuitNameKeyword");
-      } else if (nameIsInUse(proj, name)) {
-        error = "\"" + name + "\": " + S.get("circuitNameExists");
-      } else {
-        String nameMessage = SyntaxChecker.getErrorMessage(name, AppPreferences.HdlType.get());
-        if (nameMessage != null) {
-          error = "\"" + name + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
-        }
+      if (labelInvalidNotify(name, proj)) {
+        initialValue = name;
+        continue;
       }
 
-      if (error != null) {
-        OptionPane.showMessageDialog(
-            proj.getFrame(), error, S.get("circuitCreateTitle"), OptionPane.ERROR_MESSAGE);
-        initialValue = name;
-      } else {
-        final var circuit = new Circuit(name, proj.getLogisimFile(), proj);
-        proj.doAction(LogisimFileActions.addCircuit(circuit));
-        proj.setCurrentCircuit(circuit);
-        break;
+      final var circuit = new Circuit(name, proj.getLogisimFile(), proj);
+      proj.doAction(LogisimFileActions.addCircuit(circuit));
+      proj.setCurrentCircuit(circuit);
+      break;
+    }
+  }
+
+  private static boolean labelInvalidNotify(String label, Project proj) {
+    String err = null;
+    /* Checking for valid names */
+    if (label.isEmpty()) {
+      err = S.get("circuitNameMissingError");
+    } else if (CorrectLabel.isKeyword(label, AppPreferences.HdlType.get(), false)) {
+      err = "\"" + label + "\": " + S.get("circuitNameKeyword");
+    } else if (nameIsInUse(proj, label)) {
+      err = "\"" + label + "\": " + S.get("circuitNameExists");
+    } else {
+      String nameMessage = SyntaxChecker.getErrorMessage(label, AppPreferences.HdlType.get());
+      if (nameMessage != null) {
+        err = "\"" + label + "\": " + S.get("circuitNameInvalidName") + "\n" + nameMessage;
       }
+    }
+
+    if (err != null) {
+      OptionPane.showMessageDialog(proj.getFrame(), err, S.get("circuitCreateTitle"), OptionPane.ERROR_MESSAGE);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -248,6 +259,54 @@ public class ProjectCircuitActions {
     }
   }
 
+  public static void doRenameCircuit(Project proj, Circuit cur) {
+    final var tool = proj.getLogisimFile().getAddTool(cur);
+    if (tool != null) {
+      final var name = cur.getName();
+      String initialValue = name;
+      while (true) {
+        final var newName = promptForNewName(proj.getFrame(), proj.getLogisimFile(), initialValue, false);
+        if (newName == null || newName.equals(name)) break;
+
+        if (!name.equalsIgnoreCase(newName) && labelInvalidNotify(newName, proj)) {
+          initialValue = newName;
+          continue;
+        }
+
+        try {
+          final var mutation = new CircuitMutation(cur);
+          mutation.setForCircuit(CircuitAttributes.NAME_ATTR, newName);
+          final var action = mutation.toAction(null);
+          proj.doAction(action);
+        } catch (CircuitException ex) {
+          OptionPane.showMessageDialog(proj.getFrame(), ex.getMessage());
+        }
+        
+        break;
+      }
+    }
+  }
+
+  public static void doRenameVhdl(Project proj, VhdlContent vhdl) {
+    final var tool = proj.getLogisimFile().getAddTool(vhdl);
+    if (tool != null) {
+      final var name = vhdl.getName();
+      String initialValue = name;
+      while (true) {
+        final var newName = promptForNewName(proj.getFrame(), proj.getLogisimFile(), initialValue, true);
+        if (newName == null || newName.equals(name)) break;
+
+        if (!name.equalsIgnoreCase(newName) && VhdlContent.labelVHDLInvalidNotify(newName, proj.getLogisimFile())) {
+          initialValue = newName;
+          continue;
+        }
+
+        proj.doAction(ToolAttributeAction.create(tool, VhdlEntity.NAME_ATTR, newName));
+        break;
+      }
+    }
+  }
+
   public static void doRemoveCircuit(Project proj, Circuit circuit) {
     if (proj.getLogisimFile().getCircuits().size() == 1) {
       OptionPane.showMessageDialog(
@@ -303,18 +362,8 @@ public class ProjectCircuitActions {
    * @param frame Project's frame
    * @param lib Project's logisim file
    * @param initialValue Default suggested value (can be empty if no initial value)
+   * @param vhdl If circuit is VHDL or not
    */
-  private static String promptForCircuitName(JFrame frame, Library lib, String initialValue) {
-    return promptForNewName(frame, lib, initialValue, false);
-  }
-
-  private static String promptForVhdlName(JFrame frame, LogisimFile file, String initialValue) {
-    final var name = promptForNewName(frame, file, initialValue, true);
-    if (name == null) return null;
-    if (VhdlContent.labelVHDLInvalidNotify(name, file)) return null;
-    return name;
-  }
-
   private static String promptForNewName(
       JFrame frame, Library lib, String initialValue, boolean vhdl) {
     String title;

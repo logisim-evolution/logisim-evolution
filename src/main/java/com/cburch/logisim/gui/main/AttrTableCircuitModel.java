@@ -24,6 +24,7 @@ public class AttrTableCircuitModel extends AttributeSetTableModel {
 
   public AttrTableCircuitModel(final Project proj, final Circuit circ) {
     super(circ.getStaticAttributes());
+    setInstance(circ.getSubcircuitFactory());
     this.proj = proj;
     this.circ = circ;
   }

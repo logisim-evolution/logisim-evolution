@@ -26,6 +26,7 @@ class AttrTableHdlModel extends AttributeSetTableModel implements HdlModelListen
 
   AttrTableHdlModel(Project proj, VhdlContent hdl) {
     super(hdl.getStaticAttributes());
+    setInstance(proj.getLogisimFile().getVhdlEntity(hdl));
     this.proj = proj;
     this.hdl = hdl;
     hdl.addHdlModelListener(this);

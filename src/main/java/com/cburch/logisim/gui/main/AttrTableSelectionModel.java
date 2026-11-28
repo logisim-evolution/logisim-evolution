@@ -20,7 +20,6 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.comp.PositionComparator;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableModelRow;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
@@ -66,12 +65,6 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
           () -> selectedSplitter() == splitter && frame.getCanvas().getCircuit() == circuit);
     }
     return super.getRow(index);
-  }
-
-  @Override
-  public void attributeValueChanged(AttributeEvent e) {
-    super.attributeValueChanged(e);
-    if (e.getAttribute().equals(StdAttr.LABEL)) fireTitleChanged();
   }
 
   @Override

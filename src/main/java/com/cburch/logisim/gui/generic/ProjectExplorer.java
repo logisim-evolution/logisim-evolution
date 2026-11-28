@@ -34,6 +34,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -86,6 +87,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     getModel().addTreeModelListener(myListener);
     setRootVisible(true);
     addMouseListener(myListener);
+    addKeyListener(myListener);
     ToolTipManager.sharedInstance().registerComponent(this);
 
     MySelectionModel selector = new MySelectionModel();
@@ -349,7 +351,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           BaseTreeModelListenerContract,
           TreeSelectionListener,
           ProjectListener,
-          PropertyChangeListener {
+          PropertyChangeListener,
+          KeyListener {
     private void checkForPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
         final var path = getPathForLocation(e.getX(), e.getY());
@@ -393,6 +396,25 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         if (node != null) node.fireNodeChanged();
       }
     }
+
+    //
+    // KeyListener methods
+    //
+    @Override
+    public void keyPressed(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_F2) {
+        final var path = getSelectionPath();
+        if (path != null && listener != null) {
+          listener.renameRequested(new Event(path));
+        }
+      }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
 
     //
     // project/library file/circuit listener methods
@@ -614,6 +636,10 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
 
     default void doubleClicked(Event event) {
+      // no-op implementation
+    }
+
+    default void renameRequested(Event event) {
       // no-op implementation
     }
 

@@ -213,17 +213,21 @@ public class VhdlContent extends HdlContent {
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
     String err = null;
-    if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*")) {
-      err = S.get("vhdlInvalidNameError");
+    /* Checking for valid names */
+    if (label.isEmpty()) {
+      err = S.get("vhdlNameMissingError");
+    } else if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*")) {
+      err = "\"" + label + "\": " + S.get("vhdlInvalidNameError");
     } else if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase(Locale.ROOT))) {
-      err = S.get("vhdlKeywordNameError");
+      err = "\"" + label + "\": " + S.get("vhdlKeywordNameError");
     } else if (file != null && file.containsFactory(label)) {
-      err = S.get("vhdlDuplicateNameError");
+      err = "\"" + label + "\": " + S.get("vhdlDuplicateNameError");
     } else {
       return false;
     }
+    final var circ = file.getMainCircuit();
     OptionPane.showMessageDialog(
-        null, label + ": " + err, S.get("validationParseError"), OptionPane.ERROR_MESSAGE);
+        circ == null ? null : circ.getProject().getFrame(), err, S.get("validationParseError"), OptionPane.ERROR_MESSAGE);
     return true;
   }
 
